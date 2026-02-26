@@ -1,6 +1,5 @@
 import React from "react";
 import { ArrowRight } from "lucide-react";
-import { BlogPost } from "./BlogCard";
 import BlogCard from "./BlogCard";
 import Link from "next/link";
 import { Skeleton } from "./Skeleton";

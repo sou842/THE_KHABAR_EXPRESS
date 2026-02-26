@@ -3,7 +3,6 @@ import useSWR from "swr";
 
 import BlogCard from "./BlogCard";
 import Loading from "./ui/loading";
-import { BlogPost } from "./BlogCard";
 import { Skeleton } from "./Skeleton";
 import { getter } from "@/lib/helper";
 
