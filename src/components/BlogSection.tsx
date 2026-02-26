@@ -4,7 +4,6 @@ import Pagination from '@/components/Pagination';
 import { getter } from '@/lib/helper';
 import Loading from '@/components/ui/loading';
 import Error from '@/components/Error';
-import { BlogPost } from '@/components/BlogCard';
 import BlogCard from './BlogCard';
 import SearchInput from './SearchInput';
 import SortDropdown from './SortDropdown';
@@ -36,8 +35,8 @@ const BlogSection = ({ status }: { status: string }) => {
             </div>
             <div className="divide-y">
                 {data?.data?.length ? (
-                    data?.data?.map((post: BlogPost) => (
-                        <BlogCard key={post._id} post={post}
+                    data?.data?.map((post: any) => (
+                        <BlogCard key={post._id} blog={post}
                             variant='compact'
                         />
                     ))
