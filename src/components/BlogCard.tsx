@@ -190,6 +190,23 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
         </Link>
       );
 
+      case "searchItem":
+        return (
+          <div className="group block p-5 border border-border/60 rounded-lg hover:border-primary/50 hover:shadow-sm hover:bg-muted/30 transition-all bg-background">
+            <div className="flex flex-col gap-2.5">
+              <span className="inline-block text-[11px] font-bold uppercase tracking-[0.15em] text-foreground">
+                {blog.category}
+              </span>
+              <h4 className="text-xl md:text-[22px] leading-tight font-extrabold text-foreground group-hover:text-primary transition-colors font-sans tracking-tight">
+                {blog.title || blog?.thumbnail?.title}
+              </h4>
+              <p className="text-[13px] text-muted-foreground/80 font-medium">
+                {formatDate(blog.publishedDate || (blog as any).createdAt)}
+              </p>
+            </div>
+          </div>
+        );
+
     default:
       return null;
   }

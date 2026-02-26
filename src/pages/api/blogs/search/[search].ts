@@ -55,6 +55,8 @@ export default async function handler(
         },
         {
           $project: {
+            title: 1,
+            publishedDate: 1,
             "thumbnail.title": 1,
             "thumbnail.description": 1,
             "thumbnail.image": 1,

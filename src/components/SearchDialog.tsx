@@ -113,93 +113,82 @@ const SearchDialog = ({ open }: SearchDialogProps) => {
   return (
     <CommandDialog open={open} onOpenChange={handleResetBack}>
       {/* Search Bar */}
-      <div className="flex items-center px-4 pt-2">
-        <button
-          // onClick={handleResetBack}
-          className="p-2 rounded-full bg-foreground hover:bg-foreground/50"
-        >
+      <div className="flex items-center gap-4 px-6 py-6 border-b border-border bg-background shrink-0 sticky top-0 z-10">
+        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-foreground text-background shrink-0">
           {searchLoading ? (
-            <Loader className="h-4 w-4 opacity-70 text-white animate-spin" />
+            <Loader className="h-5 w-5 animate-spin" />
           ) : (
-            <Search className="h-4 w-4 opacity-70 text-white" />
+            <Search className="h-5 w-5" />
           )}
-        </button>
+        </div>
         <input
           ref={inputRef}
           value={search}
           placeholder="Search all topics here"
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={handleSearch}
-          className="flex h-11 w-full rounded-md bg-transparent py-3 pl-3 text-sm outline-none placeholder:text-muted-foreground"
+          className="flex-1 h-10 w-full bg-transparent text-lg md:text-xl outline-none placeholder:text-muted-foreground/60 text-foreground"
         />
-        {true && (
-          <button
-            onClick={handleResetBack}
-            className="p-2 rounded-full hover:bg-foreground/5"
-          >
-            <X className="h-4 w-4 opacity-50" />
-          </button>
-        )}
-      </div>
-
-      {/* Horizontal Scroll Categories */}
-      <div className="w-full px-4 pt-3 pb-2">
-        <div
-          id="hide_scrollbar"
-          className="flex flex-row gap-3 overflow-x-auto scrollbar-hide"
+        <button
+          onClick={handleResetBack}
+          className="p-1 rounded-sm text-muted-foreground hover:text-foreground shrink-0 transition-colors"
+          aria-label="Close search"
         >
-          {categories.map((category: any, index: number) => (
-            <div
-              onClick={handleResetBack}
-              key={index}
-              className="w-[130px] h-[80px] shrink-0"
-            >
-              <BlogCard
-                key={category.thumbnail._id}
-                blog={category}
-                variant="category"
-              />
-            </div>
-          ))}
-        </div>
+          <X className="h-5 w-5 opacity-70" />
+        </button>
       </div>
 
       {/* Search Results or Recent Posts */}
-      <div className="w-full h-full md:max-h-[300px] md:min-h-[150px] px-4 overflow-y-scroll scroll-smooth rounded-4xl py-2">
+      <div className="w-full h-full md:max-h-[380px] md:min-h-[250px] px-6 overflow-y-auto scroll-smooth py-6 bg-background">
         {searchQuery ? (
           searchLoading ? (
-            <Skeleton repeat={5} type="category-compact-skeleton" />
+            <div className="space-y-4">
+              <Skeleton repeat={3} type="category-compact-skeleton" />
+            </div>
           ) : searchResult?.data?.length === 0 ? (
-            <div className="w-fit m-auto text-muted-foreground text-md">
-              No search results found.
+            <div className="w-full text-center py-8 text-muted-foreground font-serif italic text-lg border border-dashed border-border rounded-sm">
+              No stories found for "{searchQuery}".
             </div>
           ) : (
-            searchResult?.data?.map((result: any, index: number) => (
-              <div
-                key={index}
-                onClick={() => handleSelect(result?.url)}
-                className="flex items-center gap-3 py-2 cursor-pointer"
-              >
-                <BlogCard blog={result} variant="compact" />
-              </div>
-            ))
-          )
-        ) : loading ? (
-          <Skeleton repeat={5} type="category-compact-skeleton" />
-        ) : recentPosts?.data?.length === 0 ? (
-          <div className="w-fit m-auto text-muted-foreground text-md">
-            No search results found.
-          </div>
-        ) : (
-          recentPosts?.data?.map((result: any, index: number) => (
-            <div
-              key={index}
-              onClick={() => handleSelect(result?.url)}
-              className="flex items-center gap-3 py-2 cursor-pointer"
-            >
-              <BlogCard blog={result} variant="compact" />
+            <div className="space-y-4">
+              {searchResult?.data?.map((result: any, index: number) => (
+                <div
+                  key={index}
+                  onClick={() => handleSelect(result?.url)}
+                  className="cursor-pointer"
+                >
+                  <BlogCard blog={result} variant="searchItem" />
+                </div>
+              ))}
             </div>
-          ))
+          )
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            {categories?.map((category: any, index: number) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setSearch(category?.thumbnail?.title);
+                  setSearchQuery(category?.thumbnail?.title);
+                  if (inputRef?.current) inputRef?.current?.focus();
+                }}
+                className="relative overflow-hidden aspect-[4/3] rounded-lg group"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={category?.thumbnail?.image}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  alt={category?.thumbnail?.title}
+                />
+                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors" />
+                <div className="absolute inset-0 flex items-center justify-center p-4">
+                  <span className="text-white font-bold uppercase tracking-widest text-xs sm:text-sm text-center drop-shadow-md">
+                    {category?.thumbnail?.title}
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
         )}
       </div>
     </CommandDialog>

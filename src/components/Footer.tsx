@@ -23,25 +23,25 @@ const Footer: React.FC = () => {
   return (
     <footer className="w-full bg-background py-12 px-5 md:px-6">
       <div className="khabar-container">
-        <div className="flex justify-between gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
           {/* Logo and description */}
-          <div className="w-full space-y-4">
+          <div className="col-span-1 sm:col-span-2 space-y-4 mb-4 md:mb-0">
             <Link
               href="/"
               className="text-2xl font-bold bg-gradient-to-r from-khabar-600 to-khabar-400 bg-clip-text text-transparent inline-block"
             >
               <Logo type={"footer-logo"} />
             </Link>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-sm max-w-sm">
               Stay informed with the latest news across various domains, from
               technology to health, finance to entertainment.
             </p>
           </div>
 
           {/* Quick links */}
-          <div className="w-full">
+          <div>
             <h3 className="text-sm font-bold uppercase tracking-widest text-primary mb-6">Quick Links</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-3 text-sm">
               {QUICK_LINKS.map((item) => (
                 <li key={item.href}>
                   <Link
@@ -56,9 +56,9 @@ const Footer: React.FC = () => {
           </div>
 
           {/* Categories */}
-          <div className="w-full">
+          <div>
             <h3 className="text-sm font-bold uppercase tracking-widest text-primary mb-6">Categories</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-3 text-sm">
               {CATEGORY_LINKS.map((item) => (
                 <li key={item.href}>
                   <Link
