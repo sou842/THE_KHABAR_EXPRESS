@@ -50,9 +50,9 @@ const Navbar: FC = () => {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </Head>
-      <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-lg" role="banner">
-        <div className="khabar-container">
-          <div className="flex h-16 items-center justify-between">
+      <header className="sticky top-0 z-50 bg-primary text-primary-foreground shadow-sm" role="banner">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex h-20 items-center justify-between">
             {/* Logo */}
             <Link
               href="/"
@@ -64,14 +64,14 @@ const Navbar: FC = () => {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-6" role="navigation" aria-label="Main Navigation">
+            <nav className="hidden md:flex items-center space-x-12" role="navigation" aria-label="Main Navigation">
               {categories?.map(
                 (category: { name: string; slug: string }, index: number) => (
                   <Link
                     key={index}
                     href={`/category/${category?.slug}`}
                     aria-label={`${category?.name} News Category`}
-                    className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                    className="hover:opacity-75 transition-opacity font-medium text-primary-foreground"
                   >
                     {category?.name}
                   </Link>
@@ -85,7 +85,7 @@ const Navbar: FC = () => {
                 onClick={toggleSearch}
                 title="Search"
                 aria-label="Search Articles"
-                className="rounded-full p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                className="rounded-full p-2 text-primary-foreground hover:bg-primary-foreground/10 transition-colors"
               >
                 <Search className="h-5 w-5" />
                 <span className="sr-only">Search</span>
@@ -100,7 +100,7 @@ const Navbar: FC = () => {
                   }
                   title="Profile"
                   aria-label="User Profile Dashboard"
-                  className="flex items-center space-x-1 rounded-full p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                  className="flex items-center space-x-1 rounded-full p-2 text-primary-foreground hover:bg-primary-foreground/10 transition-colors"
                 >
                   <User className="h-5 w-5" />
                   <span className="sr-only">Profile</span>
@@ -110,7 +110,7 @@ const Navbar: FC = () => {
                   href="/login"
                   title="Login"
                   aria-label="Login to Account"
-                  className="rounded-full p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                  className="rounded-full p-2 text-primary-foreground hover:bg-primary-foreground/10 transition-colors"
                 >
                   <User className="h-5 w-5" />
                   <span className="sr-only">Login</span>
@@ -124,12 +124,12 @@ const Navbar: FC = () => {
                 aria-label="Toggle Mobile Menu"
                 aria-expanded={isMenuOpen}
                 aria-controls="mobile-menu"
-                className="md:hidden rounded-full p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                className="md:hidden rounded-full p-2 text-primary-foreground hover:bg-primary-foreground/10 transition-colors"
               >
                 {isMenuOpen ? (
-                  <X className="h-5 w-5" />
+                  <X className="h-6 w-6" />
                 ) : (
-                  <Menu className="h-5 w-5" />
+                  <Menu className="h-6 w-6" />
                 )}
                 <span className="sr-only">Menu</span>
               </button>
@@ -146,28 +146,28 @@ const Navbar: FC = () => {
         {isMenuOpen && (
           <div 
             id="mobile-menu" 
-            className="md:hidden border-t border-border py-4"
+            className="md:hidden pb-4 border-t border-primary-foreground/20 pt-4 space-y-3 bg-primary"
             role="navigation" 
             aria-label="Mobile Navigation"
           >
-            <div className="khabar-container">
-              <nav className="flex flex-col space-y-4">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <nav className="flex flex-col space-y-3">
                 {categories?.map((category: any, index: number) => (
                   <Link
                     key={index}
                     href={`/category/${category.slug}`}
                     aria-label={`${category.name} News Category`}
-                    className="text-foreground hover:text-khabar-500 transition-colors"
+                    className="block hover:opacity-75 transition-opacity font-medium text-primary-foreground"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {category?.name}
                   </Link>
                 ))}
-                <div className="border-t border-border pt-4 mt-4">
+                <div className="border-t border-primary-foreground/20 pt-4 mt-4">
                   <Link
                     href="/about"
                     aria-label="About Us"
-                    className="text-foreground hover:text-khabar-500 transition-colors"
+                    className="block hover:opacity-75 transition-opacity font-medium text-primary-foreground"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     About Us

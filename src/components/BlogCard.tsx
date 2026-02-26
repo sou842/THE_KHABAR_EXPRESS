@@ -8,8 +8,25 @@ interface BlogCardProps {
 }
 
 export const getImageUrl = (blog: IBlog) => {
-  if (blog?.thumbnail?.url) return blog.thumbnail.url;
-  return null;
+  const category = blog?.category?.toLowerCase();
+  switch (category) {
+    case "technology":
+      return "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=900&auto=format&fit=crop";
+    case "health":
+      return "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&auto=format&fit=crop";
+    case "finance":
+      return "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&auto=format&fit=crop";
+    case "politics":
+      return "https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?w=800&auto=format&fit=crop";
+    case "sports":
+      return "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&auto=format&fit=crop";
+    case "travel":
+      return "https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?w=900&auto=format&fit=crop";
+    case "food":
+      return "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=900&auto=format&fit=crop";
+    default:
+      if (blog?.thumbnail?.url) return blog.thumbnail.url;
+  }
 };
 
 export const formatDate = (dateString?: Date | string) => {

@@ -199,7 +199,13 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs`);
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+    if (!siteUrl) {
+      console.warn("NEXT_PUBLIC_SITE_URL is not defined. Skipping getStaticPaths API call.");
+      return { paths: [], fallback: "blocking" };
+    }
+
+    const res = await fetch(`${siteUrl}/api/blogs`);
 
     if (!res.ok) {
       throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
@@ -234,8 +240,14 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       return { notFound: true };
     }
 
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+    if (!siteUrl) {
+      console.warn("NEXT_PUBLIC_SITE_URL is not defined. Failing getStaticProps.");
+      return { notFound: true };
+    }
+
     const blogRes = await fetch(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs/${params?.id}`
+      `${siteUrl}/api/blogs/${params?.id}`
     );
     if (!blogRes.ok) {
       return { notFound: true };
@@ -247,7 +259,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     }
 
     const relatedRes = await fetch(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs?category=${blogData.data.category}&limit=3&status=approved`
+      `${siteUrl}/api/blogs?category=${blogData.data.category}&limit=3&status=approved`
     );
     if (!relatedRes.ok) {
       return {
