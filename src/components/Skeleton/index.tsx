@@ -153,6 +153,98 @@ export const Skeleton: React.FC<skeletonProps> = (props) => {
           </div>
         </div>
       );
+    case "home":
+      return (
+        <div className="w-full flex flex-col min-h-screen">
+          <div className="animate-pulse w-full border-b border-border">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
+                <div className="lg:col-span-3">
+                  <div className="bg-foreground/20 aspect-video rounded-sm w-full h-full"></div>
+                </div>
+                <div className="lg:col-span-2 space-y-5">
+                  <div className="h-4 w-20 bg-foreground/10 rounded"></div>
+                  <div className="h-10 w-full bg-foreground/20 rounded"></div>
+                  <div className="h-10 w-3/4 bg-foreground/20 rounded"></div>
+                  <div className="space-y-2 mt-4">
+                    <div className="h-4 w-full bg-foreground/10 rounded"></div>
+                    <div className="h-4 w-5/6 bg-foreground/10 rounded"></div>
+                  </div>
+                  <div className="flex justify-between items-center pt-4 border-t border-border mt-4">
+                    <div className="space-y-2">
+                      <div className="h-4 w-24 bg-foreground/10 rounded"></div>
+                      <div className="h-3 w-32 bg-foreground/10 rounded"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="animate-pulse w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+            <div className="mb-8 space-y-2">
+              <div className="h-4 w-24 bg-foreground/10 rounded"></div>
+              <div className="h-8 w-64 bg-foreground/20 rounded"></div>
+            </div>
+            <div className="space-y-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex gap-6 pb-6 border-b border-border last:border-0">
+                  <div className="hidden sm:block w-24 md:w-32 aspect-square bg-foreground/20 rounded-sm shrink-0"></div>
+                  <div className="flex-1 space-y-3">
+                    <div className="h-4 w-16 bg-foreground/10 rounded"></div>
+                    <div className="h-6 w-full max-w-xl bg-foreground/20 rounded"></div>
+                    <div className="h-4 w-full max-w-lg bg-foreground/10 rounded"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="animate-pulse w-full border-b border-border">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div>
+                  <div className="h-6 w-32 bg-foreground/20 rounded mb-6"></div>
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="space-y-2">
+                        <div className="h-5 w-full max-w-md bg-foreground/20 rounded"></div>
+                        <div className="h-3 w-24 bg-foreground/10 rounded"></div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="bg-foreground/5 border border-border rounded-sm p-8 flex flex-col justify-center">
+                  <div className="h-6 w-48 bg-foreground/20 rounded mb-3"></div>
+                  <div className="h-4 w-full max-w-xs bg-foreground/10 rounded mb-6"></div>
+                  <div className="space-y-3">
+                    <div className="h-12 w-full bg-foreground/10 border border-border rounded-sm"></div>
+                    <div className="h-12 w-full bg-foreground/20 rounded-sm"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="animate-pulse w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+            <div className="mb-8 space-y-2">
+              <div className="h-4 w-20 bg-foreground/10 rounded"></div>
+              <div className="h-8 w-56 bg-foreground/20 rounded"></div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="space-y-4">
+                  <div className="aspect-video bg-foreground/20 rounded-sm w-full"></div>
+                  <div className="h-3 w-20 bg-foreground/10 rounded"></div>
+                  <div className="h-5 w-full bg-foreground/20 rounded"></div>
+                  <div className="h-4 w-full max-w-[80%] bg-foreground/10 rounded"></div>
+                  <div className="flex justify-between items-center pt-2">
+                    <div className="h-3 w-16 bg-foreground/10 rounded"></div>
+                    <div className="h-3 w-24 bg-foreground/10 rounded"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
     default:
       return (
         <div className="h-screen flex items-center justify-center">

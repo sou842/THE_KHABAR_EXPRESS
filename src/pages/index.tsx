@@ -5,6 +5,7 @@ import Head from "next/head";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BlogCard from "@/components/BlogCard";
+import { Skeleton } from "@/components/Skeleton";
 import { getter, preventRerendering } from "@/lib/helper";
 import { IBlog } from "@/models/blog.model";
 import { useEffect, useRef } from "react";
@@ -87,8 +88,8 @@ export default function Home() {
     return (
       <div className="flex flex-col min-h-screen bg-background text-foreground">
         <Navbar />
-        <main className="flex-grow flex items-center justify-center">
-          <p className="font-bold uppercase tracking-widest animate-pulse text-muted-foreground">Loading Newsroom...</p>
+        <main className="flex-grow bg-background">
+          <Skeleton type="home" />
         </main>
         <Footer />
       </div>
