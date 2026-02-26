@@ -1,0 +1,410 @@
+import useSWR from "swr";
+import useSWRInfinite from "swr/infinite";
+import Link from "next/link";
+import Head from "next/head";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import BlogCard from "@/components/BlogCard";
+import { getter, preventRerendering } from "@/lib/helper";
+import { IBlog } from "@/models/blog.model";
+import { useEffect, useRef } from "react";
+
+export default function Home() {
+  // 1. Fetch general top articles
+  const { data: generalData, isLoading: isGeneralLoading } = useSWR<any>(
+    "/api/blogs?limit=15&status=approved",
+    getter,
+    preventRerendering
+  );
+
+  // 2. Separate API calls for categories
+  const { data: techData } = useSWR<any>(
+    "/api/blogs?category=technology&limit=4&status=approved",
+    getter,
+    preventRerendering
+  );
+  const { data: financeData } = useSWR<any>(
+    "/api/blogs?category=finance&limit=4&status=approved",
+    getter,
+    preventRerendering
+  );
+  const { data: sportsData } = useSWR<any>(
+    "/api/blogs?category=sports&limit=4&status=approved",
+    getter,
+    preventRerendering
+  );
+
+  // 3. Infinite scrolling for All Stories
+  const getInfiniteKey = (pageIndex: number, previousPageData: any) => {
+    if (previousPageData && (!previousPageData.data || previousPageData.data.length === 0)) return null;
+    return `/api/blogs?limit=8&page=${pageIndex + 1}&status=approved`;
+  };
+  
+  const { data: infiniteData, size, setSize, isLoading: isInfiniteLoading } = useSWRInfinite<any>(
+    getInfiniteKey,
+    getter,
+    preventRerendering
+  );
+
+  // Parse general articles
+  const articles: IBlog[] = generalData?.data || [];
+  
+  const featuredBlog = articles[0] || null;
+  const topStories = articles.slice(1, 4) || [];
+  const trendingBlogs = articles.slice(4, 7) || [];
+  const mostReadBlogs = articles.slice(7, 10) || [];
+  const editorsPicks = articles.slice(10, 13) || [];
+  
+  // Parse category arrays
+  const designBlogs: IBlog[] = techData?.data || [];
+  const techBlogs: IBlog[] = financeData?.data || [];
+  const webDevBlogs: IBlog[] = sportsData?.data || [];
+  
+  // Flatten infinite scroll data
+  const latestAll: IBlog[] = infiniteData ? infiniteData.reduce((acc, val) => [...acc, ...(val.data || [])], []) : [];
+  const isReachingEnd = infiniteData && infiniteData[infiniteData.length - 1]?.data?.length < 8;
+
+  // Infinite Scroll Observer
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isInfiniteLoading && !isReachingEnd) {
+          setSize((prevSize) => prevSize + 1);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    
+    if (loadMoreRef.current) observer.observe(loadMoreRef.current);
+    return () => observer.disconnect();
+  }, [isInfiniteLoading, isReachingEnd, setSize]);
+
+  // Helper functions moved to BlogCard.tsx
+
+  if (isGeneralLoading && !articles.length) {
+    return (
+      <div className="flex flex-col min-h-screen bg-background text-foreground">
+        <Navbar />
+        <main className="flex-grow flex items-center justify-center">
+          <p className="font-bold uppercase tracking-widest animate-pulse text-muted-foreground">Loading Newsroom...</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen bg-background text-foreground font-sans">
+      <Head>
+        <title>Khabar - The Latest News and Insights</title>
+      </Head>
+
+      <Navbar />
+
+      <main className="flex-grow bg-background">
+        {/* Large Hero Featured Article */}
+        {featuredBlog && (
+          <section className="border-b border-border">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+              <BlogCard blog={featuredBlog} variant="hero" />
+            </div>
+          </section>
+        )}
+
+        {/* Top Stories Grid */}
+        {topStories.length > 0 && (
+          <section className="border-b border-border">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+              <div className="mb-8">
+                <h2 className="text-sm font-bold uppercase tracking-widest text-primary mb-2">Top Stories</h2>
+                <h3 className="text-2xl md:text-3xl font-bold text-foreground">What's trending now</h3>
+              </div>
+              
+              <div className="space-y-6">
+                {topStories.map((blog, idx) => (
+                  <BlogCard key={idx} blog={blog} variant="topStory" index={idx} />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Trending & Categories Grid */}
+        <section className="border-b border-border">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              {/* Trending */}
+              <div>
+                <h3 className="text-xl font-bold text-foreground mb-6">Trending</h3>
+                <div className="space-y-4">
+                  {trendingBlogs.map((blog, idx) => (
+                    <BlogCard key={idx} blog={blog} variant="trending" />
+                  ))}
+                </div>
+              </div>
+
+              {/* Newsletter Signup */}
+              <div className="bg-primary/5 border border-border rounded-sm p-8 flex flex-col justify-center">
+                <h3 className="text-xl font-bold text-foreground mb-3">Subscribe for Updates</h3>
+                <p className="text-muted-foreground mb-6">Get the latest stories delivered to your inbox every morning.</p>
+                <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
+                  <input
+                    type="email"
+                    placeholder="your@email.com"
+                    className="w-full bg-background border border-border rounded-sm px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                  <button
+                    type="submit"
+                    className="w-full bg-primary text-primary-foreground px-4 py-3 rounded-sm font-semibold hover:bg-primary/90 transition-colors uppercase tracking-widest text-xs"
+                  >
+                    Subscribe
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Category Sections - Design, Tech, Web Dev */}
+        <section className="border-t border-border py-12 md:py-16 bg-muted/30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Design Section (Mapped to Technology here as example fallback) */}
+              {designBlogs.length > 0 && (
+                <div className="border-l-4 border-primary pl-6">
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-primary mb-6">{designBlogs[0]?.category}</h3>
+                  <div className="space-y-6">
+                    {designBlogs.map((blog, idx) => (
+                      <BlogCard key={idx} blog={blog} variant="trending" />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Technology Section (Mapped to Finance) */}
+              {techBlogs.length > 0 && (
+                <div className="border-l-4 border-secondary pl-6">
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-secondary mb-6">{techBlogs[0]?.category}</h3>
+                  <div className="space-y-6">
+                    {techBlogs.map((blog, idx) => (
+                      <BlogCard key={idx} blog={blog} variant="trending" />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Web Development Section (Mapped to Sports) */}
+              {webDevBlogs.length > 0 && (
+                <div className="border-l-4 border-accent pl-6">
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-accent mb-6">{webDevBlogs[0]?.category}</h3>
+                  <div className="space-y-6">
+                    {webDevBlogs.map((blog, idx) => (
+                      <BlogCard key={idx} blog={blog} variant="trending" />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Editors' Picks Section */}
+        {editorsPicks.length > 0 && (
+          <section className="border-b border-border">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+              <div className="mb-8">
+                <h2 className="text-sm font-bold uppercase tracking-widest text-primary mb-2">Curated</h2>
+                <h3 className="text-2xl md:text-3xl font-bold text-foreground">Editors&apos; Picks</h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {editorsPicks.map((blog, idx) => (
+                  <BlogCard key={idx} blog={blog} variant="editorPick" />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Most Read Articles Section */}
+        {mostReadBlogs.length > 0 && (
+          <section className="border-b border-border bg-muted/30">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+              <div className="mb-8">
+                <h2 className="text-sm font-bold uppercase tracking-widest text-primary mb-2">Popular</h2>
+                <h3 className="text-2xl md:text-3xl font-bold text-foreground">Most Read This Week</h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {mostReadBlogs.map((blog, idx) => (
+                  <BlogCard key={idx} blog={blog} variant="mostRead" index={idx} />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* All Articles Grid Section */}
+        {latestAll.length > 0 && (
+          <section className="border-b border-border">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+              <div className="flex items-baseline justify-between mb-8">
+                <div>
+                  <h2 className="text-sm font-bold uppercase tracking-widest text-primary mb-2">Complete Archive</h2>
+                  <h3 className="text-2xl md:text-3xl font-bold text-foreground">All Stories</h3>
+                </div>
+                <Link href="/category/technology" className="text-primary font-semibold hover:text-primary/80 transition-colors hidden md:block">
+                  Browse All &rarr;
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {latestAll.map((blog, idx) => (
+                  <BlogCard key={`all-${idx}`} blog={blog} variant="compact" />
+                ))}
+              </div>
+              
+              {/* Infinite Scroll trigger / Loading state */}
+              <div 
+                ref={loadMoreRef} 
+                className="mt-12 w-full flex justify-center py-8 border-t border-border"
+              >
+                {!isReachingEnd && (
+                   <button 
+                     onClick={() => setSize(size + 1)}
+                     disabled={isInfiniteLoading}
+                     className="inline-flex items-center justify-center bg-primary text-primary-foreground px-6 py-3 rounded-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                   >
+                     {isInfiniteLoading ? (
+                       <span className="flex items-center gap-2">
+                         <svg className="animate-spin h-4 w-4 text-primary-foreground" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                         </svg>
+                         Loading more...
+                       </span>
+                     ) : "Load More Stories"}
+                   </button>
+                )}
+                {isReachingEnd && latestAll.length > 0 && (
+                  <p className="text-muted-foreground text-sm font-medium">You have reached the end of the archive.</p>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Industry Updates Section */}
+        {articles.length > 0 && (
+          <section className="border-b border-border bg-muted/30">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+              <div className="mb-8">
+                <h2 className="text-sm font-bold uppercase tracking-widest text-primary mb-2">News</h2>
+                <h3 className="text-2xl md:text-3xl font-bold text-foreground">Industry Updates</h3>
+              </div>
+
+              <div className="space-y-4">
+                {articles.slice(0, 4).map((blog, idx) => (
+                  <BlogCard key={idx} blog={blog} variant="horizontal" />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Newsletter & Social Section */}
+        <section className="border-b border-border">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Full Width Newsletter */}
+              <div className="md:col-span-2 bg-primary text-primary-foreground rounded-sm p-8 md:p-12">
+                <div className="max-w-2xl">
+                  <h3 className="text-2xl md:text-3xl font-bold mb-3">Stay in the Loop</h3>
+                  <p className="text-primary-foreground/80 mb-6 flex-wrap">Get the best stories, analysis, and insights delivered to your inbox every week. No spam, no fluff.</p>
+                  <form className="flex flex-col sm:flex-row gap-3" onSubmit={(e) => e.preventDefault()}>
+                    <input
+                      type="email"
+                      placeholder="your@email.com"
+                      className="flex-1 bg-primary-foreground text-foreground px-4 py-3 rounded-sm placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-primary focus:ring-primary-foreground"
+                    />
+                    <button
+                      type="submit"
+                      className="bg-primary-foreground text-primary px-8 py-3 rounded-sm font-extrabold uppercase tracking-widest text-xs hover:bg-primary-foreground/90 transition-colors whitespace-nowrap"
+                    >
+                      Subscribe
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Follow & Resources Section */}
+        <section className="bg-muted/30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Follow Section */}
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-widest text-primary mb-6">Follow Us</h3>
+                <div className="flex gap-3">
+                  <a href="#" className="inline-flex items-center justify-center w-10 h-10 border border-border rounded-sm hover:bg-border transition-colors">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8.29 20c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                    </svg>
+                  </a>
+                  <a href="#" className="inline-flex items-center justify-center w-10 h-10 border border-border rounded-sm hover:bg-border transition-colors">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.475-2.236-1.986-2.236-1.081 0-1.722.722-2.004 1.418-.103.249-.129.597-.129.946v5.441h-3.554s.05-8.81 0-9.728h3.554v1.375c.425-.654 1.185-1.585 2.882-1.585 2.105 0 3.685 1.375 3.685 4.331l.001 5.607zM5.337 8.855c-1.144 0-1.915-.762-1.915-1.715 0-.955.77-1.715 1.958-1.715 1.188 0 1.915.76 1.933 1.715 0 .953-.745 1.715-1.976 1.715zm1.946 11.597H3.392V9.142h3.891v11.31zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                    </svg>
+                  </a>
+                  <a href="#" className="inline-flex items-center justify-center w-10 h-10 border border-border rounded-sm hover:bg-border transition-colors">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 0C5.373 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v 3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+
+              {/* Quick Links */}
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-widest text-primary mb-6">Quick Links</h3>
+                <ul className="space-y-2 text-sm">
+                  <li><Link href="/category/technology" className="text-muted-foreground hover:text-foreground transition-colors">All Articles</Link></li>
+                  <li><Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors">About Us</Link></li>
+                  <li><Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">Contact</Link></li>
+                </ul>
+              </div>
+
+              {/* Categories */}
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-widest text-primary mb-6">Categories</h3>
+                <ul className="space-y-2 text-sm">
+                  <li><Link href="/category/finance" className="text-muted-foreground hover:text-foreground transition-colors">Finance</Link></li>
+                  <li><Link href="/category/technology" className="text-muted-foreground hover:text-foreground transition-colors">Technology</Link></li>
+                  <li><Link href="/category/health" className="text-muted-foreground hover:text-foreground transition-colors">Health & Wellness</Link></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* All Stories CTA */}
+        <section className="border-t border-border py-12 md:py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex justify-center">
+            <Link href="/category/finance" className="inline-flex items-center justify-center bg-primary text-primary-foreground px-8 py-3 rounded-sm font-semibold hover:bg-primary/90 transition-colors">
+              Explore Complete Archives
+              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
