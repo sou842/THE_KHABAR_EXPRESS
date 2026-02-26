@@ -1,6 +1,5 @@
 import React from "react";
 import { ArrowRight } from "lucide-react";
-import { BlogPost } from "./BlogCard";
 import BlogCard from "./BlogCard";
 import Link from "next/link";
 import { Skeleton } from "./Skeleton";
@@ -8,7 +7,7 @@ import { Skeleton } from "./Skeleton";
 interface CategorySectionProps {
   title: string;
   slug: string;
-  posts: BlogPost[];
+  posts: any[];
   variant?: "default" | "featured" | "compact";
   loading?: boolean;
 }
@@ -41,7 +40,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                 <BlogCard
                   key={index}
                   variant={variant}
-                  post={{ ...post, categorySlug: slug }}
+                  blog={{ ...post, categorySlug: slug }}
                 />
               ))}
           </div>

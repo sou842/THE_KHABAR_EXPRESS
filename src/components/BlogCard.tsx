@@ -3,7 +3,7 @@ import { IBlog } from "@/models/blog.model";
 
 interface BlogCardProps {
   blog: IBlog;
-  variant?: "hero" | "topStory" | "trending" | "editorPick" | "mostRead" | "compact" | "horizontal";
+  variant?: any;
   index?: number;
 }
 
