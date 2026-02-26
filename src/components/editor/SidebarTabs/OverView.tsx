@@ -72,7 +72,7 @@ const OverView: React.FC = () => {
                   {index ? (
                     <div className="w-full h-[1px] bg-muted"></div>
                   ) : null}
-                  <BlogCard key={index} post={post} variant="compact" />
+                  <BlogCard key={index} blog={post} variant="compact" />
                 </>
               ))}
           </div>

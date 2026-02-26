@@ -130,7 +130,7 @@ const Category: FC = () => {
             {/* Posts grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {data?.data?.map((post: any, index: number) => (
-                <BlogCard key={index} post={post} />
+                <BlogCard key={index} blog={post} />
               ))}
             </div>
           </>

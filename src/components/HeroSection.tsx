@@ -35,7 +35,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Featured post */}
           <div className="lg:col-span-7 xl:col-span-8">
-            {featuredPostloading ? <Loading /> : <BlogCard post={featuredPost?.data?.[0]} variant="hero-section" />}
+            {featuredPostloading ? <Loading /> : <BlogCard blog={featuredPost?.data?.[0]} variant="hero-section" />}
           </div>
 
           {/* Recent posts */}
@@ -46,7 +46,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             {!loading ? (
               <div className="space-y-4">
                 {recentPosts && recentPosts?.data?.map((post: any, index: number) => (
-                  <BlogCard key={index} post={post} variant={"compact"} />
+                  <BlogCard key={index} blog={post} variant={"compact"} />
                 ))}
               </div>
             ) : (

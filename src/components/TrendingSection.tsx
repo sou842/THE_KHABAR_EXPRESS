@@ -31,7 +31,7 @@ const TrendingSection: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {trendingPosts &&
               trendingPosts?.data?.map((post: any, index: number) => (
-                <BlogCard key={index} post={post} />
+                <BlogCard key={index} blog={post} />
               ))}
           </div>
         ) : (

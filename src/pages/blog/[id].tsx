@@ -183,7 +183,7 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
               <h2 id="related-articles-heading" className="text-2xl font-medium mb-6">Related Articles</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {relatedPosts?.map((post: any) => (
-                  <BlogCard variant="featured" key={post?._id} post={post} />
+                  <BlogCard variant="featured" key={post?._id} blog={post} />
                 ))}
                 {relatedPosts?.length === 0 && (
                   <p className="text-muted-foreground col-span-3 text-center py-4">No related articles found</p>

@@ -156,7 +156,7 @@ const SearchDialog = ({ open }: SearchDialogProps) => {
             >
               <BlogCard
                 key={category.thumbnail._id}
-                post={category}
+                blog={category}
                 variant="category"
               />
             </div>
@@ -180,7 +180,7 @@ const SearchDialog = ({ open }: SearchDialogProps) => {
                 onClick={() => handleSelect(result?.url)}
                 className="flex items-center gap-3 py-2 cursor-pointer"
               >
-                <BlogCard post={result} variant="compact" />
+                <BlogCard blog={result} variant="compact" />
               </div>
             ))
           )
@@ -197,7 +197,7 @@ const SearchDialog = ({ open }: SearchDialogProps) => {
               onClick={() => handleSelect(result?.url)}
               className="flex items-center gap-3 py-2 cursor-pointer"
             >
-              <BlogCard post={result} variant="compact" />
+              <BlogCard blog={result} variant="compact" />
             </div>
           ))
         )}

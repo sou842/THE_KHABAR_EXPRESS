@@ -6,7 +6,7 @@ import Error from '@/components/Error';
 import Loading from '@/components/ui/loading';
 import { getter, putter } from '@/lib/helper';
 import { Button } from '@/components/ui/button';
-import BlogCard, { BlogPost } from '@/components/BlogCard';
+import BlogCard from '@/components/BlogCard';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import DateTimeDisplay from '@/components/DateTimeDisplay';
@@ -16,7 +16,7 @@ import Label from '@/components/Label';
 type BlogOption = {
     label: string;
     value: string;
-    blog: BlogPost; // Blog type can be more specific
+    blog: any; // Blog type can be more specific
 };
 
 const fetchBlogs = async (inputValue: string): Promise<BlogOption[]> => {
@@ -39,7 +39,7 @@ const Overview: React.FC = () => {
         `/api/blogs?status=approved&trending=true`,
         getter
     );
-    const [selectedBlog, setSelectedBlog] = React.useState<BlogPost | BlogOption | any | null>(null);
+    const [selectedBlog, setSelectedBlog] = React.useState< BlogOption | any | null>(null);
 
     if (isLoading) {
         return <Loading />
@@ -144,7 +144,7 @@ const Overview: React.FC = () => {
             {selectedBlog && (
                 <>
                     <div className='max-w-full justify-around  flex flex-col md:flex-row border overflow-hidden '>
-                        <BlogCard post={selectedBlog} variant='hero-section' />
+                        <BlogCard blog={selectedBlog} variant='hero-section' />
 
                         <div className="min-h-full p-4 py-auto border rounded-xl bg-muted">
                             <h4 className="text-xl font-semibold">{selectedBlog.title}</h4>
