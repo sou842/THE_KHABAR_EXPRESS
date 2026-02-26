@@ -123,7 +123,7 @@ export const Skeleton: React.FC<skeletonProps> = (props) => {
             </div>
 
             <div className="w-full flex flex-col md:flex-row gap-4">
-              {Array?.from({ length: 4 })?.map((_, index) => (
+              {Array?.from({ length: 3 })?.map((_, index) => (
                 <BlogCardSkeleton key={index} />
               ))}
             </div>

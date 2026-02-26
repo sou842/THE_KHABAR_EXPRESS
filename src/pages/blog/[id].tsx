@@ -74,98 +74,78 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
       />
 
       <motion.div
-        className="max-w-3xl mx-auto"
+        className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <article className="py-8 md:py-12" itemScope itemType="https://schema.org/NewsArticle">
-          <div className="khabar-container max-w-4xl">
-            {/* Category and breadcrumbs */}
-            <div>
-              <nav aria-label="Breadcrumb" className="flex items-center text-sm text-muted-foreground mb-2">
-                <Link
-                  href="/"
-                  aria-label="Home"
-                  className="hover:text-foreground transition-colors"
-                >
+        <article className="py-8 md:py-16" itemScope itemType="https://schema.org/NewsArticle">
+          <div className="w-full">
+            {/* Category, breadcrumbs, and metadata bar */}
+            <div className="mb-10 space-y-4">
+              {/* Breadcrumb — lightest element, sits at the very top */}
+              <nav
+                aria-label="Breadcrumb"
+                className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground/60"
+              >
+                <Link href="/" className="hover:text-primary transition-colors duration-200">
                   Home
                 </Link>
                 <span className="mx-2" aria-hidden="true">/</span>
-                <Link
-                  href={`/category/${blog?.category}`}
-                  aria-label={`${blog?.category} Category`}
-                  className="hover:text-foreground transition-colors"
-                >
+                <Link href={`/blog/${blog?.category}`} className="hover:text-primary transition-colors duration-200">
                   {blog?.category}
                 </Link>
-                {blog?.category && <span className="mx-2" aria-hidden="true">/</span>}
-                <span className="text-foreground" aria-current="page">
-                  {blog?.title?.substring(0, 20)}...
+                <span className="mx-2" aria-hidden="true">/</span>
+                <span
+                  className="text-muted-foreground truncate max-w-[260px] sm:max-w-[440px]"
+                  title={blog?.title}
+                >
+                  {blog?.title}
                 </span>
               </nav>
-              <div
-                className={`category-tag ${getCategoryColor(blog?.category)}`}
-                aria-label={`Category: ${blog?.category}`}
-                itemProp="articleSection"
-              >
-                {blog?.category}
+
+              {/* Meta row — author + date, minimal */}
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[11px] tracking-wide text-muted-foreground/70">
+                {blog?.author?.name && (
+                  <span itemProp="author" className="font-semibold text-foreground/80">
+                    {blog.author.name}
+                  </span>
+                )}
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="h-3 w-3 opacity-40" aria-hidden="true" />
+                  <time
+                    dateTime={new Date(blog?.createdAt).toISOString()}
+                    itemProp="datePublished"
+                  >
+                    <DateTimeDisplay type="date">{blog?.createdAt}</DateTimeDisplay>
+                  </time>
+                </div>
               </div>
             </div>
 
             {/* Content */}
-            <div className="w-full pb-10 flex flex-col items-center gap-5 mt-6" itemProp="articleBody">
+            <div className="w-full pb-12 flex flex-col items-center gap-0 mt-8" itemProp="articleBody">
               {blog?.body?.map((block: any, index: number) => (
                 <BlogContent key={index} block={block} />
               ))}
             </div>
 
-            {/* Social sharing */}
-            <div className="border-t border-b py-4 mb-8">
-              <div className="flex items-center justify-between">
-                {/* Meta information */}
-                <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                  <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-1" aria-hidden="true" />
-                    <time dateTime={new Date(blog?.createdAt).toISOString()} itemProp="datePublished">
-                      <DateTimeDisplay type="date">
-                        {blog?.createdAt}
-                      </DateTimeDisplay>
-                    </time>
-                  </div>
-                  {/* <div className="flex items-center">
-                    <Eye className="h-4 w-4 mr-1" />
-                    <span>{blog?.views} views</span>
-                  </div> */}
-                </div>
+            {/* Article Footer & Social sharing */}
+            <div className="border-t border-b border-border py-6 mb-12 bg-muted/20">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4">
+                <p className="text-sm font-bold uppercase tracking-widest text-primary border-l-2 border-primary pl-3">
+                  Share this story
+                </p>
 
                 <div className="flex items-center space-x-4">
-                  {/* <button className="text-muted-foreground cursor-pointer hover:text-blue-600 transition-colors">
-                    <Facebook className="h-5 w-5" />
-                  </button>
-                  <button className="text-muted-foreground cursor-pointer hover:text-blue-400 transition-colors">
-                    <Twitter className="h-5 w-5" />
-                  </button> */}
                   <button
                     onClick={handleCopy}
                     title="Copy Link"
                     aria-label="Copy article link to clipboard"
-                    className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
+                    className="flex items-center gap-2 bg-background border border-border px-4 py-2 rounded-sm text-sm font-semibold hover:bg-muted transition-colors text-foreground"
                   >
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Share2 className="h-5 w-5" aria-hidden="true" />
-                        </TooltipTrigger>
-                        <TooltipContent
-                          className="text-muted-foreground"
-                          side="top"
-                        >
-                          Copy Link
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <span className="sr-only">Copy article link</span>
+                    <Share2 className="h-4 w-4" aria-hidden="true" />
+                    <span>Copy Link</span>
                   </button>
                 </div>
               </div>
@@ -173,20 +153,26 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
 
             {/* FAQ's section */}
             {blog?.faqs?.length > 0 &&
-              <section className="mx-auto">
-                <h3 className="text-xl font-semibold mb-4">Frequently Asked Questions</h3>
+              <section className="mx-auto my-12 p-8 border border-border rounded-sm bg-muted/10">
+                <h3 className="text-xl font-bold font-serif mb-6 border-l-4 border-primary pl-4 text-foreground">Frequently Asked Questions</h3>
                 <FaqSchema faqs={blog?.faqs || []} />
               </section>}
 
             {/* Related articles */}
-            <section aria-labelledby="related-articles-heading" className="mt-10 mb-12">
-              <h2 id="related-articles-heading" className="text-2xl font-medium mb-6">Related Articles</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedPosts?.map((post: any) => (
-                  <BlogCard variant="featured" key={post?._id} blog={post} />
+            <section aria-labelledby="related-articles-heading" className="mt-16 mb-12 border-t border-border pt-12">
+              <div className="mb-8 flex items-baseline justify-between">
+                <div>
+                  <h2 className="text-sm font-bold uppercase tracking-widest text-primary mb-2">Read More</h2>
+                  <h3 id="related-articles-heading" className="text-3xl font-bold font-serif text-foreground tracking-tight">Related Articles</h3>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {relatedPosts && relatedPosts?.map((post: any) => (
+                  <BlogCard variant="editorPick" key={post?._id} blog={post} />
                 ))}
                 {relatedPosts?.length === 0 && (
-                  <p className="text-muted-foreground col-span-3 text-center py-4">No related articles found</p>
+                  <p className="text-muted-foreground col-span-3 text-center py-8 bg-muted/30 rounded-sm font-serif italic text-lg border border-border">No related articles found matching this topic.</p>
                 )}
               </div>
             </section>

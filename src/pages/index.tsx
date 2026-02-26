@@ -172,11 +172,11 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {/* Design Section (Mapped to Technology here as example fallback) */}
-              {designBlogs.length > 0 && (
+              {designBlogs?.length > 0 && (
                 <div className="border-l-4 border-primary pl-6">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-primary mb-6">{designBlogs[0]?.category}</h3>
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-primary mb-6">{designBlogs?.[0]?.category}</h3>
                   <div className="space-y-6">
-                    {designBlogs.map((blog, idx) => (
+                    {designBlogs?.map((blog, idx) => (
                       <BlogCard key={idx} blog={blog} variant="trending" />
                     ))}
                   </div>
@@ -184,11 +184,11 @@ export default function Home() {
               )}
 
               {/* Technology Section (Mapped to Finance) */}
-              {techBlogs.length > 0 && (
-                <div className="border-l-4 border-secondary pl-6">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-secondary mb-6">{techBlogs[0]?.category}</h3>
+              {techBlogs?.length > 0 && (
+                <div className="pl-6">
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-secondary mb-6">{techBlogs?.[0]?.category}</h3>
                   <div className="space-y-6">
-                    {techBlogs.map((blog, idx) => (
+                    {techBlogs?.map((blog, idx) => (
                       <BlogCard key={idx} blog={blog} variant="trending" />
                     ))}
                   </div>
@@ -196,11 +196,11 @@ export default function Home() {
               )}
 
               {/* Web Development Section (Mapped to Sports) */}
-              {webDevBlogs.length > 0 && (
-                <div className="border-l-4 border-accent pl-6">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-accent mb-6">{webDevBlogs[0]?.category}</h3>
+              {webDevBlogs?.length > 0 && (
+                <div className="pl-6">
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-primary mb-6">{webDevBlogs?.[0]?.category}</h3>
                   <div className="space-y-6">
-                    {webDevBlogs.map((blog, idx) => (
+                    {webDevBlogs?.map((blog, idx) => (
                       <BlogCard key={idx} blog={blog} variant="trending" />
                     ))}
                   </div>

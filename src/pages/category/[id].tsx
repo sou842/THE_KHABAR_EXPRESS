@@ -84,13 +84,13 @@ const Category: FC = () => {
                 <span className="text-sm text-muted-foreground">
                   Showing {data?.data?.length || 0} articles
                 </span>
-                <button
+                {/* <button
                   onClick={() => setShowFilters(!showFilters)}
                   className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-md bg-transparent transition-colors"
                 >
                   <SlidersHorizontal className="h-4 w-4" />
                   <span>Filters</span>
-                </button>
+                </button> */}
               </div>
             </div>
 
@@ -128,7 +128,7 @@ const Category: FC = () => {
             )}
 
             {/* Posts grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
               {data?.data?.map((post: any, index: number) => (
                 <BlogCard key={index} blog={post} />
               ))}
