@@ -92,7 +92,7 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
                   Home
                 </Link>
                 <span className="mx-2" aria-hidden="true">/</span>
-                <Link href={`/blog/${blog?.category}`} className="hover:text-primary transition-colors duration-200">
+                <Link href={`/category/${blog?.category}`} className="hover:text-primary transition-colors duration-200">
                   {blog?.category}
                 </Link>
                 <span className="mx-2" aria-hidden="true">/</span>
