@@ -1,6 +1,7 @@
 import { FC, Fragment, Suspense } from "react";
 import { CopyBlock, dracula } from "react-code-blocks";
 import dynamic from "next/dynamic";
+import { getRandomFallbackImage } from "@/lib/blogUtils";
 
 const ReactPlayer = dynamic(() => import("react-player/youtube"), {
   ssr: false,
@@ -140,8 +141,8 @@ export const BlogContent: FC<{ block: any }> = ({ block }) => {
                     alt={safelyAccessData(block, "data.caption", "Article image")}
                     itemProp="contentUrl"
                     onError={(e) => {
-                      e.currentTarget.src =
-                        "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&auto=format&fit=crop";
+                      e.currentTarget.src = getRandomFallbackImage();
+                      e.currentTarget.onerror = null;
                     }}
                   />
                   {safelyAccessData(block, "data.caption") && (

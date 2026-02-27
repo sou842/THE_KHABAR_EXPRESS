@@ -205,3 +205,13 @@ export const formatShortDate = (dateString?: Date | string) => {
     day: "numeric",
   });
 };
+
+export const getRandomFallbackImage = () => {
+  const images = [
+    "https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1635156219587-879ded59e273?w=900&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=900&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1495020689067-958852a7765e?w=900&auto=format&fit=crop"
+  ];
+  return images[Math.floor(Math.random() * images.length)];
+};
