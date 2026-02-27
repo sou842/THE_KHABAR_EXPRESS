@@ -52,7 +52,7 @@ const Navbar: FC = () => {
       </Head>
       <header className="sticky top-0 z-50 bg-primary text-primary-foreground shadow-sm" role="banner">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-20 items-center justify-between">
+          <div className="flex h-16 sm:h-20 items-center justify-between">
             {/* Logo */}
             <Link
               href="/"

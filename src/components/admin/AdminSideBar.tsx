@@ -57,10 +57,10 @@ const AdminSideBar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
             <button
               key={value}
               onClick={() => setActiveTab(value)}
-              className={`w-full flex items-center space-x-3 px-3 py-2 rounded-md text-sm ${
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-md text-sm transition-colors ${
                 activeTab === value
-                  ? "bg-khabar-50 text-khabar-700 font-medium"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                  ? "bg-accent/50 text-accent-foreground font-semibold"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
               }`}
             >
               <Icon className="h-4 w-4" />
@@ -70,20 +70,20 @@ const AdminSideBar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
         </nav>
       </div>
 
-      <div className="p-4 border-t">
+      <div className="p-4 border-t border-border">
         <div className="flex items-center space-x-3 mb-4">
-          <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-muted/50 flex items-center justify-center">
             <span className="text-sm font-medium">A</span>
           </div>
           <div>
-            <div className="text-sm font-medium">{user?.name}</div>
+            <div className="text-sm font-medium text-foreground">{user?.name}</div>
             <div className="text-xs text-muted-foreground">{user?.email}</div>
           </div>
         </div>
 
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center space-x-2 px-3 py-2 border rounded-md text-sm hover:bg-muted transition-colors"
+          className="w-full flex items-center justify-center space-x-2 px-3 py-2 border border-border rounded-md text-sm text-muted-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-colors"
         >
           <LogOut className="h-4 w-4" />
           <span>Sign Out</span>

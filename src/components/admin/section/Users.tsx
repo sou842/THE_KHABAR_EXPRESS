@@ -148,8 +148,8 @@ const UserManagement: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <h2 className="text-2xl font-medium">User Management</h2>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-4">
+        <h2 className="text-2xl font-bold text-foreground">User Management</h2>
 
         <div className="flex flex-col md:flex-row gap-4">
           {/* Search */}
@@ -160,7 +160,7 @@ const UserManagement: React.FC = () => {
               placeholder="Search users..."
               value={searchTerm}
               onChange={handleSearch}
-              className="pl-9 pr-4 py-2 border rounded-md w-full md:w-60"
+              className="pl-9 pr-4 py-2 border border-border bg-background rounded-md w-full md:w-64 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-shadow"
             />
           </div>
 
@@ -170,7 +170,7 @@ const UserManagement: React.FC = () => {
             <select
               value={filterRole}
               onChange={handleFilterChange}
-              className="pl-9 pr-4 py-2 border rounded-md w-full appearance-none"
+              className="pl-9 pr-8 py-2 border border-border bg-background rounded-md w-full appearance-none text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-shadow"
             >
               <option value="all">All Roles</option>
               <option value="admin">Admin</option>
@@ -181,7 +181,7 @@ const UserManagement: React.FC = () => {
           {/* Refresh button */}
           <button
             onClick={fetchUsers}
-            className="flex items-center justify-center p-2 border rounded-md hover:bg-muted transition-colors"
+            className="flex items-center justify-center p-2 border border-border rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
             title="Refresh"
           >
             <RefreshCw className="h-4 w-4" />
@@ -190,8 +190,7 @@ const UserManagement: React.FC = () => {
           {/* Add user button */}
           <button
             onClick={() => setShowCreateForm(!showCreateForm)}
-
-            className="flex items-center gap-1 px-4 py-2 bg-khabar-500 text-white rounded-md hover:bg-khabar-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium text-sm shadow-sm"
           >
             <Plus className="h-4 w-4" />
             <span>{showCreateForm ? "Cancel" : "Add New User"}</span>
@@ -208,56 +207,56 @@ const UserManagement: React.FC = () => {
           isUpdate={isUpdate}
         />
       </div> :
-        <div className="bg-card rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-border">
           {loading ? (
             <div className="p-8 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-khabar-600 mx-auto"></div>
-              <p className="mt-2 text-muted-foreground">Loading users...</p>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+              <p className="mt-2 text-muted-foreground text-sm">Loading user directory...</p>
             </div>
           ) : filteredUsers.length === 0 ? (
             <div className="p-8 text-center">
-              <p className="text-muted-foreground">No users found</p>
+              <p className="text-muted-foreground text-sm">No users found</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-muted/30">
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Email</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Role</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Created At</th>
-                    <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">Permissions</th>
-                    <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider text-right">Actions</th>
+                  <tr className="bg-muted/50 border-b border-border">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground tracking-widest uppercase">Name</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground tracking-widest uppercase">Email</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground tracking-widest uppercase">Role</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground tracking-widest uppercase">Status</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground tracking-widest uppercase">Created At</th>
+                    <th className="px-6 py-4 text-xs font-semibold text-muted-foreground tracking-widest uppercase text-center">Permissions</th>
+                    <th className="px-6 py-4 text-xs font-semibold text-muted-foreground tracking-widest uppercase text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-muted">
+                <tbody className="divide-y divide-border">
                   {filteredUsers.map((user) => (
                     <tr key={user._id} className="hover:bg-muted/30 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="w-8 h-8 rounded-full bg-khabar-100 flex items-center justify-center text-khabar-700">
+                          <div className="w-8 h-8 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-medium">
                             {user.name.charAt(0).toUpperCase()}
                           </div>
                           <div className="ml-3">
-                            <div className="text-sm font-medium">{user.name}</div>
+                            <div className="text-sm font-semibold text-foreground">{user.name}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">{user.email}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{user.email}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`text-xs px-2 py-1 rounded-full ${user.role === "admin"
-                          ? "bg-purple-100 text-purple-800"
-                          : "bg-blue-100 text-blue-800"
+                        <span className={`text-xs px-2.5 py-1 font-medium rounded-full ${user.role === "admin"
+                          ? "bg-primary/10 text-primary border border-primary/20"
+                          : "bg-secondary text-secondary-foreground border border-border"
                           }`}>
                           {user.role}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`text-xs px-2 py-1 rounded-full ${user.status === "active"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
+                        <span className={`text-xs px-2.5 py-1 font-medium rounded-full ${user.status === "active"
+                          ? "bg-green-500/10 text-green-600 border border-green-500/20"
+                          : "bg-destructive/10 text-destructive border border-destructive/20"
                           }`}>
                           {user.status}
                         </span>
@@ -272,19 +271,19 @@ const UserManagement: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-center">
                         <div className="flex justify-center gap-3">
                           <div className="flex flex-col items-center">
-                            <span className="text-xs text-muted-foreground mb-1">Approve</span>
+                            <span className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Approve</span>
                             {user.access?.canApprove ? (
-                              <Check className="h-4 w-4 text-green-600" />
+                              <div className="bg-green-500/10 p-1 rounded-full"><Check className="h-4 w-4 text-green-600" /></div>
                             ) : (
-                              <X className="h-4 w-4 text-red-600" />
+                              <div className="bg-destructive/10 p-1 rounded-full"><X className="h-4 w-4 text-destructive" /></div>
                             )}
                           </div>
                           <div className="flex flex-col items-center">
-                            <span className="text-xs text-muted-foreground mb-1">Add Blog</span>
+                            <span className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Add Blog</span>
                             {user.access?.canAddBlog ? (
-                              <Check className="h-4 w-4 text-green-600" />
+                              <div className="bg-green-500/10 p-1 rounded-full"><Check className="h-4 w-4 text-green-600" /></div>
                             ) : (
-                              <X className="h-4 w-4 text-red-600" />
+                              <div className="bg-destructive/10 p-1 rounded-full"><X className="h-4 w-4 text-destructive" /></div>
                             )}
                           </div>
                         </div>
@@ -293,21 +292,21 @@ const UserManagement: React.FC = () => {
                         <div className="flex items-center justify-end space-x-2">
                           <button
                             onClick={() => handleViewUser(user._id)}
-                            className="text-yellow-700"
+                            className="p-1.5 rounded-md bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
                             title="View Details"
                           >
                             <Eye className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => handleUpdateUser(user)}
-                            className="text-blue-700"
+                            className="p-1.5 rounded-md bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
                             title="Edit User"
                           >
                             <PencilIcon className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => handleToggleStatus(user._id, user.status)}
-                            className={user.status === "active" ? "text-red-700" : "text-green-700"}
+                            className={`p-1.5 rounded-md bg-muted transition-colors ${user.status === "active" ? "text-muted-foreground hover:bg-destructive/10 hover:text-destructive" : "text-muted-foreground hover:bg-green-500/10 hover:text-green-600"}`}
                             title={user.status === "active" ? "Deactivate User" : "Activate User"}
                           >
                             {user.status === "active" ? (
@@ -318,7 +317,7 @@ const UserManagement: React.FC = () => {
                           </button>
                           <button
                             onClick={() => handleDeleteUser(user._id)}
-                            className="text-red-700"
+                            className="p-1.5 rounded-md bg-muted text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
                             title="Delete User"
                           >
                             <Trash2 className="h-4 w-4" />

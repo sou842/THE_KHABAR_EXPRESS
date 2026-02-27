@@ -4,6 +4,7 @@ import { CommandDialog } from "@/components/ui/command";
 import { getter } from "@/lib/helper";
 import React, { useState } from "react";
 import useSWR from "swr";
+import { Mail, Calendar, MessageSquare, Quote } from 'lucide-react';
 
 const Contributor: React.FC = () => {
   const { data, isLoading } = useSWR("/api/contributor", getter);
@@ -19,42 +20,44 @@ const Contributor: React.FC = () => {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <h1 className="text-2xl font-bold mb-6">Contributor Management</h1>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-4 mb-6">
+        <h1 className="text-2xl font-bold text-foreground">Contributor Management</h1>
+      </div>
 
       {!isLoading ? (
-        <div className="bg-white shadow-md rounded-lg overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="bg-card shadow-sm rounded-xl overflow-hidden border border-border">
+          <table className="min-w-full divide-y divide-border">
+            <thead className="bg-muted/50 border-b border-border">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
+                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground tracking-widest uppercase">
+                  <div className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> Email</div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date & Time
+                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground tracking-widest uppercase">
+                  <div className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> Date & Time</div>
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Note
+                <th className="px-6 py-4 text-right text-xs font-semibold text-muted-foreground tracking-widest uppercase">
+                  <div className="flex items-center justify-end gap-1.5"><MessageSquare className="w-3.5 h-3.5" /> Note</div>
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-border">
               {data && data?.data?.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={5}
-                    className="px-6 py-4 text-center text-gray-500"
+                    colSpan={3}
+                    className="px-6 py-8 text-center text-muted-foreground text-sm"
                   >
-                    No users found
+                    No contributors found
                   </td>
                 </tr>
               ) : (
                 data?.data?.map((user: any) => (
                   <tr
                     key={user._id}
-                    className="cursor-pointer hover:bg-gray-100 transition"
+                    className="cursor-pointer hover:bg-muted/30 transition-colors"
                     onClick={() => handleSelectContributor(user)}
                   >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground font-medium">
                       {user?.email}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
@@ -62,8 +65,8 @@ const Contributor: React.FC = () => {
                         {user?.createdAt}
                       </DateTimeDisplay>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium text-muted-foreground">
-                      {user?.note?.substring(0, 25)}...
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-muted-foreground">
+                      {user?.note?.substring(0, 40) || ""}...
                     </td>
                   </tr>
                 ))
@@ -92,8 +95,8 @@ const Contributor: React.FC = () => {
           </div>
 
           <div>
-            <h2 className="text-sm font-bold mb-2">Note:</h2>
-            <p className="bg-khabar-200/10 rounded p-4">{selectedContributor?.note}</p>
+            <h2 className="text-sm font-bold mb-2 flex items-center gap-1.5"><Quote className="w-4 h-4 text-primary" /> Note:</h2>
+            <p className="bg-muted p-4 rounded-md border border-border text-foreground text-sm">{selectedContributor?.note}</p>
           </div>
         </div>
       </CommandDialog>

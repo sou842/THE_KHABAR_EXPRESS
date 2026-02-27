@@ -58,7 +58,7 @@ export default function Home() {
   
   // Parse category arrays
   const designBlogs: IBlog[] = techData?.data || [];
-  const techBlogs: IBlog[] = financeData?.data || [];
+  const financeBlogs: IBlog[] = financeData?.data || [];
   const webDevBlogs: IBlog[] = sportsData?.data || [];
   
   // Flatten infinite scroll data
@@ -185,11 +185,11 @@ export default function Home() {
               )}
 
               {/* Technology Section (Mapped to Finance) */}
-              {techBlogs?.length > 0 && (
+              {financeBlogs?.length > 0 && (
                 <div className="pl-6">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-secondary mb-6">{techBlogs?.[0]?.category}</h3>
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-primary mb-6">{financeBlogs?.[0]?.category}</h3>
                   <div className="space-y-6">
-                    {techBlogs?.map((blog, idx) => (
+                    {financeBlogs?.map((blog, idx) => (
                       <BlogCard key={idx} blog={blog} variant="trending" />
                     ))}
                   </div>
