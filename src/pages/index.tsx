@@ -132,9 +132,9 @@ export default function Home() {
 
               {/* Contributor CTA */}
               <div className="bg-primary/5 border border-primary/20 rounded-sm p-8 flex flex-col justify-center relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                {/* <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                   <PenLine size={80} />
-                </div>
+                </div> */}
                 <h3 className="text-xl font-bold text-foreground mb-3 relative z-10">Become a Contributor</h3>
                 <p className="text-muted-foreground mb-6 relative z-10">Share your stories, insights, and expertise with our growing community of readers.</p>
                 <div className="relative z-10">
