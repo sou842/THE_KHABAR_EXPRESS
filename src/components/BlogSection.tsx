@@ -106,11 +106,11 @@ const BlogSection = ({ status }: { status: string }) => {
                     <SortDropdown value={sort} onChange={setSort} />
                 </div>
             </div>
-            <div className="divide-y">
+            <div className="divide-y p-2">
                 {data?.data?.length ? (
                     data?.data?.map((post: any) => (
                         <div key={post?._id}>
-                            <BlogCard blog={post} variant='compact' />
+                            <BlogCard blog={post} variant='topStory' />
                             <BlogActionRow post={post} onDone={() => mutate()} />
                         </div>
                     ))

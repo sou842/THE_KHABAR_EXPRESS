@@ -1,22 +1,41 @@
-import { FC, useState } from "react";
+import { FC, useState, useMemo } from "react";
 import { GetServerSideProps } from "next";
 import Layout from "@/components/Layout";
 import BlogCard from "@/components/BlogCard";
 import { Filter, SlidersHorizontal } from "lucide-react";
 import { Skeleton } from "@/components/Skeleton";
 import { getter } from "@/lib/helper";
-import useSWR from "swr";
+import useSWRInfinite from "swr/infinite";
 import { useParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 const Category: FC = () => {
   const params = useParams<{ id: string }>();
   const category = params?.id;
   const [sortBy, setSortBy] = useState<"recent" | "popular">("recent");
   const [showFilters, setShowFilters] = useState(false);
-  const { data, isLoading, error } = useSWR(
-    `/api/blogs?category=${params?.id}&status=approved`,
+  const PAGE_SIZE = 9;
+
+  const getKey = (pageIndex: number, previousPageData: any) => {
+    if (previousPageData && !previousPageData.data.length) return null;
+    return `/api/blogs?category=${category}&status=approved&page=${pageIndex + 1}&limit=${PAGE_SIZE}`;
+  };
+
+  const { data, size, setSize, isLoading, isValidating, error } = useSWRInfinite(
+    getKey,
     getter
   );
+
+  const blogs = useMemo(() => {
+    return data ? data.flatMap((page) => page.data) : [];
+  }, [data]);
+
+  const isLoadingMore =
+    isLoading || (size > 0 && data && typeof data[size - 1] === "undefined");
+  const isEmpty = data?.[0]?.data?.length === 0;
+  const isReachingEnd =
+    isEmpty || (data && data[data.length - 1]?.data?.length < PAGE_SIZE);
+  const isRefreshing = isValidating && data && data.length === size;
 
   if (error) {
     return (
@@ -82,7 +101,7 @@ const Category: FC = () => {
 
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">
-                  Showing {data?.data?.length || 0} articles
+                  Showing {blogs.length} articles
                 </span>
                 {/* <button
                   onClick={() => setShowFilters(!showFilters)}
@@ -129,10 +148,36 @@ const Category: FC = () => {
 
             {/* Posts grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-              {data?.data?.map((post: any, index: number) => (
-                <BlogCard key={index} blog={post} />
+              {blogs.map((post: any, index: number) => (
+                <BlogCard key={post._id || index} blog={post} />
               ))}
             </div>
+
+            {/* Load More Button */}
+            {!isReachingEnd && (
+              <div className="flex justify-center mt-8 mb-12">
+                <button
+                  onClick={() => setSize(size + 1)}
+                  disabled={isLoadingMore}
+                  className="flex items-center gap-2 px-8 py-3 bg-foreground text-background rounded-full font-medium transition-all hover:scale-105 active:scale-95 disabled:opacity-70 disabled:hover:scale-100 cursor-pointer shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
+                >
+                  {isLoadingMore ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <span>Loading...</span>
+                    </>
+                  ) : (
+                    <span>Load More Articles</span>
+                  )}
+                </button>
+              </div>
+            )}
+
+            {isReachingEnd && !isEmpty && blogs.length > 0 && (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground italic">You've reached the end of the collection.</p>
+              </div>
+            )}
           </>
         ) : (
           <Skeleton type="category-page" />

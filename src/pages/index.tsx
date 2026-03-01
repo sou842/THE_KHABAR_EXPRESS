@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/Skeleton";
 import { getter, preventRerendering } from "@/lib/helper";
 import { IBlog } from "@/models/blog.model";
 import { useEffect, useRef } from "react";
+import { PenLine, ArrowRight } from "lucide-react";
 
 export default function Home() {
   // 1. Fetch general top articles
@@ -64,23 +65,6 @@ export default function Home() {
   // Flatten infinite scroll data
   const latestAll: IBlog[] = infiniteData ? infiniteData.reduce((acc, val) => [...acc, ...(val?.data || [])], []) : [];
   const isReachingEnd = infiniteData && infiniteData[infiniteData.length - 1]?.data?.length < 8;
-
-  // Infinite Scroll Observer
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !isInfiniteLoading && !isReachingEnd) {
-          setSize((prevSize) => prevSize + 1);
-        }
-      },
-      { threshold: 0.1 }
-    );
-    
-    if (loadMoreRef.current) observer.observe(loadMoreRef.current);
-    return () => observer.disconnect();
-  }, [isInfiniteLoading, isReachingEnd, setSize]);
 
   // Helper functions moved to BlogCard.tsx
 
@@ -140,29 +124,28 @@ export default function Home() {
               <div>
                 <h3 className="text-xl font-bold text-foreground mb-6">Trending</h3>
                 <div className="space-y-4">
-                  {trendingBlogs.map((blog, idx) => (
+                  {trendingBlogs && trendingBlogs?.length > 0 && trendingBlogs?.map((blog, idx) => (
                     <BlogCard key={idx} blog={blog} variant="trending" />
                   ))}
                 </div>
               </div>
 
-              {/* Newsletter Signup */}
-              <div className="bg-primary/5 border border-border rounded-sm p-8 flex flex-col justify-center">
-                <h3 className="text-xl font-bold text-foreground mb-3">Subscribe for Updates</h3>
-                <p className="text-muted-foreground mb-6">Get the latest stories delivered to your inbox every morning.</p>
-                <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
-                  <input
-                    type="email"
-                    placeholder="your@email.com"
-                    className="w-full bg-background border border-border rounded-sm px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                  />
-                  <button
-                    type="submit"
-                    className="w-full bg-primary text-primary-foreground px-4 py-3 rounded-sm font-semibold hover:bg-primary/90 transition-colors uppercase tracking-widest text-xs"
+              {/* Contributor CTA */}
+              <div className="bg-primary/5 border border-primary/20 rounded-sm p-8 flex flex-col justify-center relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <PenLine size={80} />
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-3 relative z-10">Become a Contributor</h3>
+                <p className="text-muted-foreground mb-6 relative z-10">Share your stories, insights, and expertise with our growing community of readers.</p>
+                <div className="relative z-10">
+                  <Link 
+                    href="/write" 
+                    className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-sm font-semibold hover:bg-primary/90 transition-all hover:gap-3 group"
                   >
-                    Subscribe
-                  </button>
-                </form>
+                    <span>Start Writing</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -248,7 +231,7 @@ export default function Home() {
         )}
 
         {/* All Articles Grid Section */}
-        {latestAll.length > 0 && (
+        {latestAll?.length > 0 && (
           <section className="border-b border-border">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
               <div className="flex items-baseline justify-between mb-8">
@@ -256,20 +239,19 @@ export default function Home() {
                   <h2 className="text-sm font-bold uppercase tracking-widest text-primary mb-2">Complete Archive</h2>
                   <h3 className="text-2xl md:text-3xl font-bold text-foreground">All Stories</h3>
                 </div>
-                <Link href="/category/technology" className="text-primary font-semibold hover:text-primary/80 transition-colors hidden md:block">
+                <Link href="/blog" className="text-primary font-semibold hover:text-primary/80 transition-colors hidden md:block">
                   Browse All &rarr;
                 </Link>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {latestAll.map((blog, idx) => (
+                {latestAll?.map((blog, idx) => (
                   <BlogCard key={`all-${idx}`} blog={blog} variant="compact" />
                 ))}
               </div>
               
               {/* Infinite Scroll trigger / Loading state */}
               <div 
-                ref={loadMoreRef} 
                 className="mt-12 w-full flex justify-center py-8 border-t border-border"
               >
                 {!isReachingEnd && (
