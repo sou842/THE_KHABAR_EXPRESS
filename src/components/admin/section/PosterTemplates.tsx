@@ -26,8 +26,6 @@ interface TemplateRendererProps {
 export const TemplateRenderer: React.FC<TemplateRendererProps> = ({ templateId, blog }) => {
   if (!blog) return null;
 
-  console.log(blog, "tara")
-
   switch (templateId) {
     case 'breaking-news':
       return (

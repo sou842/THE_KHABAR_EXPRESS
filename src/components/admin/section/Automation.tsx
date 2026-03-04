@@ -1,11 +1,12 @@
 import { FC, useState } from 'react';
-import { Bot, Zap, Sparkles, Activity, Plus, Play, Pause, Trash2, Settings2, Image as ImageIcon, Send } from 'lucide-react';
+import { Bot, Zap, Sparkles, Activity, Plus, Play, Pause, Trash2, Settings2, Image as ImageIcon, Send, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ImagePosterGenerator from './ImagePosterGenerator';
 import TelegramAutomation from './TelegramAutomation';
+import InstagramAutomation from './InstagramAutomation';
 
 interface AutomationHeaderProps {
   activeView: string;
@@ -35,6 +36,10 @@ const AutomationHeader = ({ activeView, onToggle }: AutomationHeaderProps) => (
                 <Send className="w-3.5 h-3.5" />
                 Telegram
              </TabsTrigger>
+             <TabsTrigger value="instagram" className="text-xs rounded-lg gap-2 data-[state=active]:bg-card">
+                <Instagram className="w-3.5 h-3.5" />
+                Instagram
+             </TabsTrigger>
           </TabsList>
        </Tabs>
     </div>
@@ -43,16 +48,28 @@ const AutomationHeader = ({ activeView, onToggle }: AutomationHeaderProps) => (
 
 
 const Automation: FC = () => {
-  const [activeTab, setActiveTab] = useState('telegram');
-  
+  const [activeTab, setActiveTab] = useState('generator'); // default to generator
+  const [sharedImageAsset, setSharedImageAsset] = useState<string | null>(null);
+  const [sharedBlog, setSharedBlog] = useState<any | null>(null);
+
+  const handleShareToInstagram = (image: string, blog: any) => {
+    setSharedImageAsset(image);
+    setSharedBlog(blog);
+    setActiveTab('instagram');
+  };
 
   return (
     <div className="max-w-[1440px] mx-auto pb-20 px-2 lg:px-4">
       <AutomationHeader activeView={activeTab} onToggle={setActiveTab} />
       {activeTab === 'telegram' ? (
         <TelegramAutomation />
+      ) : activeTab === 'instagram' ? (
+        <InstagramAutomation 
+          initialImageAsset={sharedImageAsset} 
+          initialBlog={sharedBlog} 
+        />
       ) : (
-        <ImagePosterGenerator />
+        <ImagePosterGenerator onShareToInstagram={handleShareToInstagram} />
       )}
     </div>
   );

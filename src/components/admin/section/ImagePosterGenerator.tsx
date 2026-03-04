@@ -1,6 +1,6 @@
 import React, { useState, useRef, FC, RefObject } from 'react';
-import { Bot, Image as ImageIcon, Download, Layout, Sparkles, X } from 'lucide-react';
-import { toPng } from 'html-to-image';
+import { Bot, Image as ImageIcon, Download, Layout, Sparkles, X, Instagram } from 'lucide-react';
+import { toPng, toJpeg } from 'html-to-image';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { TemplateRenderer } from './PosterTemplates';
@@ -33,11 +33,16 @@ const PosterPreview: FC<TemplateRendererProps> = ({ blog, templateId, previewRef
 };
 
 
-const ImagePosterGenerator: FC = () => {
+interface ImagePosterGeneratorProps {
+  onShareToInstagram?: (image: string, blog: any) => void;
+}
+
+const ImagePosterGenerator: FC<ImagePosterGeneratorProps> = ({ onShareToInstagram }) => {
   const [selectedBlog, setSelectedBlog] = useState<any | null>(null);
   const [currentTemplate, setCurrentTemplate] = useState('breaking-news');
   const previewRef = useRef<HTMLDivElement>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
 
   const handleDownload = async () => {
     if (!previewRef.current || !selectedBlog) return;
@@ -73,6 +78,37 @@ const ImagePosterGenerator: FC = () => {
       toast.error(`Export failed: ${err.message || 'Possible CORS issue'}`);
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!previewRef.current || !selectedBlog || !onShareToInstagram) return;
+    
+    setIsSharing(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const dataUrl = await toJpeg(previewRef.current, {
+        quality: 0.8,
+        pixelRatio: 2,
+        cacheBust: true,
+        includeQueryParams: true,
+        skipFonts: true,
+        style: {
+          fontFamily: 'sans-serif',
+        },
+      });
+      
+      if (dataUrl) {
+        onShareToInstagram(dataUrl, selectedBlog);
+      } else {
+        throw new Error('Failed to generate image data url');
+      }
+    } catch (err: any) {
+      console.error('Share to Instagram Error:', err);
+      toast.error(`Share failed: ${err.message || 'Possible CORS issue'}`);
+    } finally {
+      setIsSharing(false);
     }
   };
 
@@ -120,14 +156,25 @@ const ImagePosterGenerator: FC = () => {
                    Live Preview
                    <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
                  </h3>
-                 <Button 
-                   onClick={handleDownload} 
-                   disabled={!selectedBlog || isGenerating}
-                   className="gap-2 rounded-xl h-9 text-xs"
-                 >
-                   <Download className="w-3.5 h-3.5" />
-                   {isGenerating ? 'Generating...' : 'Export High-Res PNG'}
-                 </Button>
+                 <div className="flex gap-2">
+                   <Button 
+                     onClick={handleShare} 
+                     disabled={!selectedBlog || isGenerating || isSharing}
+                     className="gap-2 rounded-xl h-9 text-xs bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 focus:from-purple-600 focus:to-pink-600 text-white border-0"
+                   >
+                     <Instagram className="w-3.5 h-3.5" />
+                     {isSharing ? 'Preparing...' : 'Share to Instagram'}
+                   </Button>
+                   <Button 
+                     onClick={handleDownload} 
+                     disabled={!selectedBlog || isGenerating || isSharing}
+                     variant="outline"
+                     className="gap-2 rounded-xl h-9 text-xs bg-card hover:bg-muted"
+                   >
+                     <Download className="w-3.5 h-3.5" />
+                     {isGenerating ? 'Exporting...' : 'Save PNG'}
+                   </Button>
+                 </div>
               </div>
 
               <div className="relative group p-4 bg-muted/30 border border-border/40 rounded-2xl">
