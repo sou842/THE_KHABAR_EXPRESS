@@ -75,12 +75,12 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## 📸 Screenshots
 
 ### Home Page Architecture
-![Home Page Overview](<img width="2880" height="10472" alt="screencapture-thekhabarexpress-2026-03-04-13_05_59" src="https://github.com/user-attachments/assets/d6e43388-b1b2-45d6-9d4e-c321ea8a5fd8" />
-)
+![Home Page Overview] <img width="2880" height="10472" alt="screencapture-thekhabarexpress-2026-03-04-13_05_59" src="https://github.com/user-attachments/assets/d6e43388-b1b2-45d6-9d4e-c321ea8a5fd8" />
+
 *The modern, high-contrast home page featuring dynamic story blocks.*
 
 ### Blog Page
-![Blog Page] (<img width="2880" height="8594" alt="screencapture-thekhabarexpress-blog-spacex-successfully-launches-next-gen-starlink-v3-satellites-2026-03-04-13_06_57" src="https://github.com/user-attachments/assets/d2682140-31d1-4be5-bdf0-67d626a54408" />)
+![Blog Page] <img width="2880" height="8594" alt="screencapture-thekhabarexpress-blog-spacex-successfully-launches-next-gen-starlink-v3-satellites-2026-03-04-13_06_57" src="https://github.com/user-attachments/assets/d2682140-31d1-4be5-bdf0-67d626a54408" />
 
 *The centralized management hub with URL-synced tabs.*
 
