@@ -18,7 +18,8 @@ interface BlogCardProps {
     | "searchItem" 
     | "adminRow"
     | "featured"
-    | "default";
+    | "default"
+    | "hero-section";
   index?: number;
 }
 
@@ -48,6 +49,7 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
   if (!blog) return null;
 
   switch (variant) {
+    case "hero-section":
     case "hero":
       return (
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
