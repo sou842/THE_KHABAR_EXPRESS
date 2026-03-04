@@ -38,7 +38,7 @@ const Navbar: FC = () => {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "SiteNavigationElement",
-    "name": categories?.map(cat => cat.name),
+    "name": categories?.map(cat => cat?.name),
     "url": categories?.map(cat => `${process.env.NEXT_PUBLIC_SITE_URL || 'https://khabar.com'}/category/${cat.slug}`),
   };
 
@@ -100,9 +100,9 @@ const Navbar: FC = () => {
                   }
                   title="Profile"
                   aria-label="User Profile Dashboard"
-                  className="flex items-center space-x-1 rounded-full p-2 text-primary-foreground hover:bg-primary-foreground/10 transition-colors"
+                  className="flex items-center justify-center space-x-1 rounded-full p-2 text-primary-foreground hover:bg-primary-foreground/10 transition-colors"
                 >
-                  <User className="h-5 w-5" />
+                  <User className="h-5 w-5 m-0" />
                   <span className="sr-only">Profile</span>
                 </Link>
               ) : (

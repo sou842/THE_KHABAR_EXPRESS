@@ -26,7 +26,7 @@ export default function AdminDashboard() {
 
       case "settings":
         return <Settings />;
-        
+
       case "tasklist":
         return <TaskList />;
 

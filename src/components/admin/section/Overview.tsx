@@ -21,7 +21,7 @@ type BlogOption = { label: string; value: string; blog: any };
 
 const fetchBlogs = async (inputValue: string): Promise<BlogOption[]> => {
     const res = await fetch(`/api/blogs?limit=5&search=${inputValue}`);
-    const result = await res.json();
+    const result = await res?.json();
     return result?.data?.map((blog: any) => ({ label: blog.title, value: blog._id, blog }));
 };
 
@@ -31,7 +31,6 @@ const loadOptions = (inputValue: string, callback: (options: BlogOption[]) => vo
 
 const HR = () => <div className="h-px bg-border/40 w-full" />;
 
-/* ─── Stat Card ─────────────────────────────────────────────────── */
 const StatCard = ({ label, value, icon: Icon }: { label: string; value: string | number; icon: any }) => (
     <div className="group relative bg-card border border-border/40 rounded-xl p-5 hover:border-border/70 hover:shadow-sm transition-all duration-200 overflow-hidden">
         <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-foreground/8 to-transparent" />
