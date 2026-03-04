@@ -184,9 +184,9 @@ export const getImageUrl = (blog: IBlog) => {
 
   const images = categoryImages[category] || categoryImages.default;
   const hashString = blog?.title || String(Math.random());
-  const hash = hashString?.split("").reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
-  const randomIndex = hash % images.length;
-  return blog?.thumbnail?.url || images[randomIndex];
+  const hash = hashString?.split("")?.reduce((acc: number, char: string) => acc + char?.charCodeAt(0), 0);
+  const randomIndex = hash % images?.length;
+  return blog?.thumbnail?.image || images?.[randomIndex];
 };
 
 export const formatDate = (dateString?: Date | string) => {

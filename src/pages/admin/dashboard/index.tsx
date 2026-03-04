@@ -36,9 +36,9 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="flex">
+    <div className="w-full h-dvh overflow-y-auto flex">
       <AdminSideBar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div className="flex-1 p-4">{renderContent()}</div>
+      <div className="flex-1 h-dvh overflow-y-auto p-4">{renderContent()}</div>
     </div>
   );
 }
