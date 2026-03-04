@@ -7,6 +7,7 @@ import UsersPage from "@/components/admin/section/Users";
 import Contributor from "@/components/admin/section/Contributor";
 import Settings from "@/components/admin/section/Settings";
 import TaskList from "@/components/admin/section/TaskList";
+import Automation from "@/components/admin/section/Automation";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -51,6 +52,9 @@ export default function AdminDashboard() {
 
       case "tasklist":
         return <TaskList />;
+
+      case "automation":
+        return <Automation />;
 
       default:
         return null;

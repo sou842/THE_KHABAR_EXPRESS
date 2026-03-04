@@ -7,9 +7,11 @@ import {
   Users,
   HeartHandshake,
   List,
+  Bot,
+  PanelLeftClose,
 } from "lucide-react";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Logo from "../Logo";
 
 interface SidebarProps {
@@ -20,6 +22,7 @@ interface SidebarProps {
 const menuItems = [
   { label: "Overview", value: "overview", icon: LayoutDashboard },
   { label: "Blogs", value: "blogs", icon: FilePlus },
+  { label: "Automation", value: "automation", icon: Bot },
   { label: "Users", value: "users", icon: Users },
   { label: "Contributor", value: "contributor", icon: HeartHandshake },
   { label: "Settings", value: "settings", icon: Settings },
@@ -28,9 +31,14 @@ const menuItems = [
 
 const AdminSideBar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
   const { user, logout } = useAuth();
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const router = useRouter();
-  const pathSegments = router.asPath.split("/");
-  const lastSegment = pathSegments[pathSegments.length - 1];
+
+  useEffect(() => {
+    if (activeTab === "automation") {
+      setIsCollapsed(true);
+    }
+  }, [activeTab]);
 
   const handleLogout = () => {
     logout();
@@ -38,55 +46,92 @@ const AdminSideBar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
   };
 
   return (
-    <div className="hidden md:flex md:w-64 flex-col bg-card border-r">
-      <div className="p-6">
-        <button
-          onClick={() => router.push("/")}
-          className="text-xl font-bold bg-gradient-to-r from-khabar-600 to-khabar-400 bg-clip-text text-transparent"
-        >
-          <Logo type="full-logo"/>
-        </button>
-        <div className="text-sm text-muted-foreground mt-1">
-          Admin Dashboard
+    <div
+      className={`hidden md:flex flex-col bg-card border-r transition-all duration-300 ease-in-out relative ${isCollapsed ? "w-20" : "w-64"
+        }`}
+    >
+      <div className={`p-6 flex items-center transition-all duration-300 ${isCollapsed ? "px-2 justify-center" : "px-6 justify-between"}`}>
+        <div className="flex items-center overflow-hidden">
+          {isCollapsed ? <button
+            onClick={() => setIsCollapsed(false)}
+            className="p-3 rounded-lg hover:bg-foreground/60 text-white bg-foreground/50 transition-colors"
+            title="Expand Sidebar"
+          >
+            <PanelLeftClose className="h-4 w-4" />
+          </button> : <button
+            onClick={() => router.push("/")}
+            className="text-xl font-bold bg-clip-text text-transparent flex items-center shrink-0"
+          >
+            <Logo type="admin-logo" />
+          </button>}
         </div>
+
+        {!isCollapsed && (
+          <button
+            onClick={() => setIsCollapsed(true)}
+            className="absolute -right-3 top-8 p-1.5 rounded-lg hover:bg-foreground/80 text-white bg-foreground/60 transition-colors shrink-0"
+            title="Collapse Sidebar"
+          >
+            <PanelLeftClose className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4">
+      {!isCollapsed && (
+        <div className="px-6 mb-4">
+          <div className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-widest">
+            Admin Dashboard
+          </div>
+        </div>
+      )}
+
+      <div className="flex-1 overflow-y-auto p-4 pt-2">
         <nav className="space-y-1">
           {menuItems?.map(({ label, value, icon: Icon }) => (
             <button
               key={value}
               onClick={() => setActiveTab(value)}
-              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-md text-sm transition-colors ${
-                activeTab === value
-                  ? "bg-accent/50 text-accent-foreground font-semibold"
-                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-              }`}
+              title={isCollapsed ? label : ""}
+              className={`w-full flex items-center rounded-lg text-sm transition-all duration-200 group ${isCollapsed ? "justify-center px-0 py-2.5" : "space-x-3 px-3 py-2.5"
+                } ${activeTab === value
+                  ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                  : "text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
+                }`}
             >
-              <Icon className="h-4 w-4" />
-              <span>{label}</span>
+              <Icon className={`h-4 w-4 shrink-0 transition-transform duration-200 ${activeTab === value ? "scale-110" : "group-hover:scale-110"}`} />
+              {!isCollapsed && (
+                <span className="whitespace-nowrap overflow-hidden transition-all duration-300">
+                  {label}
+                </span>
+              )}
             </button>
           ))}
         </nav>
       </div>
 
-      <div className="p-4 border-t border-border">
-        <div className="flex items-center space-x-3 mb-4">
-          <div className="w-10 h-10 rounded-full bg-muted/50 flex items-center justify-center">
-            <span className="text-sm font-medium">A</span>
+      <div className={`p-4 border-t border-border/50 transition-all duration-300 ${isCollapsed ? "px-2" : "px-4"}`}>
+        <div className={`flex items-center mb-4 ${isCollapsed ? "justify-center" : "space-x-3"}`}>
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-muted/80 to-muted flex items-center justify-center shrink-0 border border-border/50">
+            <span className="text-xs font-bold text-foreground/70">
+              {user?.name?.charAt(0) || "A"}
+            </span>
           </div>
-          <div>
-            <div className="text-sm font-medium text-foreground">{user?.name}</div>
-            <div className="text-xs text-muted-foreground">{user?.email}</div>
-          </div>
+          {!isCollapsed && (
+            <div className="flex-1 min-w-0">
+              <div className="text-xs font-semibold text-foreground truncate">{user?.name}</div>
+              <div className="text-[10px] text-muted-foreground truncate">{user?.email}</div>
+            </div>
+          )}
         </div>
 
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center space-x-2 px-3 py-2 border border-border rounded-md text-sm text-muted-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-colors"
+          title={isCollapsed ? "Sign Out" : ""}
+          className={`w-full flex items-center justify-center border border-border/50 rounded-lg text-xs font-medium text-muted-foreground hover:bg-destructive/5 hover:text-destructive hover:border-destructive/20 transition-all duration-200 ${isCollapsed ? "p-2" : "space-x-2 px-3 py-2"
+            }`}
         >
-          <LogOut className="h-4 w-4" />
-          <span>Sign Out</span>
+          <LogOut className="h-3.5 w-3.5 shrink-0" />
+          {!isCollapsed && <span>Sign Out</span>}
         </button>
       </div>
     </div>
