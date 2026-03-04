@@ -80,7 +80,7 @@ const ImagePosterGenerator: FC = () => {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex gap-8 items-start">
         {/* Left Side: Controls */}
-        <div className="max-w-[460px] space-y-8">
+        <div className="max-w-[400px] space-y-8">
            <div className="bg-card/50 backdrop-blur-sm border border-border/40 rounded-2xl p-8 shadow-sm">
               <div className="flex items-center gap-3 mb-8">
                 <div className="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20">

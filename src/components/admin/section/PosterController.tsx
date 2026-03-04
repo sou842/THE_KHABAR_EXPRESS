@@ -29,11 +29,12 @@ const loadOptions = (inputValue: string, callback: (options: BlogOption[]) => vo
 
 interface PosterControllerProps {
   onBlogSelect: (blog: any) => void;
-  onTemplateChange: (templateId: string) => void;
-  currentTemplate: string;
+  onTemplateChange?: (templateId: string) => void;
+  currentTemplate?: string;
+  showTemplates?: boolean;
 }
 
-const PosterController: React.FC<PosterControllerProps> = ({ onBlogSelect, onTemplateChange, currentTemplate }) => {
+const PosterController: React.FC<PosterControllerProps> = ({ onBlogSelect, onTemplateChange, currentTemplate, showTemplates = true }) => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
@@ -60,32 +61,34 @@ const PosterController: React.FC<PosterControllerProps> = ({ onBlogSelect, onTem
         </div>
       </div>
 
-      <div className="flex flex-col gap-4">
-        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest pl-1">Visual Template</label>
-        <div className="grid grid-cols-2 gap-4">
-          {posterTemplates?.map((tpl) => (
-            <button
-              key={tpl?.id}
-              onClick={() => onTemplateChange(tpl?.id)}
-              className={`flex flex-col items-center gap-3 p-4 rounded-xl border transition-all duration-300 text-center group ${
-                currentTemplate === tpl?.id 
-                  ? 'bg-primary/5 border-primary ring-1 ring-primary/20' 
-                  : 'bg-card border-border/40 hover:border-border/70 text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              <div className={`w-full aspect-video rounded-lg bg-foreground/80 flex items-center justify-center shadow-inner relative overflow-hidden`}>
-                 {tpl?.icon && (
-                   <tpl.icon className={`w-6 h-6 text-white transition-transform duration-500 group-hover:scale-110 ${
-                     currentTemplate === tpl?.id ? 'opacity-100' : 'opacity-80'
-                   }`} />
-                 )}
-                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
-              </div>
-              <span className="text-[11px] font-bold uppercase tracking-tight">{tpl?.name}</span>
-            </button>
-          ))}
+      {showTemplates && (
+        <div className="flex flex-col gap-4">
+          <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest pl-1">Visual Template</label>
+          <div className="grid grid-cols-2 gap-4">
+            {posterTemplates?.map((tpl) => (
+              <button
+                key={tpl?.id}
+                onClick={() => onTemplateChange?.(tpl?.id)}
+                className={`flex flex-col items-center gap-3 p-4 rounded-xl border transition-all duration-300 text-center group ${
+                  currentTemplate === tpl?.id 
+                    ? 'bg-primary/5 border-primary ring-1 ring-primary/20' 
+                    : 'bg-card border-border/40 hover:border-border/70 text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <div className={`w-full aspect-video rounded-lg bg-foreground/80 flex items-center justify-center shadow-inner relative overflow-hidden`}>
+                   {tpl?.icon && (
+                     <tpl.icon className={`w-6 h-6 text-white transition-transform duration-500 group-hover:scale-110 ${
+                       currentTemplate === tpl?.id ? 'opacity-100' : 'opacity-80'
+                     }`} />
+                   )}
+                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
+                </div>
+                <span className="text-[11px] font-bold uppercase tracking-tight">{tpl?.name}</span>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
