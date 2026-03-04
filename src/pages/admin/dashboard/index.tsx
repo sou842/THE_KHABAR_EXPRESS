@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import AdminSideBar from "@/components/admin/AdminSideBar";
 import Overview from "@/components/admin/section/Overview";
 import Blogs from "@/components/admin/section/Blogs";
@@ -8,7 +9,28 @@ import Settings from "@/components/admin/section/Settings";
 import TaskList from "@/components/admin/section/TaskList";
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState("overview");
+  const router = useRouter();
+  const [activeTab, setActiveTabState] = useState("overview");
+
+  // Sync state with query parameter on load and when query changes
+  useEffect(() => {
+    if (router.isReady && router.query.tab) {
+      setActiveTabState(router.query.tab as string);
+    }
+  }, [router.isReady, router.query.tab]);
+
+  const setActiveTab = (tab: string) => {
+    if (tab === activeTab) return;
+    setActiveTabState(tab);
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, tab },
+      },
+      undefined,
+      { shallow: true }
+    );
+  };
 
   const renderContent = () => {
     switch (activeTab) {
