@@ -16,7 +16,9 @@ interface BlogCardProps {
     | "compact" 
     | "horizontal" 
     | "searchItem" 
-    | "adminRow";
+    | "adminRow"
+    | "featured"
+    | "default";
   index?: number;
 }
 
@@ -140,6 +142,8 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
         </Link>
       );
 
+    case "featured":
+    case "default":
     case "editorPick":
       return (
         <Link href={`/blog/${blog?.url}`} className="group">
