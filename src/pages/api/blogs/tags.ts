@@ -11,9 +11,18 @@ export default async function handler(
   await dbConnect();
 
   if (method === 'GET') {
+    const { limit = 20, sitemap } = req.query;
+    const finalLimit = sitemap === 'true' ? 5000 : Number(limit);
+
     try {
-      const tags = await Blog.distinct('tags');
-      res.status(200).json({ success: true, data: tags.filter(Boolean) });
+      const tagsWithCounts = await Blog.aggregate([
+        { $unwind: '$tags' },
+        { $group: { _id: '$tags', count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: finalLimit },
+        { $project: { _id: 0, tag: '$_id', count: 1 } }
+      ]);
+      res.status(200).json({ success: true, data: tagsWithCounts });
     } catch (error: any) {
       res.status(400).json({ success: false, error: error.message });
     }

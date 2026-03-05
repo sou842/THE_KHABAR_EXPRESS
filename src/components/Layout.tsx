@@ -2,19 +2,30 @@ import { FC, ReactNode } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { motion } from "framer-motion";
-import DefaultLayoutSeo from "./SeoMeta/DefaultLayoutSeo";
+import SeoMeta from "./SeoMeta";
 
 interface LayoutProps {
   children: ReactNode;
   disableDefaultMeta?: boolean;
   title?: string;
+  description?: string;
+  image?: string;
   path?: string;
 }
 
-const Layout: FC<LayoutProps> = ({ children, disableDefaultMeta, title, path }) => {
+const Layout: FC<LayoutProps> = ({ children, disableDefaultMeta, title, description, image, path }) => {
+  const url = `${process.env.NEXT_PUBLIC_SITE_URL}/${path || ""}`;
+
   return (
     <div className="min-h-screen flex flex-col">
-      {!disableDefaultMeta && <DefaultLayoutSeo title={title} path={path} />}
+      {!disableDefaultMeta && (
+        <SeoMeta 
+          title={title!}
+          description={description!}
+          image={image!}
+          url={url} 
+        />
+      )}
 
       <Navbar />
       <motion.main

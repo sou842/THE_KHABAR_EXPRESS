@@ -15,16 +15,56 @@ interface SeoMetaProps {
 
 const SeoMeta: FC<SeoMetaProps> = (props) => {
   const {
-    title = "Today's News",
-    description = "At Khabar Express, we bring you the latest and most relevant news from around the world, covering everything from current events and technology to health, entertainment, and beyond.",
-    image = "https://images.pexels.com/photos/3944460/pexels-photo-3944460.jpeg?auto=compress&cs=tinysrgb&w=600",
-    url,
+    title = "The Khabar Express - Latest News and Insights",
+    description = "At The Khabar Express, we bring you the latest and most relevant news from around the world, covering everything from current events and technology to health, entertainment, and beyond.",
+    image = "https://images.pexels.com/photos/3944460/pexels-photo-3944460.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    url = process.env.NEXT_PUBLIC_SITE_URL || "https://www.thekhabarexpress.com",
     category,
     createdAt,
     updatedAt,
     author,
     structuredData = [],
   } = props;
+
+  const generateWebSiteSchema = () => {
+    return {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "The Khabar Express",
+      "alternateName": "Khabar Express",
+      "url": process.env.NEXT_PUBLIC_SITE_URL,
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": `${process.env.NEXT_PUBLIC_SITE_URL}/search?q={search_term_string}`,
+        "query-input": "required name=search_term_string"
+      }
+    };
+  };
+
+  const generateOrganizationSchema = () => {
+    return {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "The Khabar Express",
+      "url": process.env.NEXT_PUBLIC_SITE_URL,
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${process.env.NEXT_PUBLIC_SITE_URL}/favicon.ico`,
+        "width": 60,
+        "height": 60
+      },
+      "sameAs": [
+        "https://twitter.com/thekhabarexpress",
+        "https://facebook.com/thekhabarexpress",
+        "https://instagram.com/thekhabarexpress"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "email": "contact@thekhabarexpress.com"
+      }
+    };
+  };
 
   const generateArticleSchema = () => {
     if (!category || !createdAt) return null;
@@ -39,7 +79,7 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
       author: author
         ? {
           "@type": "Person",
-          name: author,
+          name: typeof author === 'string' ? author : (author.name || 'Staff Writer'),
         }
         : {
           "@type": "Organization",
@@ -49,10 +89,9 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
       publisher: {
         "@type": "Organization",
         name: "The Khabar Express",
-
         logo: {
           "@type": "ImageObject",
-          url: [image],
+          url: `${process.env.NEXT_PUBLIC_SITE_URL}/favicon.ico`,
         },
       },
       description: description,
@@ -65,86 +104,83 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
   };
 
   const generateBreadcrumbSchema = () => {
-    if (!category) return null;
+    if (!category || !url) return null;
+
+    const items = [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: process.env.NEXT_PUBLIC_SITE_URL,
+      },
+    ];
+
+    if (category) {
+      items.push({
+        "@type": "ListItem",
+        position: 2,
+        name: category,
+        item: `${process.env.NEXT_PUBLIC_SITE_URL}/category/${category.toLowerCase()}`,
+      });
+    }
+
+    if (title && url !== process.env.NEXT_PUBLIC_SITE_URL) {
+      items.push({
+        "@type": "ListItem",
+        position: items.length + 1,
+        name: title,
+        item: url,
+      });
+    }
 
     return {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: process.env.NEXT_PUBLIC_SITE_URL,
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: category,
-          item: `${process.env.NEXT_PUBLIC_SITE_URL}/category/${category}`,
-        },
-        {
-          "@type": "ListItem",
-          position: 3,
-          name: title,
-          item: url,
-        },
-      ],
+      itemListElement: items,
     };
   };
 
+  const normalizeUrl = (u: string) => u?.replace(/\/$/, "");
+
   const allStructuredData = [
     ...structuredData,
+    generateOrganizationSchema(),
+    ...(normalizeUrl(url) === normalizeUrl(process.env.NEXT_PUBLIC_SITE_URL!) ? [generateWebSiteSchema()] : []),
     ...(generateArticleSchema() ? [generateArticleSchema()] : []),
     ...(generateBreadcrumbSchema() ? [generateBreadcrumbSchema()] : []),
   ];
 
+  const fullTitle = title.includes("The Khabar Express") ? title : `${title} - The Khabar Express`;
+
   return (
     <Head>
-      <title>{`${title} - The Khabar Express`}</title>
-      <link rel="canonical" href={`${url}`} />
-      <meta name="title" content={`${title}`} data-rh="true" />
-      <meta name="description" content={`${description}`} data-rh="true" />
-      <meta
-        property="og:site_name"
-        content="the khabar express"
-        data-rh="true"
-      />
-      <meta name="robots" content="index,follow"></meta>
-      {/* OG Controll */}
-      <meta
-        property="og:title"
-        content={`${title} - The Khabar Express`}
-        data-rh="true"
-      />
-      <meta property="og:description" content={`${description}`} data-rh="true" />
-      <meta property="og:image" content={`${image}`} data-rh="true" />
-      <meta property="og:type" content="article" data-rh="true" />
-      <meta property="og:image:width" content="1200" data-rh="true" />
-      <meta property="og:image:height" content="630" data-rh="true" />
-      <meta property="og:locale" content="en_US" data-rh="true" />
-      <meta property="og:url" content={`${url}`} data-rh="true" />
-      <meta property="og:logo" content={`${image}`} data-rh="true" />
+      <title>{fullTitle}</title>
+      <meta name="description" content={description} />
+      <link rel="canonical" href={url} />
+      
+      <meta name="robots" content="index, follow" />
+      
+      {/* Open Graph */}
+      <meta property="og:site_name" content="The Khabar Express" />
+      <meta property="og:title" content={fullTitle} />
+      <meta property="og:description" content={description} />
+      <meta property="og:image" content={image} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:url" content={url} />
+      <meta property="og:type" content={category ? "article" : "website"} />
+      <meta property="og:locale" content="en_US" />
 
-      {/* twitter */}
-      <meta name="twitter:card" content="summary_large_image" data-rh="true" />
-      <meta
-        name="twitter:title"
-        content={`${title} - The Khabar Express`}
-        data-rh="true"
-      />
-      <meta name="twitter:description" content={`${description}`} data-rh="true" />
-      <meta name="twitter:image" content={`${image}`} data-rh="true" />
-      {/* <meta name="twitter:site" content="@yourTwitterHandle" />  data-rh="true"*/}
-
-      {/* app links */}
-      <meta property="al:android:url" content={`${url}`} data-rh="true" />
-      <meta property="al:ios:url" content={`${url}`} data-rh="true" />
+      {/* Twitter */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={fullTitle} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={image} />
 
       {/* Structured data */}
-      {allStructuredData?.map((data: any, index: number) => (
+      {allStructuredData.map((data, index) => (
         <script
-          key={index}
+          key={`schema-${index}`}
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
         />

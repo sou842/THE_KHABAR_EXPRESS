@@ -172,6 +172,23 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
             <h4 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
               {blog?.title}
             </h4>
+            
+            {blog?.tags && blog?.tags?.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {blog?.tags?.slice(0, 3)?.map((tag, idx) => (
+                  <span 
+                    key={idx}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.href = `/topic/${tag}`;
+                    }}
+                    className="px-2 py-0.5 bg-primary/10 hover:bg-primary hover:text-primary-foreground text-[10px] font-bold uppercase tracking-wider text-primary/50 rounded transition-colors cursor-pointer"
+                  >
+                    {tag || '#'}
+                  </span>
+                ))}
+              </div>
+            )}
 
             <div className="space-y-6">
               <p className="text-sm text-muted-foreground line-clamp-1">Explore the latest insights and deep dives.</p>
