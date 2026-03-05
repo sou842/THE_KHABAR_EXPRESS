@@ -262,7 +262,7 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
                   {blog?.category}
                 </span>
                 <span className="text-xs text-muted-foreground">&bull;</span>
-                <span className="text-xs text-muted-foreground">{formatDate(blog?.publishedDate)}</span>
+                <span className="text-xs text-muted-foreground">{formatDate(blog?.publishedDate) || ''}</span>
               </div>
               <h4 className="text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
                 {blog?.title}
@@ -310,15 +310,15 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
 
               {/* Thumbnail */}
               <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-border/30 bg-muted shadow-sm">
-                <img
-                  src={blog.thumbnail?.image || 'invalid.jpg'}
+                {getImageUrl(blog) && <img
+                  src={getImageUrl(blog)!}
                   alt=""
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                   onError={(e) => {
                     e.currentTarget.src = 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=200';
                     e.currentTarget.onerror = null;
                   }}
-                />
+                />}
               </div>
 
               {/* Main content */}
