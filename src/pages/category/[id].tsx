@@ -33,9 +33,7 @@ const Category: FC = () => {
   const isLoadingMore =
     isLoading || (size > 0 && data && typeof data[size - 1] === "undefined");
   const isEmpty = data?.[0]?.data?.length === 0;
-  const isReachingEnd =
-    isEmpty || (data && data[data.length - 1]?.data?.length < PAGE_SIZE);
-  const isRefreshing = isValidating && data && data.length === size;
+  const isReachingEnd = isEmpty || (data && data[data.length - 1]?.data?.length < PAGE_SIZE);
 
   if (error) {
     return (

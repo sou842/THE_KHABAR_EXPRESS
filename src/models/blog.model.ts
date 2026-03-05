@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
 
-// ========= Blog Schema =========
 interface IFaqItem {
     question: string;
     answer: string;
@@ -56,9 +56,25 @@ const BlogSchema = new Schema<IBlog>({
         },
     ]
 });
-// Pre-save middleware to update the updatedAt field
+
 BlogSchema.pre('save', function (next) {
     this.updatedAt = new Date();
+
+    if (this?.isNew || !this?.url) {
+        const title = this?.title || "untitled";
+        const slug = title
+            ?.trim()
+            ?.replace(/\?/g, "")
+            ?.replace(/&/g, "and")
+            ?.replace(/[^\w\s-]/g, "")
+            ?.replace(/\s+/g, "-")
+            ?.toLowerCase();
+
+        const suffix = uuidv4().split("-")[0];
+        this.url = `${slug}-${suffix}`;
+    }
+
     next();
 });
+
 export const Blog = mongoose.models.Blog || mongoose.model<IBlog>('Blog', BlogSchema);

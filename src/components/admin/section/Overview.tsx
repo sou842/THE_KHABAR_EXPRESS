@@ -4,7 +4,6 @@ import AsyncSelect from 'react-select/async';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Error from '@/components/Error';
-import Loading from '@/components/ui/loading';
 import { getter, putter } from '@/lib/helper';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -15,12 +14,14 @@ import {
     Search, Zap, ArrowUpRight, Activity, Star, BarChart2, Layers
 } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import BlogCard from '@/components/BlogCard';
+import { Skeleton } from '@/components/Skeleton';
 
 type BlogOption = { label: string; value: string; blog: any };
 
 const fetchBlogs = async (inputValue: string): Promise<BlogOption[]> => {
     const res = await fetch(`/api/blogs?limit=5&search=${inputValue}`);
-    const result = await res.json();
+    const result = await res?.json();
     return result?.data?.map((blog: any) => ({ label: blog.title, value: blog._id, blog }));
 };
 
@@ -30,29 +31,6 @@ const loadOptions = (inputValue: string, callback: (options: BlogOption[]) => vo
 
 const HR = () => <div className="h-px bg-border/40 w-full" />;
 
-
-const statusConfig: Record<string, { label: string; color: string; bg: string; dot: string }> = {
-    approved: {
-        label: 'Live',
-        color: 'text-emerald-700 dark:text-emerald-400',
-        bg: 'bg-green-100 dark:bg-green-100 border-green-500 dark:border-green-500',
-        dot: 'bg-green-400',
-    },
-    pending: {
-        label: 'Pending',
-        color: 'text-orange-700 dark:text-orange-400',
-        bg: 'bg-orange-50 dark:bg-orange-100 border-orange-200/60 dark:border-orange-800/40',
-        dot: 'bg-orange-400',
-    },
-    rejected: {
-        label: 'Draft',
-        color: 'text-slate-500 dark:text-slate-400',
-        bg: 'bg-slate-100 dark:bg-slate-800/60 border-slate-200/60 dark:border-slate-700/40',
-        dot: 'bg-slate-400',
-    },
-};
-
-/* ─── Stat Card ─────────────────────────────────────────────────── */
 const StatCard = ({ label, value, icon: Icon }: { label: string; value: string | number; icon: any }) => (
     <div className="group relative bg-card border border-border/40 rounded-xl p-5 hover:border-border/70 hover:shadow-sm transition-all duration-200 overflow-hidden">
         <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-foreground/8 to-transparent" />
@@ -66,84 +44,7 @@ const StatCard = ({ label, value, icon: Icon }: { label: string; value: string |
     </div>
 );
 
-/* ─── Blog Row ───────────────────────────────────────────────────── */
-const BlogRow = ({ blog, index }: { blog: any; index: number }) => {
-    const status = statusConfig[blog.status] ?? statusConfig.rejected;
 
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.035, duration: 0.25, ease: 'easeOut' }}
-            className="group relative flex items-center gap-4 px-4 py-3.5 rounded-xl hover:bg-muted/40 transition-colors duration-150 cursor-default"
-        >
-            {/* Left accent line on hover */}
-            <div className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full bg-primary scale-y-0 group-hover:scale-y-100 transition-transform duration-200 origin-center" />
-
-            {/* Thumbnail */}
-            <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-border/30 bg-muted shadow-sm">
-                <img
-                    src={blog.thumbnail?.image || 'invalid.jpg'}
-                    alt=""
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                    onError={(e) => {
-                        e.currentTarget.src = 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=200';
-                        e.currentTarget.onerror = null;
-                    }}
-                />
-            </div>
-
-            {/* Main content */}
-            <div className="flex-1 min-w-0">
-                {blog.category && (
-                    <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-primary/70 mb-0.5">
-                        {blog.category}
-                    </span>
-                )}
-                <h4 className="font-semibold text-[13.5px] text-foreground leading-snug line-clamp-1 group-hover:text-primary transition-colors duration-150">
-                    {blog.title}
-                </h4>
-                <div className="flex items-center gap-2 mt-1">
-                    <div className="flex items-center gap-1.5">
-                        <div className="w-4 h-4 rounded-full bg-primary/15 border border-primary/20 flex items-center justify-center text-[9px] font-bold text-primary uppercase">
-                            {blog.author?.[0] ?? '?'}
-                        </div>
-                        <span className="text-[11px] text-muted-foreground/60 font-medium">{blog.author}</span>
-                    </div>
-                    <span className="text-muted-foreground/20 text-[10px]">·</span>
-                    <span className="text-[11px] text-muted-foreground/40">
-                        <DateTimeDisplay type="auto-advanced">{blog.createdAt}</DateTimeDisplay>
-                    </span>
-                </div>
-            </div>
-
-            {/* Right: views + status + action */}
-            <div className="flex items-center gap-3 shrink-0">
-                <div className="hidden sm:flex flex-col items-end gap-0.5">
-                    <span className="text-sm font-bold tabular-nums text-foreground/70">
-                        {(blog.views || 0).toLocaleString()}
-                    </span>
-                    <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/35 flex items-center gap-0.5">
-                        <Eye className="w-2.5 h-2.5" strokeWidth={1.5} /> views
-                    </span>
-                </div>
-
-                <div className="hidden sm:block h-6 w-px bg-border/30" />
-
-                <span className={`inline-flex items-center gap-1.5 text-[10px] font-semibold px-2.5 py-1 rounded-full border ${status.bg} ${status.color}`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
-                    {status.label}
-                </span>
-
-                <Link href={`/blog/${blog.url}`}>
-                    <button className="opacity-0 group-hover:opacity-100 w-8 h-8 rounded-lg bg-primary/8 hover:bg-primary hover:text-white text-primary flex items-center justify-center transition-all duration-150">
-                        <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={2} />
-                    </button>
-                </Link>
-            </div>
-        </motion.div>
-    );
-};
 
 /* ─── Trending Row ───────────────────────────────────────────────── */
 const TrendingRow = ({ post, onRemove, rank }: { post: any; onRemove: () => void; rank: number }) => (
@@ -186,7 +87,6 @@ const TrendingRow = ({ post, onRemove, rank }: { post: any; onRemove: () => void
     </motion.div>
 );
 
-/* ─── Main ───────────────────────────────────────────────────────── */
 const Overview: React.FC = () => {
     const { data: dashboardData, error: dashboardError, isLoading: dashboardLoading } = useSWR('/api/dashboard/admin', getter);
     const { data: trendingPost, isLoading: trendingLoading, mutate: mutateTrending } = useSWR<any>(
@@ -198,8 +98,10 @@ const Overview: React.FC = () => {
     const [selectedBlog, setSelectedBlog] = React.useState<any | null>(null);
 
     const isLoading = dashboardLoading || trendingLoading || blogsLoading;
-    if (isLoading) return <div className="flex h-[400px] items-center justify-center"><Loading /></div>;
+    if (isLoading) return <Skeleton type="admin-overview" />;
     if (dashboardError) return <Error />;
+
+    console.log(dashboardData);
 
     const record = dashboardData?.data;
 
@@ -217,8 +119,7 @@ const Overview: React.FC = () => {
     return (
         <div className="max-w-[1440px] mx-auto pb-20">
 
-            {/* ── Page Header ──────────────────────────────────────── */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
                     <div className="flex items-center gap-2 mb-1.5">
                         <div className="w-1.5 h-1.5 rounded-full bg-primary" />
@@ -235,30 +136,26 @@ const Overview: React.FC = () => {
                     </span>
                     <div className="h-3.5 w-px bg-border/50 hidden md:block" />
                     <Link
-                        href="/admin/blog"
+                        href="/blog"
                         className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-lg border border-border/50 bg-background hover:bg-muted/30 text-foreground/60 hover:text-foreground transition-all duration-150 shadow-sm"
                     >
                         <Layers className="w-3.5 h-3.5" strokeWidth={1.5} />
                         All Content
                     </Link>
                 </div>
-            </div>
+            </header>
 
             {/* ── Stats ────────────────────────────────────────────── */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                <StatCard label="Total Views" value={(record?.totalViews || 0).toLocaleString()} icon={BarChart2} />
+                <StatCard label="Total Views" value={(record?.totalViews || 0)?.toLocaleString() || 'N/A'} icon={BarChart2} />
                 <StatCard label="Pending Review" value={record?.totalPendingBlogs || 0} icon={Clock} />
                 <StatCard label="Published" value={record?.totalBlogs || 0} icon={FileText} />
             </div>
 
-            {/* ── Main Grid ────────────────────────────────────────── */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+            <main className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
-                {/* ── Blog Feed ──────────────────────────────────────── */}
-                <div className="lg:col-span-7 xl:col-span-8 bg-card border border-border/40 rounded-xl overflow-hidden">
+                <section className="lg:col-span-7 xl:col-span-8 bg-card border border-border/40 rounded-xl overflow-hidden">
                     <Tabs defaultValue="submissions">
-
-                        {/* Tab bar */}
                         <div className="px-5 pt-4 pb-0">
                             <div className="flex items-center justify-between mb-4">
                                 <TabsList className="bg-muted/40 rounded-lg p-0.5 h-auto border border-border/30">
@@ -306,7 +203,7 @@ const Overview: React.FC = () => {
                             <div className="py-1 px-0">
                                 <AnimatePresence>
                                     {recentBlogs?.data?.map((blog: any, i: number) => (
-                                        <BlogRow key={blog._id} blog={blog} index={i} />
+                                        <BlogCard key={blog._id} blog={blog} index={i} variant="adminRow" />
                                     ))}
                                 </AnimatePresence>
 
@@ -328,7 +225,7 @@ const Overview: React.FC = () => {
                         </TabsContent>
 
                     </Tabs>
-                </div>
+                </section>
 
                 {/* ── Sidebar ────────────────────────────────────────── */}
                 <div className="lg:col-span-5 xl:col-span-4 space-y-4">
@@ -467,7 +364,7 @@ const Overview: React.FC = () => {
                     </div>
 
                 </div>
-            </div>
+            </main>
         </div>
     );
 };

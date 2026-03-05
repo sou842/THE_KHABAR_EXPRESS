@@ -273,17 +273,17 @@ const UserManagement: React.FC = () => {
                           <div className="flex flex-col items-center">
                             <span className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Approve</span>
                             {user.access?.canApprove ? (
-                              <div className="bg-green-500/10 p-1 rounded-full"><Check className="h-4 w-4 text-green-600" /></div>
+                              <div className="bg-green-500/10 px-3 py-1 rounded-full"><Check className="h-4 w-4 text-green-600" /></div>
                             ) : (
-                              <div className="bg-destructive/10 p-1 rounded-full"><X className="h-4 w-4 text-destructive" /></div>
+                              <div className="bg-destructive/10 px-3 py-1 rounded-full"><X className="h-4 w-4 text-destructive" /></div>
                             )}
                           </div>
                           <div className="flex flex-col items-center">
                             <span className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Add Blog</span>
                             {user.access?.canAddBlog ? (
-                              <div className="bg-green-500/10 p-1 rounded-full"><Check className="h-4 w-4 text-green-600" /></div>
+                              <div className="bg-green-500/10 px-3 py-1 rounded-full"><Check className="h-4 w-4 text-green-600" /></div>
                             ) : (
-                              <div className="bg-destructive/10 p-1 rounded-full"><X className="h-4 w-4 text-destructive" /></div>
+                              <div className="bg-destructive/10 px-3 py-1 rounded-full"><X className="h-4 w-4 text-destructive" /></div>
                             )}
                           </div>
                         </div>

@@ -245,6 +245,58 @@ export const Skeleton: React.FC<skeletonProps> = (props) => {
           </div>
         </div>
       );
+    case "admin-overview":
+      return (
+        <div className="max-w-[1440px] mx-auto pb-20 animate-pulse">
+          {/* Page Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div className="space-y-2">
+              <div className="h-3 w-32 bg-gray-200 rounded"></div>
+              <div className="h-7 w-48 bg-gray-300 rounded"></div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="h-4 w-40 bg-gray-200 rounded hidden md:block"></div>
+              <div className="h-10 w-28 bg-gray-200 rounded-lg"></div>
+            </div>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-32 bg-gray-100 border border-gray-200 rounded-xl"></div>
+            ))}
+          </div>
+
+          {/* Main Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+            {/* Left Column Feed */}
+            <div className="lg:col-span-7 xl:col-span-8 bg-gray-50 border border-gray-200 rounded-xl overflow-hidden min-h-[500px]">
+              <div className="px-5 py-6 border-b border-gray-100 flex justify-between">
+                <div className="h-10 w-48 bg-gray-200 rounded-lg"></div>
+                <div className="h-4 w-16 bg-gray-200 rounded"></div>
+              </div>
+              <div className="p-4 space-y-4">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="flex items-center gap-4 py-3">
+                    <div className="w-12 h-12 bg-gray-200 rounded-xl flex-shrink-0"></div>
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 w-3/4 bg-gray-300 rounded"></div>
+                      <div className="h-3 w-1/2 bg-gray-200 rounded"></div>
+                    </div>
+                    <div className="w-24 h-6 bg-gray-200 rounded-full"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Sidebar */}
+            <div className="lg:col-span-5 xl:col-span-4 space-y-4">
+              <div className="bg-gray-50 border border-gray-200 rounded-xl h-64"></div>
+              <div className="bg-gray-50 border border-gray-200 rounded-xl h-96"></div>
+            </div>
+          </div>
+        </div>
+      );
     default:
       return (
         <div className="h-screen flex items-center justify-center">

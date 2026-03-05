@@ -19,15 +19,15 @@ const statusConfig: Record<string, { label: string; color: string; bg: string; d
     },
     pending: {
         label: 'Pending',
-        color: 'text-orange-600 dark:text-orange-600',
+        color: 'text-orange-500 dark:text-orange-500',
         bg: 'bg-orange-50 dark:bg-orange-200',
-        dot: 'bg-orange-600',
+        dot: 'bg-orange-500',
     },
     rejected: {
         label: 'Rejected',
-        color: 'text-red-600 dark:text-red-600',
+        color: 'text-red-500 dark:text-red-500',
         bg: 'bg-red-50 dark:bg-red-200',
-        dot: 'bg-red-600',
+        dot: 'bg-red-500',
     },
 };
 
@@ -43,7 +43,7 @@ const useDebounce = (value: string, delay: number) => {
 const HR = () => <div className="h-px bg-border/40 w-full" />;
 
 const BlogRow = ({ blog, index, onAction, mutate }: { blog: any; index: number; onAction: (id: string, action: 'approved' | 'rejected' | 'deleted') => Promise<void>; mutate: any }) => {
-    const status = statusConfig[blog.status] ?? statusConfig.rejected;
+    const status = statusConfig[blog?.status] ?? statusConfig.rejected;
     const [loading, setLoading] = useState<'approved' | 'rejected' | 'deleted' | null>(null);
 
     const handleAction = async (newStatus: 'approved' | 'rejected' | 'deleted') => {
@@ -53,8 +53,8 @@ const BlogRow = ({ blog, index, onAction, mutate }: { blog: any; index: number; 
         mutate();
     };
 
-    const canApprove = blog.status !== 'approved';
-    const canReject = blog.status !== 'rejected';
+    const canApprove = blog?.status !== 'approved';
+    const canReject = blog?.status !== 'rejected';
 
     return (
         <motion.div
@@ -70,7 +70,7 @@ const BlogRow = ({ blog, index, onAction, mutate }: { blog: any; index: number; 
                 {/* Thumbnail */}
                 <div className="relative w-14 h-14 md:w-16 md:h-16 rounded-xl overflow-hidden shrink-0 border border-border/30 bg-muted shadow-sm">
                     <img
-                        src={blog.thumbnail?.image || 'invalid.jpg'}
+                        src={blog?.thumbnail?.image || 'invalid.jpg'}
                         alt=""
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                         onError={(e) => {
@@ -83,23 +83,23 @@ const BlogRow = ({ blog, index, onAction, mutate }: { blog: any; index: number; 
                 {/* Main content */}
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                        {blog.category && (
+                        {blog?.category && (
                             <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-primary/70">
-                                {blog.category}
+                                {blog?.category}
                             </span>
                         )}
                         <span className="text-muted-foreground/30 text-[10px]">•</span>
                         <span className="text-[11px] text-muted-foreground/50">
-                            <DateTimeDisplay type="auto-advanced">{blog.createdAt}</DateTimeDisplay>
+                            <DateTimeDisplay type="auto-advanced">{blog?.createdAt}</DateTimeDisplay>
                         </span>
                     </div>
                     
                     <h4 className="font-semibold text-[14px] md:text-[15px] text-foreground leading-snug line-clamp-1 group-hover:text-primary transition-colors duration-150 pr-4">
-                        {blog.title}
+                        {blog?.title}
                     </h4>
-                    {blog.author && (
+                    {blog?.author && (
                         <p className="text-[11px] text-muted-foreground/60 mt-0.5 font-medium flex items-center gap-1.5">
-                            By {blog.author}
+                            By {blog?.author}
                         </p>
                     )}
                 </div>
@@ -109,16 +109,16 @@ const BlogRow = ({ blog, index, onAction, mutate }: { blog: any; index: number; 
             <div className="flex items-center justify-between md:justify-end gap-4 shrink-0 mt-3 md:mt-0 pt-3 md:pt-0 border-t md:border-none border-border/30">
                 <div className="flex items-center gap-4 md:gap-5 mr-auto md:mr-0">
                     <div className="min-w-[80px] flex md:justify-center">
-                        <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full border ${status.bg} ${status.color}`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
-                            {status.label}
+                        <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full border ${status?.bg} ${status?.color}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${status?.dot}`} />
+                            {status?.label}
                         </span>
                     </div>
                 </div>
 
                 <div className="hidden md:block h-8 w-px bg-border/30 ml-2" />
 
-                <div className="flex items-center justify-end gap-2 min-w-[200px]">
+                <div className="flex items-center justify-center gap-2 min-w-[200px]">
                     {canApprove && (
                         <button 
                             disabled={!!loading}
@@ -216,7 +216,7 @@ const Blogs = () => {
     return (
         <div className="space-y-6 pb-20">
 
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+            <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
                 <div>
                     <div className="flex items-center gap-2 mb-1.5">
                         <div className="w-1.5 h-1.5 rounded-full bg-primary" />
@@ -235,7 +235,7 @@ const Blogs = () => {
                             type="text"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="w-full sm:w-[260px] pl-9 pr-8 h-10 rounded-lg border border-border/50 bg-background hover:border-border/80 focus:border-primary/40 focus:ring-2 focus:ring-primary/10 text-sm transition-all duration-200 shadow-sm"
+                            className="w-full h-10 sm:w-[260px] pl-9 pr-8 rounded-lg border border-border bg-white hover:border-border/80 focus:border-primary/40 text-sm transition-all duration-200"
                             placeholder="Search articles..."
                         />
                         {search && (
@@ -252,32 +252,31 @@ const Blogs = () => {
 
                     <button
                         onClick={() => router.push("/write")}
-                        className="flex items-center justify-center gap-2 px-5 h-10 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:bg-primary/90 transition-all active:scale-[0.98] shadow-sm whitespace-nowrap"
+                        className="flex items-center justify-center gap-2 px-5 h-10 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:bg-primary/90 transition-all active:scale-[0.98] whitespace-nowrap"
                     >
                         <Plus className="w-4 h-4" strokeWidth={2.5} />
                         New Blog
                     </button>
                 </div>
-            </div>
+            </header>
 
-            {/* ── Main Content Area ─────────────────────────────────── */}
-            <div className="bg-card border border-border/40 rounded-xl overflow-hidden shadow-sm">
+            <div className="bg-card border border-border rounded-xl overflow-hidden">
                 
                 {/* Custom Tab Bar */}
                 <div className="px-2 pt-2 pb-0 bg-muted/10">
                     <div className="flex overflow-x-auto pb-2 sm:pb-0 scrollbar-hide border-b border-border/30">
                         <div className="flex space-x-1 px-3">
-                            {tabs.map((tab) => {
-                                const isActive = activeTab === tab.id;
+                            {tabs && tabs?.map((tab) => {
+                                const isActive = activeTab === tab?.id;
                                 return (
                                     <button
-                                        key={tab.id}
-                                        onClick={() => setActiveTab(tab.id)}
+                                        key={tab?.id}
+                                        onClick={() => setActiveTab(tab?.id)}
                                         className={`relative px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors duration-200 ${
                                             isActive ? 'text-primary' : 'text-muted-foreground/60 hover:text-foreground/80'
                                         }`}
                                     >
-                                        {tab.label}
+                                        {tab?.label}
                                         {isActive && (
                                             <motion.div
                                                 layoutId="activeTabIndicatorAdmin"
@@ -313,10 +312,10 @@ const Blogs = () => {
                     {!isLoading ? (
                         data?.data?.length > 0 ? (
                             <AnimatePresence>
-                                {data.data.map((post: any, index: number) => (
+                                {data?.data?.map((post: any, index: number) => (
                                     <div key={post._id}>
                                         <BlogRow blog={post} index={index} onAction={handleAction} mutate={mutate} />
-                                        {index < data.data.length - 1 && <HR />}
+                                        {index < data?.data?.length - 1 && <HR />}
                                     </div>
                                 ))}
                             </AnimatePresence>
@@ -338,7 +337,7 @@ const Blogs = () => {
                                 {search && (
                                     <button
                                         onClick={() => setSearch("")}
-                                        className="mt-4 text-primary font-medium text-sm hover:underline"
+                                        className="mt-4 text-primary/50 font-medium text-sm bg-primary/10 px-4 py-1 rounded-full"
                                     >
                                         Clear search
                                     </button>

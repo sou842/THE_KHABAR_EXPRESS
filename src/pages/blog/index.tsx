@@ -10,10 +10,12 @@ import {
   ChevronRight,
   TrendingUp,
   Clock,
-  LayoutGrid
+  LayoutGrid,
+  RotateCcw
 } from "lucide-react";
 import { Skeleton } from "@/components/Skeleton";
 import { getter } from "@/lib/helper";
+import { getWithExpiry, setWithExpiry } from "@/lib/storageUtils";
 import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
 import { debounce } from "lodash";
@@ -31,10 +33,30 @@ const BlogArchive: FC = () => {
 
   // Fetch Categories and Tags
   const { data: categoriesData } = useSWR("/api/blogs/category", getter);
-  const { data: tagsData } = useSWR("/api/blogs/tags", getter);
+  const { data: tagsData, mutate: mutateTags, isValidating: isTagsValidating } = useSWR("/api/blogs/tags", getter);
 
+  const [tags, setTags] = useState<string[]>([]);
   const categories = categoriesData?.data || [];
-  const tags = tagsData?.data || [];
+
+  // Load tags from cache on mount
+  useEffect(() => {
+    const cachedTags = getWithExpiry("blog_tags_cache");
+    if (cachedTags) {
+      setTags(cachedTags);
+    }
+  }, []);
+
+  // Update cache when fresh tags data is received
+  useEffect(() => {
+    if (tagsData?.data) {
+      setTags(tagsData.data);
+      setWithExpiry("blog_tags_cache", tagsData.data, 15);
+    }
+  }, [tagsData]);
+
+  const handleRefreshTags = () => {
+    mutateTags();
+  };
 
   // Search Debounce
   const debouncedSearch = useMemo(
@@ -193,9 +215,19 @@ const BlogArchive: FC = () => {
 
                 {/* Tags Section */}
                 <div className="bg-muted/10 p-6 rounded-2xl border border-border/40 backdrop-blur-md">
-                  <div className="flex items-center gap-2 mb-5">
-                    <TagIcon className="h-4 w-4 text-primary" />
-                    <h3 className="text-sm font-black uppercase tracking-widest">Trending Tags</h3>
+                  <div className="flex items-center justify-between gap-2 mb-5">
+                    <div className="flex items-center gap-2">
+                      <TagIcon className="h-4 w-4 text-primary" />
+                      <h3 className="text-sm font-black uppercase tracking-widest">Trending Tags</h3>
+                    </div>
+                    <button
+                      onClick={handleRefreshTags}
+                      disabled={isTagsValidating}
+                      className="p-1.5 rounded-full hover:bg-primary/10 text-primary/60 hover:text-primary transition-all cursor-pointer disabled:opacity-50"
+                      title="Refresh Tags"
+                    >
+                      <RotateCcw className={`h-3.5 w-3.5 ${isTagsValidating ? "animate-spin" : ""}`} />
+                    </button>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <button

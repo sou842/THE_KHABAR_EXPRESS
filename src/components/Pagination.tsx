@@ -18,7 +18,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
     // If we have 5 or fewer pages, show all of them
     if (totalPages <= maxPagesToShow) {
       for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
+        pages?.push(i);
       }
       return pages;
     }
@@ -28,11 +28,11 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
     const pageSet = new Set<number>([1, totalPages, currentPage]);
     
     if (currentPage > 1) {
-      pageSet.add(currentPage - 1);
+      pageSet?.add(currentPage - 1);
     }
     
     if (currentPage < totalPages) {
-      pageSet.add(currentPage + 1);
+      pageSet?.add(currentPage + 1);
     }
     
     // Add additional pages if we still have room
@@ -57,7 +57,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
       <button 
         onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="w-10 h-10 flex items-center justify-center rounded-md border disabled:opacity-50"
+        className="w-10 h-10 flex items-center justify-center rounded-full border disabled:opacity-50"
       >
         <ChevronLeft className="h-4 w-4" />
       </button>
@@ -74,9 +74,9 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
             )}
             <button 
               onClick={() => onPageChange(page)}
-              className={`w-10 h-10 flex items-center justify-center rounded-md ${
+              className={`w-10 h-10 flex items-center justify-center rounded-full ${
                 isCurrentPage 
-                  ? 'bg-khabar-600 text-white' 
+                  ? 'bg-primary text-white' 
                   : 'border hover:bg-muted transition-colors'
               }`}
             >
@@ -89,7 +89,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
       <button 
         onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="w-10 h-10 flex items-center justify-center rounded-md border disabled:opacity-50"
+        className="w-10 h-10 flex items-center justify-center rounded-full border disabled:opacity-50"
       >
         <ChevronRight className="h-4 w-4" />
       </button>
