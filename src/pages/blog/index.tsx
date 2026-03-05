@@ -35,7 +35,7 @@ const BlogArchive: FC = () => {
   const { data: categoriesData } = useSWR("/api/blogs/category", getter);
   const { data: tagsData, mutate: mutateTags, isValidating: isTagsValidating } = useSWR("/api/blogs/tags", getter);
 
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<{ tag: string; count: number }[]>([]);
   const categories = categoriesData?.data || [];
 
   // Load tags from cache on mount
@@ -239,16 +239,17 @@ const BlogArchive: FC = () => {
                     >
                       #all
                     </button>
-                    {tags?.map((tag: string) => (
+                    {tags?.map((tagObj: any) => (
                       <button
-                        key={tag}
-                        onClick={() => setSelectedTag(tag)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border cursor-pointer ${selectedTag === tag
+                        key={tagObj.tag}
+                        onClick={() => setSelectedTag(tagObj.tag)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border cursor-pointer ${selectedTag === tagObj.tag
                           ? "bg-foreground text-background border-foreground shadow-sm"
                           : "border-border hover:border-primary hover:text-primary"
                           }`}
                       >
-                        {tag}
+                        {tagObj.tag}
+                        <span className="ml-1.5 opacity-50 font-medium">{tagObj.count}</span>
                       </button>
                     ))}
                   </div>
