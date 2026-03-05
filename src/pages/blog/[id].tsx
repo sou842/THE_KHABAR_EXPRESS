@@ -3,19 +3,14 @@ import Layout from "@/components/Layout";
 import Link from "next/link";
 import { toast } from "sonner";
 import { GetStaticProps, GetStaticPaths } from "next";
-import { Calendar, Eye, Share2, Facebook, Twitter } from "lucide-react";
+import { Calendar, Share2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 import BlogCard from "@/components/BlogCard";
 import DateTimeDisplay from "@/components/DateTimeDisplay";
 import SeoMeta from "@/components/SeoMeta";
 import { BlogContent } from "@/components/BlogContent";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import TopicCloud from "@/components/TopicCloud";
 import FaqSchema, { IFaqItem } from "@/components/BlogEditor/FaqSchema";
 
 interface BlogPost {
@@ -32,7 +27,8 @@ interface BlogPost {
     name: string;
     image?: string;
   };
-  faqs: IFaqItem[]
+  faqs: IFaqItem[];
+  tags?: string[];
 }
 
 interface BlogPostPageProps {
@@ -54,6 +50,8 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
     return colors[blog?.category?.toLowerCase()] || "bg-gray-100 text-gray-800";
   };
 
+  const [displayTag] = blog?.tags || "";
+
   const handleCopy = () => {
     const URL = window.location.href;
     navigator.clipboard.writeText(URL);
@@ -64,13 +62,13 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
     <Layout disableDefaultMeta>
       <SeoMeta
         image={blog?.thumbnail?.image}
-        title={blog?.thumbnail?.title}
-        description={blog?.thumbnail?.description}
+        title={blog?.title}
+        description={blog?.thumbnail?.description || blog?.title}
         url={`${process.env.NEXT_PUBLIC_SITE_URL}/blog/${blog?.url}`}
         category={blog?.category}
         createdAt={blog?.createdAt}
         updatedAt={blog?.updatedAt}
-        author={blog?.author || ''}
+        author={blog?.author?.name || blog?.author || ''}
       />
 
       <motion.div
@@ -123,11 +121,38 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
               </div>
             </div>
 
-            {/* Content */}
-            <div className="w-full pb-12 flex flex-col items-center gap-0 mt-8" itemProp="articleBody">
-              {blog?.body?.map((block: any, index: number) => (
-                <BlogContent key={index} block={block} />
-              ))}
+            {/* Main content grid: sidebar on desktop */}
+            <div className="flex flex-col gap-12 my-8">
+              <div className="flex-grow min-w-0" itemProp="articleBody">
+                <div className="flex flex-col items-center gap-0">
+                  {blog?.body?.map((block: any, index: number) => (
+                    <BlogContent key={index} block={block} />
+                  ))}
+                </div>
+                
+                {/* Topic Hub CTA at the end of content */}
+                {displayTag && (
+                  <div className="mt-12 p-6 bg-primary/5 border border-primary/20 rounded-sm">
+                    <h4 className="text-sm font-bold uppercase tracking-widest text-primary mb-2">Dive Deeper</h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Love this story? Explore more in-depth coverage and trending news on <span className="font-bold underline decoration-primary underline-offset-4">{displayTag}</span>.
+                    </p>
+                    <Link 
+                      href={`/topic/${encodeURIComponent(displayTag)}`}
+                      className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest bg-primary text-primary-foreground px-4 py-2 rounded-sm hover:bg-primary/90 transition-colors"
+                    >
+                      Explore the {displayTag} Topic Hub
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Sidebar: Topic Cloud */}
+              <aside className="flex-shrink-0 space-y-12">
+                <div className="sticky top-24">
+                  <TopicCloud />
+                </div>
+              </aside>
             </div>
 
             {/* Article Footer & Social sharing */}
@@ -244,25 +269,34 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       return { notFound: true };
     }
 
-    const relatedRes = await fetch(
-      `${siteUrl}/api/blogs?category=${blogData.data.category}&limit=3&status=approved`
-    );
-    if (!relatedRes.ok) {
-      return {
-        props: {
-          blog: blogData.data,
-          relatedPosts: [],
-        },
-        revalidate: 60 * 60,
-      };
+    // Attempt to fetch by tags first (Topical Authority)
+    let relatedRes;
+    const primaryTag = blogData?.data?.tags?.[0];
+    
+    if (primaryTag) {
+      relatedRes = await fetch(
+        `${siteUrl}/api/blogs?tag=${encodeURIComponent(primaryTag)}&limit=4&status=approved`
+      );
+    }
+
+    // Fallback to category if no tag or tag fetch failed or returned too few results
+    if (!relatedRes || !relatedRes.ok) {
+      relatedRes = await fetch(
+        `${siteUrl}/api/blogs?category=${blogData.data.category}&limit=4&status=approved`
+      );
     }
 
     const relatedData = await relatedRes.json();
+    
+    // Filter out current post and ensure we have exactly 4 if possible
+    const relatedPosts = (relatedData?.data || [])
+      ?.filter((p: any) => p?._id !== blogData?.data?._id)
+      ?.slice(0, 4);
 
     return {
       props: {
         blog: blogData.data,
-        relatedPosts: relatedData.data || [],
+        relatedPosts,
       },
       revalidate: 60 * 60,
     };

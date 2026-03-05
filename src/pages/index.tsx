@@ -8,6 +8,7 @@ import BlogCard from "@/components/BlogCard";
 import { Skeleton } from "@/components/Skeleton";
 import { getter, preventRerendering } from "@/lib/helper";
 import { IBlog } from "@/models/blog.model";
+import Layout from "@/components/Layout";
 import { useEffect, useRef } from "react";
 import { PenLine, ArrowRight } from "lucide-react";
 
@@ -70,25 +71,24 @@ export default function Home() {
 
   if (isGeneralLoading && !articles.length) {
     return (
-      <div className="flex flex-col min-h-screen bg-background text-foreground">
-        <Navbar />
-        <main className="flex-grow bg-background">
-          <Skeleton type="home" />
-        </main>
-        <Footer />
-      </div>
+      <Layout title="Loading..." disableDefaultMeta>
+         <Skeleton type="home" />
+      </Layout>
     );
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground font-sans">
-      <Head>
-        <title>Khabar - The Latest News and Insights</title>
-      </Head>
-
-      <Navbar />
-
+    <Layout 
+      title="The Latest News and Insights" 
+      path=""
+      description="Stay updated with the latest news, in-depth analysis, and trending stories across Technology, Finance, Sports, and more at The Khabar Express."
+    >
       <main className="flex-grow bg-background">
+        {/* Hidden H1 for SEO if no featured blog exists */}
+        {!featuredBlog && (
+          <h1 className="sr-only">The Khabar Express: Latest News and Global Insights</h1>
+        )}
+
         {/* Large Hero Featured Article */}
         {featuredBlog && (
           <section className="border-b border-border">
@@ -336,8 +336,6 @@ export default function Home() {
           </div>
         </section> */}
       </main>
-
-      <Footer />
-    </div>
+    </Layout>
   );
 }
