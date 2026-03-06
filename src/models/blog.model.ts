@@ -26,6 +26,12 @@ export interface IBlog extends Document {
     updatedAt: Date;
     isTrending: Boolean;
     faqs?: IFaqItem[];
+    aiSummary?: {
+        mainIdea: string;
+        keyPoints: string[];
+        finalTakeaway: string;
+        suggestedQuestions: string[];
+    };
 }
 
 
@@ -54,7 +60,13 @@ const BlogSchema = new Schema<IBlog>({
             question: { type: String, required: true },
             answer: { type: String, required: true },
         },
-    ]
+    ],
+    aiSummary: {
+        mainIdea: { type: String },
+        keyPoints: [{ type: String }],
+        finalTakeaway: { type: String },
+        suggestedQuestions: [{ type: String }],
+    }
 });
 
 BlogSchema.pre('save', function (next) {

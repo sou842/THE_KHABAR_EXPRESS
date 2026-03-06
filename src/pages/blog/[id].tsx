@@ -1,9 +1,10 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import Layout from "@/components/Layout";
 import Link from "next/link";
 import { toast } from "sonner";
 import { GetStaticProps, GetStaticPaths } from "next";
-import { Calendar, Share2 } from "lucide-react";
+import { Calendar, Share2, Sparkles, BrainCircuit } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
 
 import BlogCard from "@/components/BlogCard";
@@ -12,6 +13,8 @@ import SeoMeta from "@/components/SeoMeta";
 import { BlogContent } from "@/components/BlogContent";
 import TopicCloud from "@/components/TopicCloud";
 import FaqSchema, { IFaqItem } from "@/components/BlogEditor/FaqSchema";
+import AiSummarySection from "@/components/AI/AiSummarySection";
+import AskAiChat from "@/components/AI/AskAiChat";
 
 interface BlogPost {
   _id: string;
@@ -29,6 +32,11 @@ interface BlogPost {
   };
   faqs: IFaqItem[];
   tags?: string[];
+  aiSummary?: {
+    mainIdea: string;
+    keyPoints: string[];
+    finalTakeaway: string;
+  };
 }
 
 interface BlogPostPageProps {
@@ -37,19 +45,7 @@ interface BlogPostPageProps {
 }
 
 const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
-  const getCategoryColor = (category: string) => {
-    const colors: Record<string, string> = {
-      technology: "bg-blue-100 text-blue-800",
-      health: "bg-green-100 text-green-800",
-      finance: "bg-purple-100 text-purple-800",
-      politics: "bg-red-100 text-red-800",
-      entertainment: "bg-pink-100 text-pink-800",
-      sports: "bg-orange-100 text-orange-800",
-    };
-
-    return colors[blog?.category?.toLowerCase()] || "bg-gray-100 text-gray-800";
-  };
-
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const [displayTag] = blog?.tags || "";
 
   const handleCopy = () => {
@@ -71,139 +67,241 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
         author={blog?.author?.name || blog?.author || ''}
       />
 
-      <motion.div
-        className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <article className="py-8 md:py-16" itemScope itemType="https://schema.org/NewsArticle">
-          <div className="w-full">
-            {/* Category, breadcrumbs, and metadata bar */}
-            <div className="mb-10 space-y-4">
-              {/* Breadcrumb — lightest element, sits at the very top */}
-              <nav
-                aria-label="Breadcrumb"
-                className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground/60"
-              >
-                <Link href="/" className="hover:text-primary transition-colors duration-200">
-                  Home
-                </Link>
-                <span className="mx-2" aria-hidden="true">/</span>
-                <Link href={`/category/${blog?.category}`} className="hover:text-primary transition-colors duration-200">
-                  {blog?.category}
-                </Link>
-                <span className="mx-2" aria-hidden="true">/</span>
-                <span
-                  className="text-muted-foreground truncate max-w-[260px] sm:max-w-[440px]"
-                  title={blog?.title}
-                >
-                  {blog?.title}
-                </span>
-              </nav>
-
-              {/* Meta row — author + date, minimal */}
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[11px] tracking-wide text-muted-foreground/70">
-                {blog?.author?.name && (
-                  <span itemProp="author" className="font-semibold text-foreground/80">
-                    {blog.author.name}
-                  </span>
-                )}
-                <div className="flex items-center gap-1.5">
-                  <Calendar className="h-3 w-3 opacity-40" aria-hidden="true" />
-                  <time
-                    dateTime={new Date(blog?.createdAt).toISOString()}
-                    itemProp="datePublished"
+      <div className="flex w-full min-h-screen relative overflow-hidden">
+        {/* Main Content Area */}
+        <motion.div
+          initial={false}
+          animate={{ width: isChatOpen ? "calc(100% - var(--sidebar-width, 0px))" : "100%" }}
+          transition={{ type: "spring", damping: 30, stiffness: 200 }}
+          className="flex-shrink-0 lg:[--sidebar-width:500px] [--sidebar-width:0px]"
+        >
+          <motion.div
+            className="max-w-4xl mx-auto px-2 sm:px-6 lg:px-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <article className="py-8 md:py-16" itemScope itemType="https://schema.org/NewsArticle">
+              <div className="w-full">
+                {/* Category, breadcrumbs, and metadata bar */}
+                <div className="mb-10 space-y-4">
+                  {/* Breadcrumb — lightest element, sits at the very top */}
+                  <nav
+                    aria-label="Breadcrumb"
+                    className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground/60"
                   >
-                    <DateTimeDisplay type="date">{blog?.createdAt}</DateTimeDisplay>
-                  </time>
-                </div>
-              </div>
-            </div>
-
-            {/* Main content grid: sidebar on desktop */}
-            <div className="flex flex-col gap-12 my-8">
-              <div className="flex-grow min-w-0" itemProp="articleBody">
-                <div className="flex flex-col items-center gap-0">
-                  {blog?.body?.map((block: any, index: number) => (
-                    <BlogContent key={index} block={block} />
-                  ))}
-                </div>
-                
-                {/* Topic Hub CTA at the end of content */}
-                {displayTag && (
-                  <div className="mt-12 p-6 bg-primary/5 border border-primary/20 rounded-sm">
-                    <h4 className="text-sm font-bold uppercase tracking-widest text-primary mb-2">Dive Deeper</h4>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Love this story? Explore more in-depth coverage and trending news on <span className="font-bold underline decoration-primary underline-offset-4">{displayTag}</span>.
-                    </p>
-                    <Link 
-                      href={`/topic/${encodeURIComponent(displayTag)}`}
-                      className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest bg-primary text-primary-foreground px-4 py-2 rounded-sm hover:bg-primary/90 transition-colors"
-                    >
-                      Explore the {displayTag} Topic Hub
+                    <Link href="/" className="hover:text-primary transition-colors duration-200">
+                      Home
                     </Link>
+                    <span className="mx-2" aria-hidden="true">/</span>
+                    <Link href={`/category/${blog?.category}`} className="hover:text-primary transition-colors duration-200">
+                      {blog?.category}
+                    </Link>
+                    <span className="mx-2" aria-hidden="true">/</span>
+                    <span
+                      className="text-muted-foreground truncate max-w-[260px] sm:max-w-[440px]"
+                      title={blog?.title}
+                    >
+                      {blog?.title}
+                    </span>
+                  </nav>
+
+                  {/* Meta row — author + date, minimal */}
+                  <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[11px] tracking-wide text-muted-foreground/70">
+                    {blog?.author?.name && (
+                      <span itemProp="author" className="font-semibold text-foreground/80">
+                        {blog?.author?.name}
+                      </span>
+                    )}
+                    <div className="flex items-center gap-1.5">
+                      <Calendar className="h-3 w-3 opacity-40" aria-hidden="true" />
+                      <time
+                        dateTime={new Date(blog?.createdAt).toISOString()}
+                        itemProp="datePublished"
+                      >
+                        <DateTimeDisplay className="text-xs" type="date">{blog?.createdAt}</DateTimeDisplay>
+                      </time>
+                    </div>
                   </div>
-                )}
-              </div>
 
-              {/* Sidebar: Topic Cloud */}
-              <aside className="flex-shrink-0 space-y-12">
-                <div className="sticky top-24">
-                  <TopicCloud />
+                  {/* AI Summary Section */}
+                  {/* <AiSummarySection blogId={blog?._id} initialSummary={blog?.aiSummary} /> */}
                 </div>
-              </aside>
-            </div>
 
-            {/* Article Footer & Social sharing */}
-            <div className="border-t border-b border-border py-6 mb-12 bg-muted/20">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4">
-                <p className="text-sm font-bold uppercase tracking-widest text-primary border-l-2 border-primary pl-3">
-                  Share this story
-                </p>
+                {/* Main content grid: sidebar on desktop */}
+                <div className="flex flex-col gap-12 mt-4 mb-8">
+                  <div className="flex-grow min-w-0" itemProp="articleBody">
+                    <div className="flex flex-col items-center gap-0">
+                      {blog?.body?.map((block: any, index: number) => (
+                        <BlogContent key={index} block={block} />
+                      ))}
+                    </div>
+                    
+                    {/* Topic Hub CTA at the end of content */}
+                    {displayTag && (
+                      <div className="mt-12 p-6 bg-primary/5 border border-primary/20 rounded-sm">
+                        <h4 className="text-sm font-bold uppercase tracking-widest text-primary mb-2">Dive Deeper</h4>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          Love this story? Explore more in-depth coverage and trending news on <span className="font-bold underline decoration-primary underline-offset-4">{displayTag}</span>.
+                        </p>
+                        <Link 
+                          href={`/topic/${encodeURIComponent(displayTag)}`}
+                          className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest bg-primary text-primary-foreground px-4 py-2 rounded-sm hover:bg-primary/90 transition-colors"
+                        >
+                          Explore the {displayTag} Topic Hub
+                        </Link>
+                      </div>
+                    )}
+                  </div>
 
-                <div className="flex items-center space-x-4">
-                  <button
-                    onClick={handleCopy}
-                    title="Copy Link"
-                    aria-label="Copy article link to clipboard"
-                    className="flex items-center gap-2 bg-background border border-border px-4 py-2 rounded-sm text-sm font-semibold hover:bg-muted transition-colors text-foreground"
-                  >
-                    <Share2 className="h-4 w-4" aria-hidden="true" />
-                    <span>Copy Link</span>
-                  </button>
+                  {/* Sidebar: Topic Cloud */}
+                  <aside className="flex-shrink-0 space-y-12">
+                    <div className="sticky top-24">
+                      <TopicCloud />
+                    </div>
+                  </aside>
                 </div>
-              </div>
-            </div>
 
-            {/* FAQ's section */}
-            {blog?.faqs?.length > 0 &&
-              <section className="mx-auto my-12 p-8 border border-border rounded-sm bg-muted/10">
-                <h3 className="text-xl font-bold font-serif mb-6 border-l-4 border-primary pl-4 text-foreground">Frequently Asked Questions</h3>
-                <FaqSchema faqs={blog?.faqs || []} />
-              </section>}
+                {/* Article Footer & Social sharing */}
+                <div className="border-t border-b border-border py-6 mb-12 bg-muted/20">
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4">
+                    <p className="text-sm font-bold uppercase tracking-widest text-primary border-l-2 border-primary pl-3">
+                      Share this story
+                    </p>
 
-            {/* Related articles */}
-            <section aria-labelledby="related-articles-heading" className="mt-16 mb-12 border-t border-border pt-12">
-              <div className="mb-8 flex items-baseline justify-between">
-                <div>
-                  <h2 className="text-sm font-bold uppercase tracking-widest text-primary mb-2">Read More</h2>
-                  <h3 id="related-articles-heading" className="text-3xl font-bold font-serif text-foreground tracking-tight">Related Articles</h3>
+                    <div className="flex items-center space-x-4">
+                      <button
+                        onClick={handleCopy}
+                        title="Copy Link"
+                        aria-label="Copy article link to clipboard"
+                        className="flex items-center gap-2 bg-background border border-border px-4 py-2 rounded-sm text-sm font-semibold hover:bg-muted transition-colors text-foreground"
+                      >
+                        <Share2 className="h-4 w-4" aria-hidden="true" />
+                        <span>Copy Link</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
+
+                {/* FAQ's section */}
+                {blog?.faqs?.length > 0 &&
+                  <section className="mx-auto my-12 p-8 border border-border rounded-sm bg-muted/10">
+                    <h3 className="text-xl font-bold font-serif mb-6 border-l-4 border-primary pl-4 text-foreground">Frequently Asked Questions</h3>
+                    <FaqSchema faqs={blog?.faqs || []} />
+                  </section>}
+
+                {/* Related articles */}
+                <section aria-labelledby="related-articles-heading" className="mt-16 mb-12 border-t border-border pt-12">
+                  <div className="mb-8 flex items-baseline justify-between">
+                    <div>
+                      <h2 className="text-sm font-bold uppercase tracking-widest text-primary mb-2">Read More</h2>
+                      <h3 id="related-articles-heading" className="text-3xl font-bold font-serif text-foreground tracking-tight">Related Articles</h3>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {relatedPosts && relatedPosts?.map((post: any) => (
+                      <BlogCard variant="editorPick" key={post?._id} blog={post} />
+                    ))}
+                    {relatedPosts?.length === 0 && (
+                      <p className="text-muted-foreground col-span-3 text-center py-8 bg-muted/30 rounded-sm font-serif italic text-lg border border-border">No related articles found matching this topic.</p>
+                    )}
+                  </div>
+                </section>
+              </div>
+            </article>
+          </motion.div>
+        </motion.div>
+
+        {/* AI Assistant Sidebar */}
+        <AnimatePresence>
+          {isChatOpen && (
+            <motion.aside
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 200 }}
+              className="fixed right-0 bottom-0 w-full h-full z-[100] bg-background border-l border-border lg:top-16 sm:lg:top-20 lg:w-[500px] lg:h-[calc(100vh-4rem)] sm:lg:h-[calc(100vh-5rem)] lg:z-[40]"
+            >
+              <AskAiChat 
+                blogId={blog._id} 
+                articleTitle={blog.title} 
+                initialSummary={blog.aiSummary} 
+                onClose={() => setIsChatOpen(false)}
+              />
+            </motion.aside>
+          )}
+        </AnimatePresence>
+
+        {/* Floating Sidebar Toggle Button */}
+        {!isChatOpen && (
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            className="fixed right-8 bottom-8 z-50 flex items-center justify-center"
+          >
+            {/* Pulsing Aura */}
+            <motion.div
+              animate={{ 
+                scale: [1, 1.2, 1],
+                opacity: [0.3, 0.1, 0.3]
+              }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute w-20 h-20 rounded-full bg-violet-500/20 blur-xl pointer-events-none"
+            />
+
+            <motion.button
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsChatOpen(true)}
+              className="relative flex items-center p-3.5 h-12 rounded-full bg-neutral-900 border border-neutral-800 shadow-2xl group overflow-hidden transition-all duration-500 ease-in-out hover:px-5"
+            >
+              {/* Shine effect */}
+              <motion.div
+                animate={{ x: ["-100%", "200%"] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear", delay: 1 }}
+                className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/[0.05] to-transparent -skew-x-12 pointer-events-none"
+              />
+
+              {/* Icon Container */}
+              <motion.div
+                animate={{ 
+                  rotate: [0, 8, -8, 0],
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="relative flex items-center justify-center flex-shrink-0"
+              >
+                <Sparkles className="w-5 h-5 text-gray-100 drop-shadow-[0_0_8px_rgba(167,139,250,0.5)]" />
+              </motion.div>
+
+              {/* Text - Hidden by default, shown on hover */}
+              <div className="flex flex-col items-start overflow-hidden whitespace-nowrap w-0 opacity-0 group-hover:w-24 group-hover:opacity-100 group-hover:ml-3 transition-all duration-500 ease-in-out">
+                <span className="text-[10px] font-bold text-white tracking-widest uppercase leading-none">Ask AI</span>
+                <span className="text-[9px] text-neutral-400 font-medium leading-none mt-1">Direct Insights</span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {relatedPosts && relatedPosts?.map((post: any) => (
-                  <BlogCard variant="editorPick" key={post?._id} blog={post} />
-                ))}
-                {relatedPosts?.length === 0 && (
-                  <p className="text-muted-foreground col-span-3 text-center py-8 bg-muted/30 rounded-sm font-serif italic text-lg border border-border">No related articles found matching this topic.</p>
-                )}
-              </div>
-            </section>
-          </div>
-        </article>
-      </motion.div>
+              {/* Hover highlight border */}
+              <div className="absolute inset-0 rounded-2xl border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </motion.button>
+          </motion.div>
+        )}
+      </div>
+
+      {/* Sidebar Toggle Global Styles for Footer */}
+      {isChatOpen && (
+        <style jsx global>{`
+          footer {
+            width: calc(100% - 500px) !important;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+          }
+          @media (max-width: 1024px) {
+            footer {
+              width: 100% !important;
+            }
+          }
+        `}</style>
+      )}
     </Layout>
   );
 };
