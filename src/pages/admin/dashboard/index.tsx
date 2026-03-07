@@ -8,6 +8,7 @@ import Contributor from "@/components/admin/section/Contributor";
 import Settings from "@/components/admin/section/Settings";
 import TaskList from "@/components/admin/section/TaskList";
 import Automation from "@/components/admin/section/Automation";
+import ContactMessages from "@/components/admin/section/ContactMessages";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -55,6 +56,9 @@ export default function AdminDashboard() {
 
       case "automation":
         return <Automation />;
+      
+      case "contact":
+        return <ContactMessages />;
 
       default:
         return null;
@@ -62,7 +66,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="w-full h-dvh overflow-y-auto flex">
+    <div className="w-full h-dvh overflow-y-auto flex gap-6">
       <AdminSideBar activeTab={activeTab} setActiveTab={setActiveTab} />
       <div className="flex-1 h-dvh overflow-y-auto p-4">{renderContent()}</div>
     </div>
