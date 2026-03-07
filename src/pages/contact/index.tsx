@@ -49,9 +49,9 @@ const CONTACT_DETAILS: ContactDetail[] = [
 ];
 
 const SOCIAL_LINKS: SocialLinkItem[] = [
-  // { icon: Twitter, label: "Twitter", href: "#" },
-  { icon: Facebook, label: "Facebook", href: "https://www.facebook.com/share/17xd6c1Uc9/" },
+  { icon: Facebook, label: "Facebook", href: "https://www.facebook.com/profile.php?id=61582733362555" },
   { icon: Instagram, label: "Instagram", href: "https://www.instagram.com/the_khabar_express?igsh=a2V5eWYxazJmMWl6" },
+  // { icon: Twitter, label: "Twitter", href: "#" },
   // { icon: Linkedin, label: "LinkedIn", href: "#" },
 ];
 
