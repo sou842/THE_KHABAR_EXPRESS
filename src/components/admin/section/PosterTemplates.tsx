@@ -95,7 +95,7 @@ export const TemplateRenderer: React.FC<TemplateRendererProps> = ({ templateId, 
                   </div>
                   <div className="flex justify-center flex-col items-center gap-3 text-white">
                      <ChevronRight className="w-5 h-5 animate-bounce rotate-90" />
-                     <span className="text-base text-nowrap font-bold tracking-[0.3em] uppercase">Swipe Up to Read</span>
+                     <span className="text-base text-nowrap font-bold tracking-[0.3em] uppercase">Read</span>
                   </div>
                </div>
             </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Plus, Search, X, CheckCircle, XCircle, FileText, Loader2, Layers, Zap, Trash2 } from "lucide-react";
+import { Plus, Search, X, CheckCircle, XCircle, FileText, Loader2, Layers, Zap, Trash2, Image as ImageIcon } from "lucide-react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { getter, putter } from "@/lib/helper";
@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/Skeleton";
 import Pagination from "@/components/Pagination";
 import { motion, AnimatePresence } from 'framer-motion';
 import SortDropdown from '@/components/SortDropdown';
+import Link from "next/link";
 
 const statusConfig: Record<string, { label: string; color: string; bg: string; dot: string }> = {
     approved: {
@@ -19,9 +20,9 @@ const statusConfig: Record<string, { label: string; color: string; bg: string; d
     },
     pending: {
         label: 'Pending',
-        color: 'text-orange-500 dark:text-orange-500',
+        color: 'text-orange-400 dark:text-orange-400',
         bg: 'bg-orange-50 dark:bg-orange-200',
-        dot: 'bg-orange-500',
+        dot: 'bg-orange-400',
     },
     rejected: {
         label: 'Rejected',
@@ -43,6 +44,7 @@ const useDebounce = (value: string, delay: number) => {
 const HR = () => <div className="h-px bg-border/40 w-full" />;
 
 const BlogRow = ({ blog, index, onAction, mutate }: { blog: any; index: number; onAction: (id: string, action: 'approved' | 'rejected' | 'deleted') => Promise<void>; mutate: any }) => {
+    const router = useRouter();
     const status = statusConfig[blog?.status] ?? statusConfig.rejected;
     const [loading, setLoading] = useState<'approved' | 'rejected' | 'deleted' | null>(null);
 
@@ -81,7 +83,7 @@ const BlogRow = ({ blog, index, onAction, mutate }: { blog: any; index: number; 
                 </div>
 
                 {/* Main content */}
-                <div className="flex-1 min-w-0">
+                <Link href={`/blog/${blog?.url}`} className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                         {blog?.category && (
                             <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-primary/70">
@@ -102,14 +104,14 @@ const BlogRow = ({ blog, index, onAction, mutate }: { blog: any; index: number; 
                             By {blog?.author}
                         </p>
                     )}
-                </div>
+                </Link>
             </div>
 
             {/* Right: views + status + action */}
             <div className="flex items-center justify-between md:justify-end gap-4 shrink-0 mt-3 md:mt-0 pt-3 md:pt-0 border-t md:border-none border-border/30">
                 <div className="flex items-center gap-4 md:gap-5 mr-auto md:mr-0">
                     <div className="min-w-[80px] flex md:justify-center">
-                        <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full border ${status?.bg} ${status?.color}`}>
+                        <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full ${status?.bg} ${status?.color}`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${status?.dot}`} />
                             {status?.label}
                         </span>
@@ -119,6 +121,13 @@ const BlogRow = ({ blog, index, onAction, mutate }: { blog: any; index: number; 
                 <div className="hidden md:block h-8 w-px bg-border/30 ml-2" />
 
                 <div className="flex items-center justify-center gap-2 min-w-[200px]">
+                    <button
+                        onClick={() => router.push({ query: { ...router.query, tab: 'automation', blogId: blog.url } }, undefined, { shallow: true })}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-primary/80 text-gray-100 border border-primary/20 hover:bg-primary/70 transition-colors"
+                        title="Move to Image Lab"
+                    >
+                        # Social
+                    </button>
                     {canApprove && (
                         <button 
                             disabled={!!loading}
@@ -297,8 +306,8 @@ const Blogs = () => {
                     <span className="flex-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground/70">
                         Article Details
                     </span>
-                    <div className="flex items-center justify-end gap-5 shrink-0 pr-2 min-w-[325px]">
-                        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/70 w-[80px] text-center">
+                    <div className="flex items-center justify-between gap-5 shrink-0 pr-2 min-w-[380px]">
+                        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/70 w-[80px] text-start">
                             Status
                         </span>
                         <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/70 w-[200px] text-center ml-2">

@@ -3,12 +3,23 @@ import { Send, Bot, CheckCircle2, AlertCircle, Info, ExternalLink } from 'lucide
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import SearchBlogs from './PosterController'; // Reusing the blog search logic
+import { useEffect } from 'react';
 
-const TelegramAutomation = () => {
+interface TelegramAutomationProps {
+    initialBlog?: any;
+}
+
+const TelegramAutomation: React.FC<TelegramAutomationProps> = ({ initialBlog }) => {
     const [selectedBlog, setSelectedBlog] = useState<any>(null);
     const [channelId, setChannelId] = useState('@the_khabar_express_news');
     const [isSending, setIsSending] = useState(false);
     const [customMessage, setCustomMessage] = useState('');
+
+    useEffect(() => {
+        if (initialBlog) {
+            setSelectedBlog(initialBlog);
+        }
+    }, [initialBlog]);
 
     const BOT_TOKEN = '8622451212:AAFGMHRiifGjwgJIcSYon_wyNxT9KRim5qY';
 

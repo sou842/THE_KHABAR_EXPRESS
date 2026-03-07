@@ -149,7 +149,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   }
 
+  // ── POST /upload_image ─────────────────────────────────────────────────────
+  if (method === 'POST' && action === 'upload_image') {
+    const { image_data, image_mime_type } = body || {};
+    if (!image_data) return apiError(res, 400, 'image_data is required', 'MISSING_IMAGE');
+
+    try {
+      const base64String = image_data.includes(',') ? image_data.split(',')[1] : image_data;
+      const mimeType = image_mime_type || 'image/jpeg';
+
+      const uploaded = await uploadImage(base64String, mimeType);
+      if (uploaded) {
+        return res.status(200).json({ success: true, url: uploaded.url, provider: uploaded.provider });
+      }
+      return apiError(res, 502, 'Could not upload image. Check your Cloudinary/Imgur/ImgBB settings.', 'IMAGE_UPLOAD_FAILED');
+    } catch (e: any) {
+      console.error('[buffer] upload_image exception:', e.message);
+      return apiError(res, 500, 'Image upload failed. Please try again.', 'INTERNAL_ERROR');
+    }
+  }
+
   // ── POST /create_update ────────────────────────────────────────────────────
+
   if (method === 'POST' && action === 'create_update') {
     // Validate required fields upfront
     const { profile_id, text, image_url, image_data, image_mime_type } = body || {};
@@ -265,7 +286,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
         return res.status(200).json({
           success: true,
-          message: 'Successfully shared to Instagram!',
+          message: 'Successfully Published!',
           postId: post.id,
           status: post.status,
         });

@@ -1,12 +1,11 @@
-import { FC, useState } from 'react';
-import { Bot, Zap, Sparkles, Activity, Plus, Play, Pause, Trash2, Settings2, Image as ImageIcon, Send, Instagram } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { FC, useState, useEffect } from 'react';
+import { Image as ImageIcon, Send, Instagram, Twitter } from 'lucide-react';
+import { useRouter } from 'next/router';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ImagePosterGenerator from './ImagePosterGenerator';
 import TelegramAutomation from './TelegramAutomation';
 import InstagramAutomation from './InstagramAutomation';
+import XAutomation from './XAutomation';
 
 interface AutomationHeaderProps {
   activeView: string;
@@ -26,50 +25,123 @@ const AutomationHeader = ({ activeView, onToggle }: AutomationHeaderProps) => (
     </div>
 
     <div className="flex items-center gap-3">
-       <Tabs value={activeView} onValueChange={onToggle} className="bg-muted/40 p-1 rounded-xl border border-border/30">
-          <TabsList className="bg-transparent border-0 h-9">
-             <TabsTrigger value="generator" className="text-xs rounded-lg gap-2 data-[state=active]:bg-card">
-                <ImageIcon className="w-3.5 h-3.5" />
-                Image Lab
-             </TabsTrigger>
-             <TabsTrigger value="telegram" className="text-xs rounded-lg gap-2 data-[state=active]:bg-card">
-                <Send className="w-3.5 h-3.5" />
-                Telegram
-             </TabsTrigger>
-             <TabsTrigger value="instagram" className="text-xs rounded-lg gap-2 data-[state=active]:bg-card">
-                <Instagram className="w-3.5 h-3.5" />
-                Instagram
-             </TabsTrigger>
-          </TabsList>
-       </Tabs>
+      <Tabs value={activeView} onValueChange={onToggle} className="bg-muted/40 p-1 rounded-xl border border-border/30">
+        <TabsList className="bg-transparent border-0 h-9">
+          <TabsTrigger value="generator" className="text-xs rounded-lg gap-2 data-[state=active]:bg-card">
+            <ImageIcon className="w-3.5 h-3.5" />
+            Image Lab
+          </TabsTrigger>
+          <TabsTrigger value="telegram" className="text-xs rounded-lg gap-2 data-[state=active]:bg-card">
+            <Send className="w-3.5 h-3.5" />
+            Telegram
+          </TabsTrigger>
+          <TabsTrigger value="instagram" className="text-xs rounded-lg gap-2 data-[state=active]:bg-card">
+            <Instagram className="w-3.5 h-3.5" />
+            Instagram
+          </TabsTrigger>
+          <TabsTrigger value="x" className="text-xs rounded-lg gap-2 data-[state=active]:bg-card">
+            <Twitter className="w-3.5 h-3.5" />
+            Twitter
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
     </div>
   </header>
 );
 
 
 const Automation: FC = () => {
+  const router = useRouter();
+  const { blogId, tab } = router.query;
   const [activeTab, setActiveTab] = useState('generator'); // default to generator
   const [sharedImageAsset, setSharedImageAsset] = useState<string | null>(null);
   const [sharedBlog, setSharedBlog] = useState<any | null>(null);
+  const [sharedImageUrl, setSharedImageUrl] = useState<string | null>(null);
+  const [fetchedBlog, setFetchedBlog] = useState<any | null>(null);
 
-  const handleShareToInstagram = (image: string, blog: any) => {
-    setSharedImageAsset(image);
+  useEffect(() => {
+    if (tab && typeof tab === 'string' && ['generator', 'telegram', 'instagram', 'x'].includes(tab)) {
+      setActiveTab(tab);
+    }
+  }, [tab]);
+
+  useEffect(() => {
+    if (blogId && !fetchedBlog) {
+      const fetchBlog = async () => {
+        try {
+          const res = await fetch(`/api/blogs/${blogId}`);
+          const result = await res.json();
+          if (result.success && result.data) {
+            setFetchedBlog({
+              ...result.data,
+              thumbnail: result.data?.thumbnail?.image || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=1000',
+              description: result.data?.thumbnail?.description || result.data?.subtitle
+            });
+          }
+        } catch (error) {
+          console.error('Failed to fetch blog for Automation:', error);
+        }
+      };
+      fetchBlog();
+    }
+  }, [blogId]);
+
+  // Upload image to CDN once and cache the URL for reuse across channels
+  const uploadSharedImage = async (base64: string): Promise<string | null> => {
+    if (sharedImageUrl && sharedImageAsset === base64) return sharedImageUrl; // same image, already uploaded
+    try {
+      const res = await fetch('/api/automation/buffer?action=upload_image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image_data: base64, image_mime_type: 'image/jpeg' }),
+      });
+      const data = await res.json();
+      if (data.success && data.url) {
+        setSharedImageAsset(base64);
+        setSharedImageUrl(data.url);
+        return data.url;
+      }
+    } catch (e) {
+      console.error('[Automation] CDN upload failed:', e);
+    }
+    return null;
+  };
+
+  const handleShareToInstagram = async (image: string, blog: any) => {
+    const cdnUrl = await uploadSharedImage(image);
     setSharedBlog(blog);
+    // Pass cdnUrl – if upload failed fall back to raw base64
+    setSharedImageUrl(cdnUrl);
+    setSharedImageAsset(cdnUrl ?? image);
     setActiveTab('instagram');
+  };
+
+  const handleShareToX = async (image: string, blog: any) => {
+    const cdnUrl = await uploadSharedImage(image);
+    setSharedBlog(blog);
+    setSharedImageUrl(cdnUrl);
+    setSharedImageAsset(cdnUrl ?? image);
+    setActiveTab('x');
   };
 
   return (
     <div className="max-w-[1440px] mx-auto pb-20 px-2 lg:px-4">
       <AutomationHeader activeView={activeTab} onToggle={setActiveTab} />
       {activeTab === 'telegram' ? (
-        <TelegramAutomation />
+        <TelegramAutomation initialBlog={fetchedBlog} />
       ) : activeTab === 'instagram' ? (
-        <InstagramAutomation 
-          initialImageAsset={sharedImageAsset} 
-          initialBlog={sharedBlog} 
+        <InstagramAutomation
+          initialImageAsset={sharedImageUrl ?? sharedImageAsset}
+          initialBlog={sharedBlog || fetchedBlog}
         />
+      ) : activeTab === 'x' ? (
+        <XAutomation initialBlog={sharedBlog || fetchedBlog} initialImageUrl={sharedImageUrl} />
       ) : (
-        <ImagePosterGenerator onShareToInstagram={handleShareToInstagram} />
+        <ImagePosterGenerator
+          onShareToInstagram={handleShareToInstagram}
+          onShareToX={handleShareToX}
+          initialBlog={fetchedBlog}
+        />
       )}
     </div>
   );

@@ -1,5 +1,5 @@
-import React, { useState, useRef, FC, RefObject } from 'react';
-import { Bot, Image as ImageIcon, Download, Layout, Sparkles, X, Instagram } from 'lucide-react';
+import React, { useState, useRef, FC, RefObject, useEffect } from 'react';
+import { Bot, Image as ImageIcon, Download, Layout, Sparkles, X, Instagram, Twitter } from 'lucide-react';
 import { toPng, toJpeg } from 'html-to-image';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -35,14 +35,24 @@ const PosterPreview: FC<TemplateRendererProps> = ({ blog, templateId, previewRef
 
 interface ImagePosterGeneratorProps {
   onShareToInstagram?: (image: string, blog: any) => void;
+  onShareToX?: (image: string, blog: any) => void;
+  initialBlog?: any;
 }
 
-const ImagePosterGenerator: FC<ImagePosterGeneratorProps> = ({ onShareToInstagram }) => {
+const ImagePosterGenerator: FC<ImagePosterGeneratorProps> = ({ onShareToInstagram, onShareToX, initialBlog }) => {
   const [selectedBlog, setSelectedBlog] = useState<any | null>(null);
+  
+  useEffect(() => {
+    if (initialBlog) {
+      setSelectedBlog(initialBlog);
+    }
+  }, [initialBlog]);
+
   const [currentTemplate, setCurrentTemplate] = useState('breaking-news');
   const previewRef = useRef<HTMLDivElement>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [isXSharing, setIsXSharing] = useState(false);
 
   const handleDownload = async () => {
     if (!previewRef.current || !selectedBlog) return;
@@ -112,6 +122,32 @@ const ImagePosterGenerator: FC<ImagePosterGeneratorProps> = ({ onShareToInstagra
     }
   };
 
+  const handleShareToX = async () => {
+    if (!previewRef.current || !selectedBlog || !onShareToX) return;
+    setIsXSharing(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      const dataUrl = await toJpeg(previewRef.current, {
+        quality: 0.8,
+        pixelRatio: 2,
+        cacheBust: true,
+        includeQueryParams: true,
+        skipFonts: true,
+        style: { fontFamily: 'sans-serif' },
+      });
+      if (dataUrl) {
+        onShareToX(dataUrl, selectedBlog);
+      } else {
+        throw new Error('Failed to generate image');
+      }
+    } catch (err: any) {
+      console.error('Share to X Error:', err);
+      toast.error(`Share failed: ${err.message || 'Possible CORS issue'}`);
+    } finally {
+      setIsXSharing(false);
+    }
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex gap-8 items-start">
@@ -159,11 +195,19 @@ const ImagePosterGenerator: FC<ImagePosterGeneratorProps> = ({ onShareToInstagra
                  <div className="flex gap-2">
                    <Button 
                      onClick={handleShare} 
-                     disabled={!selectedBlog || isGenerating || isSharing}
+                     disabled={!selectedBlog || isGenerating || isSharing || isXSharing}
                      className="gap-2 rounded-xl h-9 text-xs bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 focus:from-purple-600 focus:to-pink-600 text-white border-0"
                    >
                      <Instagram className="w-3.5 h-3.5" />
                      {isSharing ? 'Preparing...' : 'Share to Instagram'}
+                   </Button>
+                   <Button
+                     onClick={handleShareToX}
+                     disabled={!selectedBlog || isGenerating || isSharing || isXSharing || !onShareToX}
+                     className="gap-2 rounded-xl h-9 text-xs bg-black hover:bg-black/80 text-white border-0"
+                   >
+                     <Twitter className="w-3.5 h-3.5" />
+                     {isXSharing ? 'Preparing...' : 'Share to X'}
                    </Button>
                    <Button 
                      onClick={handleDownload} 
