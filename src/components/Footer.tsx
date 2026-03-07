@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Logo from "./Logo";
+import { Facebook, Instagram, Twitter, Send } from "lucide-react";
 
 const QUICK_LINKS = [
   { label: "Home", href: "/" },
@@ -36,6 +37,20 @@ const Footer: React.FC = () => {
               Stay informed with the latest news across various domains, from
               technology to health, finance to entertainment.
             </p>
+            <div className="flex items-center gap-4 pt-2">
+              <a href="https://www.facebook.com/profile.php?id=61582733362555" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a href="https://www.instagram.com/the_khabar_express?igsh=a2V5eWYxazJmMWl6" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a href="https://x.com/khabar_express_" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                <Twitter className="w-5 h-5" />
+              </a>
+              <a href="https://t.me/the_khabar_express_news" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                <Send className="w-5 h-5" />
+              </a>
+            </div>
           </div>
 
           {/* Quick links */}

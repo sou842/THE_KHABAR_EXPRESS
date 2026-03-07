@@ -51,8 +51,8 @@ const CONTACT_DETAILS: ContactDetail[] = [
 const SOCIAL_LINKS: SocialLinkItem[] = [
   { icon: Facebook, label: "Facebook", href: "https://www.facebook.com/profile.php?id=61582733362555" },
   { icon: Instagram, label: "Instagram", href: "https://www.instagram.com/the_khabar_express?igsh=a2V5eWYxazJmMWl6" },
-  // { icon: Twitter, label: "Twitter", href: "#" },
-  // { icon: Linkedin, label: "LinkedIn", href: "#" },
+  { icon: Twitter, label: "Twitter", href: "https://x.com/khabar_express_" },
+  { icon: Send, label: "Telegram", href: "https://t.me/the_khabar_express_news" },
 ];
 
 const ContactInfoItem = ({ icon: Icon, label, value, href }: ContactDetail) => (
@@ -201,7 +201,7 @@ export default function ContactUs() {
         </section>
 
         {/* ── Main Content ── */}
-        <main className="max-w-7xl mx-auto px-6 md:px-16 py-16 md:py-24">
+        <main className="max-w-7xl mx-auto px-2 md:px-16 py-16 md:py-24">
           <div className="flex flex-col-reverse lg:flex-row gap-10 lg:gap-12">
 
             {/* ── Left Column: Info ── */}
@@ -266,7 +266,7 @@ export default function ContactUs() {
                     <p className="font-sans text-xs tracking-[0.25em] uppercase text-zinc-400 mb-2">
                       Secure Dispatch
                     </p>
-                    <h2 id="form-heading" className="text-3xl md:text-4xl font-black uppercase tracking-tight leading-none text-zinc-900">
+                    <h2 id="form-heading" className="text-2xl md:text-3xl lg:text-4xl font-black uppercase tracking-tight leading-none text-zinc-900">
                       Editor Inquiry
                     </h2>
                   </div>
