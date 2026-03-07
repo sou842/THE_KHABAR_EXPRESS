@@ -166,11 +166,13 @@ const BlogRow = ({ blog, index, onAction, mutate }: { blog: any; index: number; 
 
 const Blogs = () => {
     const router = useRouter();
-    const [page, setPage] = useState(1);
+    const page = Number(router.query.page) || 1;
+    const sort = (router.query.sort as 'asc' | 'desc') || 'desc';
+    const activeTab = (router.query.state as string) || 'pending';
+
     const [search, setSearch] = useState("");
-    const [sort, setSort] = useState<'asc' | 'desc'>('desc');
+    const [isInitialized, setIsInitialized] = useState(false);
     const debouncedSearchTerm = useDebounce(search, 500);
-    const [activeTab, setActiveTab] = useState('pending');
 
     const tabs = [
         { id: 'pending', label: 'Pending' },
@@ -178,9 +180,41 @@ const Blogs = () => {
         { id: 'rejected', label: 'Rejected' },
     ];
 
+    // Initialize search from URL once
     useEffect(() => {
-        setPage(1);
-    }, [debouncedSearchTerm, activeTab, sort]);
+        if (router.isReady && !isInitialized) {
+            if (router.query.search) {
+                setSearch(router.query.search as string);
+            }
+            setIsInitialized(true);
+        }
+    }, [router.isReady, isInitialized, router.query.search]);
+
+    // Keep URL synced with debouncedSearchTerm
+    useEffect(() => {
+        if (!isInitialized) return;
+        const currentSearch = (router.query.search as string) || "";
+        if (debouncedSearchTerm !== currentSearch) {
+            const { search: _prevSearch, ...restQuery } = router.query;
+            const newQuery: Record<string, string | string[]> = { ...restQuery, page: '1' };
+            if (debouncedSearchTerm) {
+                newQuery.search = debouncedSearchTerm;
+            }
+            router.push({ query: newQuery }, undefined, { shallow: true });
+        }
+    }, [debouncedSearchTerm, isInitialized, router]);
+
+    const setPage = (newPage: number) => {
+        router.push({ query: { ...router.query, page: String(newPage) } }, undefined, { shallow: true });
+    };
+
+    const setSort = (newSort: 'asc' | 'desc') => {
+        router.push({ query: { ...router.query, sort: newSort, page: '1' } }, undefined, { shallow: true });
+    };
+
+    const setActiveTab = (newState: string) => {
+        router.push({ query: { ...router.query, state: newState, page: '1' } }, undefined, { shallow: true });
+    };
 
     const limit = 10;
     
