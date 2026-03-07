@@ -9,6 +9,7 @@ import {
   List,
   Bot,
   PanelLeftClose,
+  Mail,
 } from "lucide-react";
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
@@ -26,6 +27,7 @@ const menuItems = [
   { label: "Users", value: "users", icon: Users },
   { label: "Contributor", value: "contributor", icon: HeartHandshake },
   { label: "Settings", value: "settings", icon: Settings },
+  { label: "Contact", value: "contact", icon: Mail },
   { label: "Task List", value: "tasklist", icon: List },
 ] as const;
 
