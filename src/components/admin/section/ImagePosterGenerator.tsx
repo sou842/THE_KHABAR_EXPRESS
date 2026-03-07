@@ -177,7 +177,7 @@ const ImagePosterGenerator: FC<ImagePosterGeneratorProps> = ({ onShareToInstagra
                  </div>
               </div>
 
-              <div className="relative group p-4 bg-muted/30 border border-border/40 rounded-2xl">
+              <div className="!w-[840px] !h-auto relative group p-4 bg-muted/30 border border-border/40 rounded-2xl">
                 <PosterPreview 
                   blog={selectedBlog} 
                   templateId={currentTemplate} 
