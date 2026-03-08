@@ -4,6 +4,29 @@ import { IBlog } from "@/models/blog.model";
 import { motion } from "framer-motion";
 import { Eye, ArrowUpRight } from "lucide-react";
 import DateTimeDisplay from "@/components/DateTimeDisplay";
+import Image from "next/image";
+import { useState, useEffect } from "react";
+
+const FallbackImage = ({ src, alt, className, priority, fallbackSrc }: { src: string; alt: string; className?: string; priority?: boolean; fallbackSrc: string }) => {
+  const [imgSrc, setImgSrc] = useState(src);
+
+  useEffect(() => {
+    setImgSrc(src);
+  }, [src]);
+
+  return (
+    <Image 
+      src={imgSrc} 
+      alt={alt} 
+      fill
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      className={`object-cover ${className || ""}`}
+      priority={priority}
+      onError={() => setImgSrc(fallbackSrc)}
+    />
+  );
+};
+
 
 interface BlogCardProps {
   blog: IBlog;
@@ -57,15 +80,11 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
             <Link href={`/blog/${blog.url}`} className="group block">
               <div className="bg-muted aspect-video rounded-sm overflow-hidden group-hover:opacity-75 transition-opacity relative">
                 {getImageUrl(blog) ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img 
+                  <FallbackImage 
                     src={getImageUrl(blog)!} 
                     alt={blog.title} 
-                    className="w-full h-full object-cover" 
-                    onError={(e) => {
-                      e.currentTarget.src = "https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop";
-                      e.currentTarget.onerror = null;
-                    }}
+                    priority={true}
+                    fallbackSrc="https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop"
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20" />
@@ -106,17 +125,13 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
       return (
         <Link href={`/blog/${blog.url}`} className="group flex gap-6 pb-6 border-b border-border last:border-0 hover:opacity-75 transition-opacity">
           <div className="hidden sm:block flex-shrink-0 w-24 md:w-32">
-            <div className="w-full aspect-square bg-muted rounded-sm overflow-hidden">
+            <div className="relative w-full aspect-square bg-muted rounded-sm overflow-hidden">
               {getImageUrl(blog) && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img 
+                <FallbackImage 
                   src={getImageUrl(blog)!} 
                   alt={blog.title} 
-                  className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" 
-                  onError={(e) => {
-                    e.currentTarget.src = "https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop";
-                    e.currentTarget.onerror = null;
-                  }}
+                  className="grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" 
+                  fallbackSrc="https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop"
                 />
               )}
             </div>
@@ -151,15 +166,11 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
         <Link href={`/blog/${blog?.url}`} className="group">
           <div className="bg-muted aspect-video rounded-sm overflow-hidden mb-4 group-hover:opacity-75 transition-opacity relative">
             {getImageUrl(blog) ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img 
+              <FallbackImage 
                 src={getImageUrl(blog)!} 
-                alt={blog?.title} 
-                className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all" 
-                onError={(e) => {
-                  e.currentTarget.src = "https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop";
-                  e.currentTarget.onerror = null;
-                }}
+                alt={blog?.title || "Blog cover image"} 
+                className="grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all" 
+                fallbackSrc="https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-primary/10 to-accent/10" />
@@ -208,17 +219,13 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
             <div className="absolute -top-4 -left-4 w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-lg z-10 shadow-md">
               {index + 1}
             </div>
-            <div className="bg-muted aspect-video rounded-sm overflow-hidden">
+            <div className="relative bg-muted aspect-video rounded-sm overflow-hidden">
               {getImageUrl(blog) ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img 
+                <FallbackImage 
                   src={getImageUrl(blog)!} 
-                  alt={blog?.title} 
-                  className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all" 
-                  onError={(e) => {
-                    e.currentTarget.src = "https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop";
-                    e.currentTarget.onerror = null;
-                  }}
+                  alt={blog?.title || "Blog cover image"} 
+                  className="grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all" 
+                  fallbackSrc="https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop"
                 />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-secondary/20 to-primary/20" />
@@ -310,14 +317,11 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
 
               {/* Thumbnail */}
               <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-border/30 bg-muted shadow-sm">
-                {getImageUrl(blog) && <img
+                {getImageUrl(blog) && <FallbackImage
                   src={getImageUrl(blog)!}
-                  alt=""
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                  onError={(e) => {
-                    e.currentTarget.src = 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=200';
-                    e.currentTarget.onerror = null;
-                  }}
+                  alt="Thumbnail"
+                  className="group-hover:scale-105 transition-transform duration-500 ease-out"
+                  fallbackSrc="https://images.unsplash.com/photo-1495020689067-958852a7765e?w=200"
                 />}
               </div>
 
