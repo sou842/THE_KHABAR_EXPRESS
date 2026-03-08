@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import AdminSideBar from "@/components/admin/AdminSideBar";
 import Overview from "@/components/admin/section/Overview";
 import Blogs from "@/components/admin/section/Blogs";
+import AutoBlogger from "@/components/admin/section/AutoBlogger";
 import UsersPage from "@/components/admin/section/Users";
 import Contributor from "@/components/admin/section/Contributor";
 import Settings from "@/components/admin/section/Settings";
@@ -41,6 +42,9 @@ export default function AdminDashboard() {
 
       case "blogs":
         return <Blogs />;
+
+      case "auto-blogger":
+        return <AutoBlogger />;
 
       case "users":
         return <UsersPage />;
