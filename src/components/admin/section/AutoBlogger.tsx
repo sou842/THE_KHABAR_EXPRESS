@@ -110,6 +110,20 @@ The JSON must be safe for direct database insertion and production use.
 
 ---
 
+CATEGORY CONSTRAINT:
+Category MUST be one of:
+- "technology"
+- "food"
+- "politics"
+- "business"
+- "science"
+- "health"
+- "entertainment"
+- "sports"
+- "geopolitics"
+
+---
+
 HARD FAIL CONDITIONS:
 - Any text outside JSON → FAIL
 - Invalid JSON syntax → FAIL
