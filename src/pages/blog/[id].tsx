@@ -133,7 +133,7 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
                   <div className="flex-grow min-w-0" itemProp="articleBody">
                     <div className="flex flex-col items-center gap-0">
                       {blog?.body?.map((block: any, index: number) => (
-                        <BlogContent key={index} block={block} />
+                        <BlogContent key={index} block={block} isFirst={index === 0} />
                       ))}
                     </div>
                     

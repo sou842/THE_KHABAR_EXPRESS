@@ -1,7 +1,34 @@
-import { FC, Fragment, Suspense } from "react";
-import { CopyBlock, dracula } from "react-code-blocks";
+import { FC, Fragment, Suspense, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { getRandomFallbackImage } from "@/lib/blogUtils";
+
+const DynamicCodeBlock = dynamic(() => import("./DynamicCodeBlock"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-32 bg-muted/30 border border-border rounded-sm animate-pulse flex items-center justify-center">
+      <span className="text-sm font-medium uppercase tracking-widest text-muted-foreground">Loading code...</span>
+    </div>
+  ),
+});
+
+const FallbackImageInline = ({ src, alt, className, priority }: { src: string; alt: string; className?: string; priority?: boolean }) => {
+  const [imgSrc, setImgSrc] = useState(src);
+  useEffect(() => { setImgSrc(src); }, [src]);
+  return (
+    <Image 
+      src={imgSrc} 
+      alt={alt} 
+      width={1200}
+      height={675}
+      sizes="(max-width: 1200px) 100vw, 1200px"
+      className={`object-cover ${className || ""}`}
+      style={{ width: '100%', height: 'auto' }}
+      priority={priority}
+      onError={() => setImgSrc(getRandomFallbackImage())}
+    />
+  );
+};
 
 const ReactPlayer = dynamic(() => import("react-player/youtube"), {
   ssr: false,
@@ -12,7 +39,7 @@ const ReactPlayer = dynamic(() => import("react-player/youtube"), {
   ),
 });
 
-export const BlogContent: FC<{ block: any }> = ({ block }) => {
+export const BlogContent: FC<{ block: any; isFirst?: boolean }> = ({ block, isFirst = false }) => {
   if (!block || typeof block !== "object") {
     return null;
   }
@@ -132,18 +159,13 @@ export const BlogContent: FC<{ block: any }> = ({ block }) => {
                   itemScope
                   itemType="https://schema.org/ImageObject"
                 >
-                  <img
+                  <FallbackImageInline
                     className={`w-full h-auto object-cover ${
                       !stretched && !withBackground ? "rounded-sm" : ""
                     } ${withBorder ? "border border-border p-1" : ""}`}
-                    loading="lazy"
+                    priority={isFirst}
                     src={imageUrl}
                     alt={safelyAccessData(block, "data.caption", "Article image")}
-                    itemProp="contentUrl"
-                    onError={(e) => {
-                      e.currentTarget.src = getRandomFallbackImage();
-                      e.currentTarget.onerror = null;
-                    }}
                   />
                   {safelyAccessData(block, "data.caption") && (
                     <figcaption
@@ -241,12 +263,9 @@ export const BlogContent: FC<{ block: any }> = ({ block }) => {
                   role="region"
                   aria-label="Code block"
                 >
-                  <CopyBlock
-                    text={safelyAccessData(block, codeProp, "// No code provided")}
+                  <DynamicCodeBlock
+                    code={safelyAccessData(block, codeProp, "// No code provided")}
                     language={safelyAccessData(block, "data.language", defaultLang)}
-                    showLineNumbers={false}
-                    codeBlock={true}
-                    theme={dracula}
                   />
                 </div>
               );
