@@ -39,7 +39,7 @@ const ReactPlayer = dynamic(() => import("react-player/youtube"), {
   ),
 });
 
-export const BlogContent: FC<{ block: any; isFirst?: boolean }> = ({ block, isFirst = false }) => {
+export const BlogContent: FC<{ block: any; isPriorityImage?: boolean }> = ({ block, isPriorityImage = false }) => {
   if (!block || typeof block !== "object") {
     return null;
   }
@@ -163,7 +163,7 @@ export const BlogContent: FC<{ block: any; isFirst?: boolean }> = ({ block, isFi
                     className={`w-full h-auto object-cover ${
                       !stretched && !withBackground ? "rounded-sm" : ""
                     } ${withBorder ? "border border-border p-1" : ""}`}
-                    priority={isFirst}
+                    priority={isPriorityImage}
                     src={imageUrl}
                     alt={safelyAccessData(block, "data.caption", "Article image")}
                   />
