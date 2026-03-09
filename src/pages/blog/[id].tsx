@@ -14,7 +14,11 @@ import { BlogContent } from "@/components/BlogContent";
 import TopicCloud from "@/components/TopicCloud";
 import FaqSchema, { IFaqItem } from "@/components/BlogEditor/FaqSchema";
 import AiSummarySection from "@/components/AI/AiSummarySection";
-import AskAiChat from "@/components/AI/AskAiChat";
+import dynamic from "next/dynamic";
+
+const AskAiChat = dynamic(() => import("@/components/AI/AskAiChat"), {
+  ssr: false,
+});
 
 interface BlogPost {
   _id: string;
@@ -132,9 +136,19 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
                 <div className="flex flex-col gap-12 mt-4 mb-8">
                   <div className="flex-grow min-w-0" itemProp="articleBody">
                     <div className="flex flex-col items-center gap-0">
-                      {blog?.body?.map((block: any, index: number) => (
-                        <BlogContent key={index} block={block} isFirst={index === 0} />
-                      ))}
+                      {(() => {
+                        const firstImageIndex = blog?.body?.findIndex(
+                          (b: any) => b.type === "image" || b.type === "inlineImage"
+                        );
+                        
+                        return blog?.body?.map((block: any, index: number) => (
+                          <BlogContent
+                            key={index}
+                            block={block}
+                            isPriorityImage={index === firstImageIndex}
+                          />
+                        ));
+                      })()}
                     </div>
                     
                     {/* Topic Hub CTA at the end of content */}
