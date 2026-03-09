@@ -53,7 +53,7 @@ const AiSummarySection: React.FC<AiSummarySectionProps> = ({ blogId, initialSumm
   }, [blogId, isLoading]);
 
   const handleToggle = useCallback(() => {
-    if (!summary) {
+    if (!summary?.finalTakeaway) {
       handleGenerateSummary();
     } else {
       setIsExpanded(prev => !prev);
@@ -61,13 +61,21 @@ const AiSummarySection: React.FC<AiSummarySectionProps> = ({ blogId, initialSumm
   }, [summary, handleGenerateSummary]);
 
   return (
-    <div className="my-8 rounded-2xl border border-gray-300 hover:border-transparent bg-gray-50 hover:bg-gray-100 transition-colors overflow-hidden">
+    <div className="rounded-2xl border border-border hover:border-transparent hover:bg-gray-100 transition-colors overflow-hidden">
       {/* Header row */}
-      <button
+      <div
         onClick={handleToggle}
-        disabled={isLoading}
+        role="button"
+        tabIndex={0}
         aria-expanded={isExpanded}
-        className="w-full flex items-center justify-between px-3 py-3 sm:px-4 sm:py-4 group text-left disabled:cursor-not-allowed"
+        aria-disabled={isLoading}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleToggle();
+          }
+        }}
+        className={`w-full flex items-center justify-between px-3 py-3 sm:px-4 sm:py-4 group text-left ${isLoading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
       >
         <div className="flex items-center gap-3">
           {/* Icon */}
@@ -80,7 +88,7 @@ const AiSummarySection: React.FC<AiSummarySectionProps> = ({ blogId, initialSumm
               AI Summary
             </p>
             <p className="text-sm text-neutral-400 font-normal mt-0.5">
-              {summary ? 'Key insights from this article' : 'Generate a summary with AI'}
+              {!!summary?.finalTakeaway ? 'Key insights from this article' : 'Generate a summary with AI'}
             </p>
           </div>
         </div>
@@ -93,13 +101,13 @@ const AiSummarySection: React.FC<AiSummarySectionProps> = ({ blogId, initialSumm
             </div>
           )}
 
-          {!summary && !isLoading && (
+          {!summary?.finalTakeaway && !isLoading && (
             <div className="w-7 h-7 rounded-full border border-neutral-200 flex items-center justify-center group-hover:border-none group-hover:bg-neutral-900 transition-all duration-200">
               <Sparkles className="w-3.5 h-3.5 text-neutral-500 group-hover:text-white transition-colors" />
             </div>
           )}
 
-          {summary && (
+          {summary?.finalTakeaway && (
             <motion.div
               animate={{ rotate: isExpanded ? 180 : 0 }}
               transition={{ duration: 0.2 }}
@@ -109,11 +117,11 @@ const AiSummarySection: React.FC<AiSummarySectionProps> = ({ blogId, initialSumm
             </motion.div>
           )}
         </div>
-      </button>
+      </div>
 
       {/* Expandable content */}
       <AnimatePresence initial={false}>
-        {isExpanded && summary && (
+        {isExpanded && summary?.finalTakeaway && (
           <motion.div
             key="summary-body"
             initial={{ height: 0, opacity: 0 }}

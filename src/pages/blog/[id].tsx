@@ -15,6 +15,7 @@ import TopicCloud from "@/components/TopicCloud";
 import FaqSchema, { IFaqItem } from "@/components/BlogEditor/FaqSchema";
 import AiSummarySection from "@/components/AI/AiSummarySection";
 import AskAiChat from "@/components/AI/AskAiChat";
+import TextToSpeech from "@/components/TextToSpeech";
 
 interface BlogPost {
   _id: string;
@@ -124,8 +125,6 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
                     </div>
                   </div>
 
-                  {/* AI Summary Section */}
-                  {/* <AiSummarySection blogId={blog?._id} initialSummary={blog?.aiSummary} /> */}
                 </div>
 
                 {/* Main content grid: sidebar on desktop */}
@@ -136,22 +135,31 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
                         <BlogContent key={index} block={block} isFirst={index === 0} />
                       ))}
                     </div>
-                    
-                    {/* Topic Hub CTA at the end of content */}
-                    {displayTag && (
-                      <div className="mt-12 p-6 bg-primary/5 border border-primary/20 rounded-sm">
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-primary mb-2">Dive Deeper</h4>
-                        <p className="text-sm text-muted-foreground mb-4">
-                          Love this story? Explore more in-depth coverage and trending news on <span className="font-bold underline decoration-primary underline-offset-4">{displayTag}</span>.
-                        </p>
-                        <Link 
-                          href={`/topic/${encodeURIComponent(displayTag)}`}
-                          className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest bg-primary text-primary-foreground px-4 py-2 rounded-sm hover:bg-primary/90 transition-colors"
-                        >
-                          Explore the {displayTag} Topic Hub
-                        </Link>
+
+                    {/* Post-Article Actions */}
+                    <div className="w-full p-4 mt-12 flex flex-col gap-4 rounded-2xl border border-border bg-muted/5">
+                      {/* Quick Actions Bar */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        {displayTag && (
+                            <span className="text-center gap-1 text-sm font-medium text-muted-foreground leading-snug">
+                              Love this story? Explore more trending news on {' '}
+                              <Link
+                                href={`/topic/${encodeURIComponent(displayTag)}`}
+                                className="font-semibold capitalize underline decoration-primary underline-offset-4"
+                              >
+                                {displayTag || ''}
+                              </Link>
+                            </span>
+                        )}
+                        <div className="flex justify-center sm:justify-start">
+                          <TextToSpeech title={blog?.title} contentBlocks={blog?.body} />
+                        </div>
+
                       </div>
-                    )}
+                      {/* AI Summary takes full width */}
+                      <AiSummarySection blogId={blog?._id} initialSummary={blog?.aiSummary} />
+
+                    </div>
                   </div>
 
                   {/* Sidebar: Topic Cloud */}
@@ -223,10 +231,10 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
               transition={{ type: "spring", damping: 30, stiffness: 200 }}
               className="fixed right-0 bottom-0 w-full h-full z-[100] bg-background border-l border-border lg:top-16 sm:lg:top-20 lg:w-[500px] lg:h-[calc(100vh-4rem)] sm:lg:h-[calc(100vh-5rem)] lg:z-[40]"
             >
-              <AskAiChat 
-                blogId={blog._id} 
-                articleTitle={blog.title} 
-                initialSummary={blog.aiSummary} 
+              <AskAiChat
+                blogId={blog._id}
+                articleTitle={blog.title}
+                initialSummary={blog.aiSummary}
                 onClose={() => setIsChatOpen(false)}
               />
             </motion.aside>
@@ -242,7 +250,7 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
           >
             {/* Pulsing Aura */}
             <motion.div
-              animate={{ 
+              animate={{
                 scale: [1, 1.2, 1],
                 opacity: [0.3, 0.1, 0.3]
               }}
@@ -265,7 +273,7 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
 
               {/* Icon Container */}
               <motion.div
-                animate={{ 
+                animate={{
                   rotate: [0, 8, -8, 0],
                   scale: [1, 1.1, 1]
                 }}
@@ -370,7 +378,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     // Attempt to fetch by tags first (Topical Authority)
     let relatedRes;
     const primaryTag = blogData?.data?.tags?.[0];
-    
+
     if (primaryTag) {
       relatedRes = await fetch(
         `${siteUrl}/api/blogs?tag=${encodeURIComponent(primaryTag)}&limit=4&status=approved`
@@ -385,7 +393,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     }
 
     const relatedData = await relatedRes.json();
-    
+
     // Filter out current post and ensure we have exactly 4 if possible
     const relatedPosts = (relatedData?.data || [])
       ?.filter((p: any) => p?._id !== blogData?.data?._id)
