@@ -145,13 +145,8 @@ export default function ContactUs() {
       title="Contact Us | The Khabar Express" 
       description="Connect with Noida's leading news portal. Send us your feedback, news tips, or inquiries through our secure contact form."
       path="contact"
+      jsonLd={jsonLd}
     >
-      <Head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      </Head>
 
       <div className="min-h-screen bg-stone-50 text-zinc-900 font-serif">
 

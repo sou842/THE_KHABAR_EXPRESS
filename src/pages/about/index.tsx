@@ -27,13 +27,8 @@ const About: FC = () => {
       title="About Us | The Khabar Express" 
       description="Learn more about The Khabar Express, our mission, editorial approach, and how we deliver fast, accurate news across Technology, Health, Finance, and more."
       path="about"
+      jsonLd={jsonLd}
     >
-      <Head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      </Head>
       <ContentComponent contents={aboutpolicy} />
     </Layout>
   );

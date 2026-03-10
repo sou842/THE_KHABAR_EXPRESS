@@ -188,7 +188,7 @@ export function buildTaskListCreatedEmail(taskList: any) {
 }
 
 export async function sendTaskListCreatedEmail(taskList: any) {
-  const to = process.env.MAIL_TO || "saifactplanet@gmail.com";
+  const to = process.env.MAIL_TO || "thekhabarexpressnews@gmail.com";
   const { subject, text, html } = buildTaskListCreatedEmail(taskList);
   return sendMail({ to, subject, text, html });
 }

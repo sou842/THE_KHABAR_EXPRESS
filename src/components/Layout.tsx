@@ -3,6 +3,11 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { motion } from "framer-motion";
 import SeoMeta from "./SeoMeta";
+import dynamic from "next/dynamic";
+
+const SocialFollowDialog = dynamic(() => import("./SocialFollowDialog"), {
+  ssr: false,
+});
 
 interface LayoutProps {
   children: ReactNode;
@@ -11,9 +16,10 @@ interface LayoutProps {
   description?: string;
   image?: string;
   path?: string;
+  jsonLd?: Record<string, any>;
 }
 
-const Layout: FC<LayoutProps> = ({ children, disableDefaultMeta, title, description, image, path }) => {
+const Layout: FC<LayoutProps> = ({ children, disableDefaultMeta, title, description, image, path, jsonLd }) => {
   const url = `${process.env.NEXT_PUBLIC_SITE_URL}/${path || ""}`;
 
   return (
@@ -24,6 +30,7 @@ const Layout: FC<LayoutProps> = ({ children, disableDefaultMeta, title, descript
           description={description!}
           image={image!}
           url={url} 
+          jsonLd={jsonLd}
         />
       )}
 
@@ -37,6 +44,7 @@ const Layout: FC<LayoutProps> = ({ children, disableDefaultMeta, title, descript
         {children}
       </motion.main>
       <Footer />
+      <SocialFollowDialog />
     </div>
   );
 };

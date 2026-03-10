@@ -1,93 +1,286 @@
 export const privacypolicy = [
   {
     type: "header",
-    value: "Privacy Policy for The Khabar Express",
+    value: "Privacy Policy – The Khabar Express",
   },
   {
     type: "text",
-    value:
-      "At The Khabar Express, accessible from our website, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by The Khabar Express and how we use it. If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us.",
+    value: "<em>Last updated: 11 March 2026</em><br><br>At <strong>The Khabar Express</strong> (“we”, “us”, “our”), accessible at <a href='https://www.thekhabarexpress.com' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>https://www.thekhabarexpress.com</a>, we are committed to protecting your privacy and handling your personal information responsibly. This Privacy Policy explains what data we collect, how we use it, how it is protected, and the choices you have regarding your information.<br><br>By accessing or using our website, you agree to the terms of this Privacy Policy.",
   },
   {
     type: "header",
-    value: "Consent",
+    value: "1. Information We Collect",
   },
   {
     type: "text",
-    value:
-      "By using our website, you hereby consent to our Privacy Policy and agree to its terms.",
+    value: "We may collect the following types of information when you visit or interact with The Khabar Express:",
   },
   {
     type: "header",
-    value: "Information We Collect",
+    value: "1.1 Information You Provide Directly",
   },
   {
     type: "text",
-    value:
-      "The personal information that you are asked to provide, and the reasons why you are asked to provide it, will be made clear to you at the point we ask you to provide your personal information. When you sign up for an account, create a blog, or join a community, we may collect personal information such as your name, email address, and other details you choose to provide.",
+    value: "When you contact us, register/login, or submit any form on our website, you may provide: <ul class='list-disc pl-5 mt-2'><li>Name</li><li>Email address</li><li>Any message or content you voluntarily submit (for example, through contact forms or feedback)</li></ul>If you become a contributor and submit articles or content, we may also collect your profile information, such as your display name and bio.",
   },
   {
     type: "header",
-    value: "How We Use Your Information",
+    value: "1.2 Information Collected Automatically",
   },
   {
     type: "text",
-    value:
-      "We use the information we collect in various ways, including to: Provide, operate, and maintain our website; Improve, personalize, and expand our website; Understand and analyze how you use our website; Develop new products, services, features, and functionality; Communicate with you, either directly or through one of our partners, including for customer service, to provide you with updates and other information relating to the website, and for marketing and promotional purposes; Send you emails.",
+    value: "When you browse our website, certain information is collected automatically, such as: <ul class='list-disc pl-5 mt-2'><li>IP address</li><li>Browser type and version</li><li>Device information (device type, operating system)</li><li>Referring URLs</li><li>Pages visited, time spent on pages, clicks, and other usage data</li><li>Date and time of visits</li></ul>This information is typically collected through cookies, web beacons, and similar technologies (see Section 4).",
   },
   {
     type: "header",
-    value: "Log Files",
+    value: "2. How We Use Your Information",
   },
   {
     type: "text",
-    value:
-      "The Khabar Express follows a standard procedure of using log files. These files log visitors when they visit websites. All hosting companies do this and a part of hosting services' analytics. The information collected by log files include internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks. These are not linked to any information that is personally identifiable. The purpose of the information is for analyzing trends, administering the site, tracking users' movement on the website, and gathering demographic information.",
+    value: "We use the information we collect for the following purposes: <ul class='list-disc pl-5 mt-2'><li>To operate, maintain, and improve our website and services.</li><li>To provide and personalize content, including news, articles, and recommendations.</li><li>To communicate with you, respond to your queries, and provide customer support.</li><li>To manage user accounts, contributor profiles, and login sessions.</li><li>To analyze website performance, usage trends, and user behaviour for analytics and reporting.</li><li>To protect the security and integrity of our website, prevent fraud, and enforce our terms.</li><li>To display advertisements, including personalized ads, in collaboration with advertising partners such as Google AdSense (see Section 6).</li></ul>We do <strong>not</strong> sell your personal information to third parties.",
   },
   {
     type: "header",
-    value: "Cookies and Web Beacons",
+    value: "3. Legal Bases for Processing (Where Applicable)",
   },
   {
     type: "text",
-    value:
-      "Like any other website, The Khabar Express uses 'cookies'. These cookies are used to store information including visitors' preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users' experience by customizing our web page content based on visitors' browser type and/or other information.",
+    value: "Where required by law (for example, under the GDPR for users in the European Economic Area), we rely on one or more of the following legal bases to process your personal data: <ul class='list-disc pl-5 mt-2'><li>Your consent.</li><li>Performance of a contract with you (e.g., providing access to our services).</li><li>Legitimate interests (e.g., improving our services, preventing fraud, securing our website).</li><li>Compliance with legal obligations.</li></ul>",
   },
   {
     type: "header",
-    value: "Google DoubleClick DART Cookie",
+    value: "4. Cookies and Similar Technologies",
   },
   {
     type: "text",
-    value:
-      "Google is one of a third-party vendor on our site. It also uses cookies, known as DART cookies, to serve ads to our site visitors based upon their visit to www.website.com and other sites on the internet. However, visitors may choose to decline the use of DART cookies by visiting the Google ad and content network Privacy Policy at the following URL – https://policies.google.com/technologies/ads",
+    value: "We use cookies and similar technologies to enhance your browsing experience and analyze site traffic.",
   },
   {
     type: "header",
-    value: "Advertising Partners Privacy Policies",
+    value: "4.1 What Are Cookies?",
   },
   {
     type: "text",
-    value:
-      "You may consult this list to find the Privacy Policy for each of the advertising partners of The Khabar Express. Third-party ad servers or ad networks uses technologies like cookies, JavaScript, or Web Beacons that are used in their respective advertisements and links that appear on The Khabar Express, which are sent directly to users' browser. They automatically receive your IP address when this occurs. These technologies are used to measure the effectiveness of their advertising campaigns and/or to personalize the advertising content that you see on websites that you visit. Note that The Khabar Express has no access to or control over these cookies that are used by third-party advertisers.",
+    value: "Cookies are small text files stored on your device by your browser when you visit a website. They help us remember your preferences and understand how you interact with our content.",
   },
   {
     type: "header",
-    value: "CCPA Privacy Rights (Do Not Sell My Personal Information)",
+    value: "4.2 Types of Cookies We Use",
   },
   {
     type: "text",
-    value:
-      "Under the CCPA, among other rights, California consumers have the right to: Request that a business that collects a consumer's personal data disclose the categories and specific pieces of personal data that a business has collected about consumers. Request that a business delete any personal data about the consumer that a business has collected. Request that a business that sells a consumer's personal data, not sell the consumer's personal data. If you make a request, we have one month to respond to you. If you would like to exercise any of these rights, please contact us.",
+    value: "<ul class='list-disc pl-5 mt-2'><li><strong>Strictly necessary cookies</strong> – Required for basic site functionality, security, and navigation.</li><li><strong>Performance and analytics cookies</strong> – Help us understand how visitors use our website, which pages are popular, and how we can improve.</li><li><strong>Functional cookies</strong> – Remember your preferences, such as language or login status.</li><li><strong>Advertising and third‑party cookies</strong> – Used by us and our partners, such as Google, to show relevant ads and measure ad performance.</li></ul>",
   },
   {
     type: "header",
-    value: "GDPR Data Protection Rights",
+    value: "4.3 Managing Cookies",
   },
   {
     type: "text",
-    value:
-      "We would like to make sure you are fully aware of all of your data protection rights. Every user is entitled to the following: The right to access – You have the right to request copies of your personal data. The right to rectification – You have the right to request that we correct any information you believe is inaccurate, or complete information you believe is incomplete. The right to erasure – You have the right to request that we erase your personal data, under certain conditions. The right to restrict processing – You have the right to request that we restrict the processing of your personal data, under certain conditions. If you make a request, we have one month to respond to you. If you would like to exercise any of these rights, please contact us.",
+    value: "You can manage or disable cookies through your browser settings. Please note that disabling certain cookies may affect the functionality and performance of our website. For more information about cookies and how to manage them, you can refer to your browser’s help section.",
+  },
+  {
+    type: "header",
+    value: "5. Third‑Party Services and Links",
+  },
+  {
+    type: "text",
+    value: "Our website may contain links to third‑party websites and may use third‑party tools or services. These external sites and services have their own privacy policies, and we are not responsible for their practices. We recommend that you review the privacy policies of any third‑party sites you visit.",
+  },
+  {
+    type: "header",
+    value: "6. Advertising, Google AdSense & Google Cookies",
+  },
+  {
+    type: "text",
+    value: "We may display advertisements on The Khabar Express with the help of third‑party advertising partners, including Google AdSense.",
+  },
+  {
+    type: "header",
+    value: "6.1 Google AdSense and the DoubleClick Cookie",
+  },
+  {
+    type: "text",
+    value: "Google uses cookies to serve ads on our website, including the DoubleClick cookie, which enables Google and its partners to serve ads based on your visits to our site and other websites on the internet.<br><br>Users may opt out of the use of the DoubleClick cookie for interest‑based advertising by visiting the Google Ads Settings page: <a href='https://www.google.com/settings/ads' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>https://www.google.com/settings/ads</a>",
+  },
+  {
+    type: "header",
+    value: "6.2 Personalized Advertising",
+  },
+  {
+    type: "text",
+    value: "Third‑party vendors, including Google, may use cookies and similar technologies to serve ads based on your prior visits to our website and other sites.<br><br>You can opt out of some third‑party vendors’ uses of cookies for personalized advertising by visiting:<br><a href='https://www.aboutads.info/choices/' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>https://www.aboutads.info/choices/</a> (for users in the United States)<br><a href='https://www.youronlinechoices.eu/' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>https://www.youronlinechoices.eu/</a> (for users in the EU)",
+  },
+  {
+    type: "header",
+    value: "6.3 Ad Partners",
+  },
+  {
+    type: "text",
+    value: "Our advertising partners may also use cookies, web beacons, or similar technologies for ad personalization, measurement, and reporting. We do not control these cookies and recommend that you review the respective privacy policies of our advertising partners for more information about their practices.",
+  },
+  {
+    type: "header",
+    value: "7. Analytics",
+  },
+  {
+    type: "text",
+    value: "We may use analytics tools (for example, Google Analytics or similar services) to understand how visitors interact with our website.<br><br>These tools collect information such as pages visited, time spent on the site, and general usage patterns. Data is typically aggregated and does not directly identify individuals.<br><br>You can learn more about how Google collects and processes data here: <a href='https://policies.google.com/technologies/partner-sites' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>https://policies.google.com/technologies/partner-sites</a><br><br>You may opt out of Google Analytics by using the browser add‑on provided by Google.",
+  },
+  {
+    type: "header",
+    value: "8. Data Retention",
+  },
+  {
+    type: "text",
+    value: "We retain your personal information only for as long as necessary to fulfill the purposes described in this Privacy Policy, unless a longer retention period is required or permitted by law. When data is no longer needed, we will delete or anonymize it in a secure manner.",
+  },
+  {
+    type: "header",
+    value: "9. Data Security",
+  },
+  {
+    type: "text",
+    value: "We take reasonable technical and organizational measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the internet or electronic storage is completely secure, and we cannot guarantee absolute security.",
+  },
+  {
+    type: "header",
+    value: "10. Your Rights and Choices",
+  },
+  {
+    type: "text",
+    value: "Depending on your location and applicable laws, you may have certain rights regarding your personal information, including: <ul class='list-disc pl-5 mt-2'><li>The right to access the personal data we hold about you.</li><li>The right to request correction of inaccurate or incomplete data.</li><li>The right to request deletion of your personal data, subject to legal limitations.</li><li>The right to object to or restrict certain types of processing.</li><li>The right to withdraw consent where processing is based on consent.</li></ul>To exercise any of these rights, please contact us at <a href='mailto:thekhabarexpressnews@gmail.com' class='text-primary hover:underline'>thekhabarexpressnews@gmail.com</a>. We may need to verify your identity before processing your request.",
+  },
+  {
+    type: "header",
+    value: "11. Children’s Privacy",
+  },
+  {
+    type: "text",
+    value: "Our website and content are intended for a general audience and are <strong>not</strong> directed at children under the age of 13 (or under the minimum age in your jurisdiction). We do not knowingly collect personal information from children under this age. If you believe that a child has provided us with personal information, please contact us, and we will take steps to delete such information promptly.",
+  },
+  {
+    type: "header",
+    value: "12. Contact Us",
+  },
+  {
+    type: "text",
+    value: "If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, you can contact us at:<br><br><strong>The Khabar Express</strong><br>Website: <a href='https://www.thekhabarexpress.com' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>https://www.thekhabarexpress.com</a><br>Email: <a href='mailto:thekhabarexpressnews@gmail.com' class='text-primary hover:underline'>thekhabarexpressnews@gmail.com</a>",
+  },
+  {
+    type: "header",
+    value: "13. Changes to This Privacy Policy",
+  },
+  {
+    type: "text",
+    value: "We may update this Privacy Policy from time to time to reflect changes in our practices, technologies, legal requirements, or for other operational reasons. When we update the policy, we will revise the “Last updated” date at the top of this page. We encourage you to review this page periodically to stay informed about how we protect your information.",
+  },
+];
+
+export const disclaimerpolicy = [
+  {
+    type: "header",
+    value: "Disclaimer – The Khabar Express",
+  },
+  {
+    type: "text",
+    value: "<em>Last updated: 11 March 2026</em><br><br>The information provided on <strong>The Khabar Express</strong> (“we”, “us”, “our”) at <a href='https://www.thekhabarexpress.com' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>https://www.thekhabarexpress.com</a> is for general information and news purposes only. By accessing or using our website, you agree to this Disclaimer.",
+  },
+  {
+    type: "header",
+    value: "1. General Information Only",
+  },
+  {
+    type: "text",
+    value: "All content published on The Khabar Express, including articles, opinions, analysis, and commentary, is intended for general informational purposes. While we strive to ensure the accuracy, timeliness, and reliability of the information, we make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability, or availability of any content.<br><br>Any reliance you place on such information is strictly at your own risk.",
+  },
+  {
+    type: "header",
+    value: "2. No Professional Advice",
+  },
+  {
+    type: "text",
+    value: "Content on this website may relate to technology, health, finance, politics, sports, entertainment, and other topics. However, nothing on this website should be taken as professional advice, including but not limited to: <ul class='list-disc pl-5 mt-2'><li>Medical or health advice</li><li>Financial, investment, or tax advice</li><li>Legal or political advice</li><li>Career or business advice</li></ul>You should always consult a qualified professional for advice tailored to your specific situation before making any decisions based on information from this website.",
+  },
+  {
+    type: "header",
+    value: "3. News, Opinions, and Editorial Content",
+  },
+  {
+    type: "text",
+    value: "Our articles may include news reports, analysis, opinions, and commentary from our editorial team and contributors. Views and opinions expressed in individual articles are those of the respective authors and do not necessarily reflect the views of The Khabar Express as an organization.<br><br>We do not endorse any particular viewpoint, political position, financial product, company, or individual unless explicitly stated.",
+  },
+  {
+    type: "header",
+    value: "4. Accuracy, Completeness, and Updates",
+  },
+  {
+    type: "text",
+    value: "We work to provide current and accurate information, but news and events can change rapidly. We do not guarantee that all information is always up to date, complete, or free from errors.<br><br>We may update, modify, or remove content at any time without prior notice.",
+  },
+  {
+    type: "header",
+    value: "5. External Links and Third‑Party Content",
+  },
+  {
+    type: "text",
+    value: "The Khabar Express may contain links to external websites, social media pages, or third‑party content. These links are provided for convenience and informational purposes only.<br><br>We have no control over the nature, content, and availability of those external sites, and inclusion of any link does not imply endorsement or recommendation of the views expressed within them. We are not responsible for any loss or damage that may arise from your use of third‑party websites.",
+  },
+  {
+    type: "header",
+    value: "6. Advertising and Sponsored Content",
+  },
+  {
+    type: "text",
+    value: "Our website may display advertisements, sponsored posts, affiliate links, or other commercial content from third parties and advertising partners (including but not limited to Google AdSense). <ul class='list-disc pl-5 mt-2'><li>Advertisements and sponsored content are typically identified as such where required.</li><li>We do not control the claims or representations made in ads or sponsored content.</li><li>Any issues, purchases, or disputes arising from such third‑party products or services are between you and the respective third party.</li></ul>We are not liable for any loss or damage resulting from your interactions with advertisers or sponsors.",
+  },
+  {
+    type: "header",
+    value: "7. Google AdSense and Third‑Party Cookies",
+  },
+  {
+    type: "text",
+    value: "Third‑party vendors, including Google, may use cookies to serve ads based on your visits to our site and other websites. These cookies may be used to show personalized or interest‑based advertisements.<br><br>You can learn more about how Google uses data in advertising and how to manage your ad settings by visiting the Google Ads Settings page and Google’s privacy policies.",
+  },
+  {
+    type: "header",
+    value: "8. User‑Generated Content and Contributors",
+  },
+  {
+    type: "text",
+    value: "The Khabar Express allows contributors and users to submit content, including articles, comments, or other materials. <ul class='list-disc pl-5 mt-2'><li>The responsibility for any user‑generated or contributor content lies solely with the individual author.</li><li>We do not guarantee the accuracy or reliability of such content.</li><li>We reserve the right (but not the obligation) to review, edit, or remove content that we consider inappropriate, inaccurate, or in violation of our policies.</li></ul>",
+  },
+  {
+    type: "header",
+    value: "9. No Guarantees of Results",
+  },
+  {
+    type: "text",
+    value: "Any examples, case studies, analyses, or forecasts provided on this website are for illustrative purposes only and do not guarantee any particular outcome or result.<br><br>Decisions based on information from this website are made at your own discretion and risk.",
+  },
+  {
+    type: "header",
+    value: "10. Limitation of Liability",
+  },
+  {
+    type: "text",
+    value: "To the fullest extent permitted by applicable law, The Khabar Express and its owners, editors, authors, contributors, and affiliates shall not be liable for any direct, indirect, incidental, consequential, or special damages arising from: <ul class='list-disc pl-5 mt-2'><li>Your access to or use of this website</li><li>Your reliance on any information provided herein</li><li>Any errors, omissions, or inaccuracies in the content</li><li>Any interruption or unavailability of the website</li><li>Any viruses, malware, or harmful components transmitted through the website or third‑party links</li></ul>By using this website, you agree to indemnify and hold us harmless from any claims arising out of or related to your use of the site.",
+  },
+  {
+    type: "header",
+    value: "11. Changes to This Disclaimer",
+  },
+  {
+    type: "text",
+    value: "We may update or revise this Disclaimer from time to time to reflect changes in our practices, legal requirements, or for other operational reasons. Any changes will be effective when posted on this page, and the “Last updated” date will be revised accordingly. We encourage you to review this Disclaimer periodically.",
+  },
+  {
+    type: "header",
+    value: "12. Contact us",
+  },
+  {
+    type: "text",
+    value: "If you have any questions about this Disclaimer or our website, you can contact us at: <br><br><strong>The Khabar Express</strong><br>Website: <a href='https://www.thekhabarexpress.com' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>https://www.thekhabarexpress.com</a><br>Email: <a href='mailto:thekhabarexpressnews@gmail.com' class='text-primary hover:underline'>thekhabarexpressnews@gmail.com</a>",
   },
 ];
 

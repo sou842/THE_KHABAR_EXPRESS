@@ -14,7 +14,7 @@ export const ContentComponent: React.FC<any> = ({ contents }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
-      <div className="w-full max-w-4xl overflow-hidden p-8 sm:p-12 md:p-16">
+      <div className="w-full max-w-5xl overflow-hidden p-8 sm:p-12 md:p-16">
         <div className="prose prose-lg prose-slate max-w-none">
           {contents &&
             contents?.map((content: ContentProps, index: number) => {
@@ -38,7 +38,7 @@ export const ContentComponent: React.FC<any> = ({ contents }) => {
               }
               if (content?.type === "text") {
                 return (
-                  <p
+                  <div
                     key={index}
                     className="text-gray-600 leading-relaxed mb-6 text-base sm:text-lg"
                     dangerouslySetInnerHTML={{ __html: content?.value }}

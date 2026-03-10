@@ -10,7 +10,7 @@ interface SeoMetaProps {
   createdAt?: string;
   updatedAt?: string;
   author?: any;
-  structuredData?: Record<string, any>[];
+  jsonLd?: Record<string, any>;
 }
 
 const SeoMeta: FC<SeoMetaProps> = (props) => {
@@ -23,7 +23,7 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
     createdAt,
     updatedAt,
     author,
-    structuredData = [],
+    jsonLd,
   } = props;
 
   const generateWebSiteSchema = () => {
@@ -61,7 +61,7 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
       "contactPoint": {
         "@type": "ContactPoint",
         "contactType": "customer service",
-        "email": "contact@thekhabarexpress.com"
+        "email": "thekhabarexpressnews@gmail.com"
       }
     };
   };
@@ -143,7 +143,7 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
   const normalizeUrl = (u: string) => u?.replace(/\/$/, "");
 
   const allStructuredData = [
-    ...structuredData,
+    ...(jsonLd ? [jsonLd] : []),
     generateOrganizationSchema(),
     ...(normalizeUrl(url) === normalizeUrl(process.env.NEXT_PUBLIC_SITE_URL!) ? [generateWebSiteSchema()] : []),
     ...(generateArticleSchema() ? [generateArticleSchema()] : []),
