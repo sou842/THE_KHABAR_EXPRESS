@@ -439,11 +439,155 @@ export const aboutpolicy = [
   },
 ];
 
+export const termsofservice = [
+  {
+    type: "header",
+    value: "Terms of Service – The Khabar Express",
+  },
+  {
+    type: "text",
+    value: "<em>Last updated: 11 March 2026</em><br><br>Welcome to <strong>The Khabar Express</strong> (“we”, “us”, “our”), accessible at <a href='https://www.thekhabarexpress.com' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>https://www.thekhabarexpress.com</a>. These Terms of Service (“Terms”) govern your access to and use of our website, content, and services (collectively, the “Service”).<br><br>By accessing or using The Khabar Express, you agree to be bound by these Terms and our Privacy Policy and Disclaimer. If you do not agree, you must not use our website.",
+  },
+  {
+    type: "header",
+    value: "1. Use of Our Website",
+  },
+  {
+    type: "text",
+    value: "You may use The Khabar Express only for lawful purposes and in accordance with these Terms. You agree not to: <ul class='list-disc pl-5 mt-2'><li>Use the website in any way that violates applicable local, national, or international laws or regulations.</li><li>Use the website to transmit any spam, unsolicited communications, or promotional materials without authorization.</li><li>Attempt to gain unauthorized access to any part of the website, server, or related systems.</li><li>Interfere with or disrupt the security or performance of the website.</li></ul>We reserve the right to suspend or terminate access to the website for any user who violates these Terms.",
+  },
+  {
+    type: "header",
+    value: "2. Accounts, Login, and Contributors",
+  },
+  {
+    type: "text",
+    value: "Some features of The Khabar Express, such as contributing articles or accessing certain sections, may require you to create an account or log in.<br><br>When creating an account, you agree to: <ul class='list-disc pl-5 mt-2'><li>Provide accurate, current, and complete information.</li><li>Keep your login credentials confidential and secure.</li><li>Notify us promptly if you suspect unauthorized access to your account.</li></ul>You are responsible for all activities that occur under your account. We may suspend or terminate accounts that provide false information, violate these Terms, or misuse the Service.",
+  },
+  {
+    type: "header",
+    value: "3. Content and Intellectual Property",
+  },
+  {
+    type: "header",
+    value: "3.1 Our Content",
+  },
+  {
+    type: "text",
+    value: "All content on The Khabar Express, including articles, text, graphics, images, logos, design, and layout, is owned by us or our licensors and is protected by copyright and other intellectual property laws.<br><br>You may: <ul class='list-disc pl-5 mt-2'><li>View and read content for your personal, non‑commercial use.</li><li>Share links to our articles on social media or other platforms, provided you do not modify the content and clearly attribute it to The Khabar Express.</li></ul>You may not, without prior written permission: <ul class='list-disc pl-5 mt-2'><li>Copy, reproduce, republish, or distribute our content in bulk or as your own.</li><li>Modify, adapt, translate, or create derivative works based on our content.</li><li>Use our content for commercial purposes such as republication on another site or in print.</li></ul>",
+  },
+  {
+    type: "header",
+    value: "3.2 User‑Generated and Contributor Content",
+  },
+  {
+    type: "text",
+    value: "The Khabar Express may allow users and contributors to submit content, including articles, comments, or other materials (“User Content”). By submitting User Content, you: <ul class='list-disc pl-5 mt-2'><li>Represent that you own or have the necessary rights and permissions to share that content.</li><li>Grant us a non‑exclusive, worldwide, royalty‑free license to use, publish, modify, display, distribute, and store your content in connection with our website and services.</li></ul>We reserve the right, but not the obligation, to review, edit, or remove any User Content that we consider inappropriate, offensive, unlawful, or otherwise in violation of these Terms. We are not responsible for the accuracy or opinions expressed in User Content.",
+  },
+  {
+    type: "header",
+    value: "4. Editorial Independence and No Guarantee of Accuracy",
+  },
+  {
+    type: "text",
+    value: "Our editorial team and contributors strive to provide accurate and timely news, analysis, and commentary across categories such as Technology, Health, Finance, Politics, Sports, and Entertainment. However, news and events change quickly, and errors or omissions may occur.<br><br>We do not guarantee that the information on our website is always complete, accurate, or up to date. Any reliance you place on our content is at your own risk, and you should independently verify information where necessary, especially before making important decisions.<br><br>For more details, please refer to our <a href='/disclaimer' class='text-primary hover:underline'>Disclaimer</a> page.",
+  },
+  {
+    type: "header",
+    value: "5. Third‑Party Links, Services, and Advertisements",
+  },
+  {
+    type: "text",
+    value: "Our website contains links to third‑party websites, social media pages, tools, and services (such as Facebook, Instagram, Twitter/X, Telegram, and others), as well as advertisements and sponsored content. <ul class='list-disc pl-5 mt-2'><li>These third‑party sites and services are not under our control, and we are not responsible for their content, privacy policies, or practices.</li><li>Inclusion of any link or advertisement does not imply endorsement or recommendation by The Khabar Express.</li></ul>Any dealings you have with third parties (including advertisers, sponsors, or other websites) are solely between you and that third party. We are not liable for any loss or damage arising from such interactions.",
+  },
+  {
+    type: "header",
+    value: "6. Advertising, Sponsorship, and Google AdSense",
+  },
+  {
+    type: "text",
+    value: "The Khabar Express may display advertisements, sponsored articles, and other commercial content from third‑party partners, including Google AdSense. <ul class='list-disc pl-5 mt-2'><li>Ads may be targeted or personalized based on cookies and similar technologies, as explained in our Privacy Policy.</li><li>We do not control or guarantee the claims made in any advertisements or sponsored content.</li></ul>Any purchases or decisions you make based on advertisements or sponsored content are at your own discretion, and we are not responsible for any outcomes resulting from such decisions.",
+  },
+  {
+    type: "header",
+    value: "7. Privacy and Cookies",
+  },
+  {
+    type: "text",
+    value: "Your use of The Khabar Express is also governed by our <a href='/privacy-policy' class='text-primary hover:underline'>Privacy Policy</a>, which explains how we collect, use, and protect your personal information, and our use of cookies and similar technologies.<br><br>By using our website, you acknowledge that you have read and agree to the Privacy Policy.",
+  },
+  {
+    type: "header",
+    value: "8. Prohibited Activities",
+  },
+  {
+    type: "text",
+    value: "In addition to other restrictions set out in these Terms, you agree that you will not: <ul class='list-disc pl-5 mt-2'><li>Use the website to post or share any content that is unlawful, defamatory, libelous, abusive, harassing, hateful, threatening, obscene, or otherwise objectionable.</li><li>Infringe or violate the intellectual property or privacy rights of others.</li><li>Spread malware, viruses, or other harmful code.</li><li>Use automated systems (such as bots or scrapers) to access the website in a way that imposes an unreasonable load on our servers or interferes with normal operation.</li><li>Attempt to bypass any security measures used to protect the website or user data.</li></ul>We may take appropriate legal action for any violation of these Terms, including removal of content, suspension of accounts, or reporting to relevant authorities.",
+  },
+  {
+    type: "header",
+    value: "9. Disclaimer of Warranties",
+  },
+  {
+    type: "text",
+    value: "The Khabar Express is provided on an “as is” and “as available” basis. To the fullest extent permitted by law, we disclaim all warranties, express or implied, including but not limited to: <ul class='list-disc pl-5 mt-2'><li>Warranties of accuracy, reliability, or completeness of content.</li><li>Warranties of merchantability, fitness for a particular purpose, or non‑infringement.</li><li>Warranties that the website will be uninterrupted, secure, or error‑free, or that any defects will be corrected.</li></ul>You use the website and rely on its content at your own risk.",
+  },
+  {
+    type: "header",
+    value: "10. Limitation of Liability",
+  },
+  {
+    type: "text",
+    value: "To the maximum extent permitted by applicable law, The Khabar Express, its owners, editors, authors, contributors, employees, and affiliates shall not be liable for any: <ul class='list-disc pl-5 mt-2'><li>Direct, indirect, incidental, consequential, special, or punitive damages.</li><li>Loss of profits, revenue, data, goodwill, or other intangible losses.</li></ul>arising out of or in connection with: <ul class='list-disc pl-5 mt-2'><li>Your access to or use of (or inability to use) the website.</li><li>Any content, information, or services provided on the website.</li><li>Any conduct or content of third parties, including advertisers or other users.</li></ul>If you are dissatisfied with any part of the website or with these Terms, your sole and exclusive remedy is to stop using the website.",
+  },
+  {
+    type: "header",
+    value: "11. Indemnification",
+  },
+  {
+    type: "text",
+    value: "You agree to indemnify, defend, and hold harmless The Khabar Express and its owners, editors, authors, contributors, employees, and affiliates from and against any and all claims, liabilities, damages, losses, costs, or expenses (including reasonable legal fees) arising out of or related to: <ul class='list-disc pl-5 mt-2'><li>Your use or misuse of the website.</li><li>Your violation of these Terms.</li><li>Your infringement or violation of any rights of another person or entity.</li></ul>",
+  },
+  {
+    type: "header",
+    value: "12. Changes to the Service",
+  },
+  {
+    type: "text",
+    value: "We reserve the right to modify, suspend, or discontinue any part of The Khabar Express at any time, with or without notice. We are not liable to you or any third party for any modification, suspension, or discontinuation of the website or any of its features.",
+  },
+  {
+    type: "header",
+    value: "13. Changes to These Terms",
+  },
+  {
+    type: "text",
+    value: "We may update or revise these Terms from time to time to reflect changes in our practices, legal requirements, or for other operational reasons.<br><br>When we make changes, we will update the “Last updated” date at the top of this page. Your continued use of the website after any changes means you accept the revised Terms. We encourage you to review this page periodically.",
+  },
+  {
+    type: "header",
+    value: "14. Governing Law and Jurisdiction",
+  },
+  {
+    type: "text",
+    value: "These Terms shall be governed by and construed in accordance with the laws of India, without regard to its conflict of law principles.<br><br>You agree that any disputes arising out of or relating to these Terms or your use of The Khabar Express shall be subject to the exclusive jurisdiction of the courts located in Bengaluru, Karnataka, India.",
+  },
+  {
+    type: "header",
+    value: "15. Contact Us",
+  },
+  {
+    type: "text",
+    value: "If you have any questions or concerns about these Terms of Service, you can contact us at:<br><br><strong>The Khabar Express</strong><br>Website: <a href='https://www.thekhabarexpress.com' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>https://www.thekhabarexpress.com</a><br>Email: <a href='mailto:thekhabarexpressnews@gmail.com' class='text-primary hover:underline'>thekhabarexpressnews@gmail.com</a>",
+  },
+];
+
 export const staticPages = [
   "/",
   "/about",
   "/contact",
   "/privacy-policy",
+  "/terms-of-service",
   "/category/technology",
   "/category/health",
   "/category/finance",
