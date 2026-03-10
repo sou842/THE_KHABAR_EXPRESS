@@ -41,9 +41,8 @@ export const ContentComponent: React.FC<any> = ({ contents }) => {
                   <p
                     key={index}
                     className="text-gray-600 leading-relaxed mb-6 text-base sm:text-lg"
-                  >
-                    {content?.value}
-                  </p>
+                    dangerouslySetInnerHTML={{ __html: content?.value }}
+                  />
                 );
               }
               return null;

@@ -94,27 +94,155 @@ export const privacypolicy = [
 export const aboutpolicy = [
   {
     type: "header",
-    value: "About us",
+    value: "About The Khabar Express",
   },
   {
     type: "text",
-    value:
-      "At The Khabar Express, we believe in the power of words and the importance of sharing ideas. Our platform is designed to provide a space where everyone can create and publish their own blogs, read others' writings, and join communities that match their interests. Whether you're an aspiring writer, a seasoned blogger, or a reader looking for inspiration, Blog is the place for you.",
+    value: "The Khabar Express is a digital-first news platform committed to delivering fast, accurate, and insightful stories across Technology, Health, Finance, Politics, Sports, and Entertainment. Our goal is to help readers stay informed, think deeper, and understand how every major event connects to the bigger picture.",
   },
   {
     type: "text",
-    value:
-      "Our mission is to empower individuals to share their unique perspectives and connect with others through their writing. We aim to create a supportive and engaging environment where diverse voices can be heard and appreciated.",
+    value: "Founded in 2025, The Khabar Express brings together breaking headlines, in-depth analysis, and curated explainers so that you don’t have to scan multiple sites to know what truly matters today. Whether it’s a market-moving development, a game-changing sports performance, or a health study that affects your daily life, we aim to cover it with clarity and context.",
+  },
+  {
+    type: "header",
+    value: "What We Cover",
   },
   {
     type: "text",
-    value:
-      "Easy-to-use blog creation tools allow you to write, edit, and publish your blogs with ease. Share your thoughts, stories, and expertise with a wide audience. Explore a vast collection of blogs written by people from all walks of life. Discover new ideas, learn from different perspectives, and stay informed on topics that interest you.",
+    value: "We focus on stories that shape conversations and impact real lives across key categories:",
   },
   {
     type: "text",
-    value:
-      "We invite you to become a part of our growing community. Start writing, explore new ideas, and connect with others today. Together, we can create a space where everyone's voice is heard.",
+    value: "• Technology: AI breakthroughs, product launches, industry shifts, and how innovation is reshaping our world.",
+  },
+  {
+    type: "text",
+    value: "• Health: Evidence-based reports, new studies, medical breakthroughs, and everyday wellness insights.",
+  },
+  {
+    type: "text",
+    value: "• Finance: Markets, personal finance, business moves, and global economic trends that influence your money decisions.",
+  },
+  {
+    type: "text",
+    value: "• Politics: Policy updates, elections, and governance issues that define the future of nations and societies.",
+  },
+  {
+    type: "text",
+    value: "• Sports: Match reports, performance analysis, records, and the larger narratives behind the scoreboard.",
+  },
+  {
+    type: "text",
+    value: "• Entertainment: Box office trends, streaming updates, major releases, and the evolving entertainment business.",
+  },
+  {
+    type: "text",
+    value: "Every story is crafted to be informative, easy to understand, and relevant to readers looking for more than just headlines.",
+  },
+  {
+    type: "header",
+    value: "Our Editorial Approach",
+  },
+  {
+    type: "text",
+    value: "At The Khabar Express, we believe good journalism is built on three pillars: accuracy, context, and clarity.",
+  },
+  {
+    type: "text",
+    value: "• We prioritize verified facts over speculation and always aim to highlight credible sources and real-world impact.",
+  },
+  {
+    type: "text",
+    value: "• We go beyond surface-level updates with explainers, background, and analysis to help you see the “why” behind each event.",
+  },
+  {
+    type: "text",
+    value: "• We write in clear, accessible language so that readers from diverse backgrounds can engage with complex topics confidently.",
+  },
+  {
+    type: "text",
+    value: "From real-time news to long-form features and editors’ picks, our editorial team works to maintain a balanced, unbiased, and reader-first perspective.",
+  },
+  {
+    type: "header",
+    value: "Community and Contributors",
+  },
+  {
+    type: "text",
+    value: "The Khabar Express is designed as a platform for both professional writers and passionate contributors who want to share their voice with a wider audience. Through our “Become a Contributor” program, we invite journalists, analysts, domain experts, and storytellers to publish their work and reach a growing community of readers.",
+  },
+  {
+    type: "text",
+    value: "Contributors can:",
+  },
+  {
+    type: "text",
+    value: "• Share original reporting, opinions, explainers, and analysis pieces.",
+  },
+  {
+    type: "text",
+    value: "• Build their digital portfolio with bylined articles on a dedicated, topic-rich news platform.",
+  },
+  {
+    type: "text",
+    value: "• Engage with a readership interested in thoughtful, well-structured content across multiple categories.",
+  },
+  {
+    type: "text",
+    value: "If you have a story to tell or an insight to share, you can easily start writing by visiting our contribution page.",
+  },
+  {
+    type: "header",
+    value: "Our Mission",
+  },
+  {
+    type: "text",
+    value: "Our mission is to make trusted news and meaningful insights accessible to everyone, anytime, on any device. In a world flooded with information, The Khabar Express aims to be your reliable stop for timely updates, sharp analysis, and curated stories that actually matter.",
+  },
+  {
+    type: "text",
+    value: "We are constantly working to:",
+  },
+  {
+    type: "text",
+    value: "• Expand coverage across new topics and regions.",
+  },
+  {
+    type: "text",
+    value: "• Improve reader experience with clean design, intuitive navigation, and mobile-first performance.",
+  },
+  {
+    type: "text",
+    value: "• Build a transparent, engaged, and informed community around quality journalism.",
+  },
+  {
+    type: "header",
+    value: "Connect With The Khabar Express",
+  },
+  {
+    type: "text",
+    value: "We are active across multiple platforms so you can follow the news the way you like:",
+  },
+  {
+    type: "text",
+    value: "• Facebook: <a href='https://www.facebook.com/profile.php?id=61582733362555' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>The Khabar Express official page</a>",
+  },
+  {
+    type: "text",
+    value: "• Instagram: <a href='https://www.instagram.com/the_khabar_express?igsh=a2V5eWYxazJmMWl6' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>@the_khabar_express</a>",
+  },
+  {
+    type: "text",
+    value: "• X (Twitter): <a href='https://x.com/khabar_express_' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>@khabar_express_</a>",
+  },
+  {
+    type: "text",
+    value: "• Telegram: <a href='https://t.me/the_khabar_express_news' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>The Khabar Express News channel</a>",
+  },
+  {
+    type: "text",
+    value: "Stay with The Khabar Express for the latest news, deep dives, and perspectives that keep you ahead of the curve.",
   },
 ];
 

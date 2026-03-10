@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Logo from "./Logo";
-import { Facebook, Instagram, Twitter, Send } from "lucide-react";
+import { SOCIAL_LINKS } from "@/lib/constants";
 
 const QUICK_LINKS = [
   { label: "Home", href: "/" },
@@ -38,18 +38,11 @@ const Footer: React.FC = () => {
               technology to health, finance to entertainment.
             </p>
             <div className="flex items-center gap-4 pt-2">
-              <a href="https://www.facebook.com/profile.php?id=61582733362555" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a href="https://www.instagram.com/the_khabar_express?igsh=a2V5eWYxazJmMWl6" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a href="https://x.com/khabar_express_" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a href="https://t.me/the_khabar_express_news" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                <Send className="w-5 h-5" />
-              </a>
+              {SOCIAL_LINKS.map(({ icon: Icon, href, label }) => (
+                <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" aria-label={label}>
+                  <Icon className="w-5 h-5" />
+                </a>
+              ))}
             </div>
           </div>
 
@@ -86,22 +79,6 @@ const Footer: React.FC = () => {
               ))}
             </ul>
           </div>
-
-          {/* Language */}
-          {/* <div>
-            <h3 className="text-base font-medium mb-4">Language</h3>
-            <div className="flex items-center space-x-2">
-              <button className="rounded-full py-1 px-3 text-xs font-medium border bg-background hover:bg-secondary transition-colors">
-                English
-              </button>
-              <button
-                disabled={true}
-                className="rounded-full py-1 px-3 text-xs font-medium border border-muted text-muted-foreground hover:border-foreground hover:text-foreground transition-colors cursor-not-allowed"
-              >
-                हिन्दी
-              </button>
-            </div>
-          </div> */}
         </div>
 
         <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">

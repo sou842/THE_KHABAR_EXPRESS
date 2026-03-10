@@ -1,16 +1,13 @@
 import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
 import Link from "next/link";
-import Head from "next/head";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import BlogCard from "@/components/BlogCard";
 import { Skeleton } from "@/components/Skeleton";
 import { getter, preventRerendering } from "@/lib/helper";
 import { IBlog } from "@/models/blog.model";
 import Layout from "@/components/Layout";
-import { useEffect, useRef } from "react";
-import { PenLine, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { SOCIAL_LINKS } from "@/lib/constants";
 
 export default function Home() {
   // 1. Fetch general top articles
@@ -131,20 +128,28 @@ export default function Home() {
               </div>
 
               {/* Contributor CTA */}
-              <div className="bg-primary/5 border border-primary/20 rounded-sm p-8 flex flex-col justify-center relative overflow-hidden group">
-                {/* <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                  <PenLine size={80} />
-                </div> */}
-                <h3 className="text-xl font-bold text-foreground mb-3 relative z-10">Become a Contributor</h3>
-                <p className="text-muted-foreground mb-6 relative z-10">Share your stories, insights, and expertise with our growing community of readers.</p>
-                <div className="relative z-10">
+              <div className="bg-primary/5 border border-primary/20 rounded-sm p-8 flex flex-col justify-between relative overflow-hidden group h-full">
+                <div>
+                  <h3 className="text-xl font-bold text-foreground mb-3 relative z-10">Join Our Community</h3>
+                  <p className="text-foreground mb-4 relative z-10 flex-wrap">Share your stories as a contributor, or connect with us on social media to stay updated with the latest news.</p>
+                </div>
+                
+                <div className="relative z-10 flex flex-col xl:flex-row gap-6 mt-auto">
                   <Link 
                     href="/write" 
-                    className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-sm font-semibold hover:bg-primary/90 transition-all hover:gap-3 group"
+                    className="flex-shrink-0 inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-sm font-semibold hover:bg-primary/90 transition-all hover:gap-3 group"
                   >
                     <span>Start Writing</span>
                     <ArrowRight className="h-4 w-4" />
                   </Link>
+                  
+                  <div className="flex items-center gap-3">
+                    {SOCIAL_LINKS?.map(({ icon: Icon, href, label }) => (
+                      <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="bg-background/80 hover:bg-primary text-primary hover:text-primary-foreground p-3 rounded-full transition-all" aria-label={label}>
+                        <Icon className="w-4 h-4" />
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

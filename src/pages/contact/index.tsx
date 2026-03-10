@@ -3,7 +3,8 @@ import Head from "next/head";
 import Layout from "@/components/Layout";
 import useSWRMutation from "swr/mutation";
 import { poster } from "@/lib/helper";
-import { Mail, Phone, MapPin, Send, MessageSquare, Linkedin, Twitter, Facebook, Instagram, ArrowRight, LucideIcon } from "lucide-react";
+import { Mail, Phone, MapPin, Send, MessageSquare, ArrowRight, LucideIcon } from "lucide-react";
+import { SOCIAL_LINKS, SocialLinkItem } from "@/lib/constants";
 
 // --- Interfaces ---
 
@@ -14,11 +15,6 @@ interface ContactDetail {
   href?: string;
 }
 
-interface SocialLinkItem {
-  icon: LucideIcon;
-  label: string;
-  href: string;
-}
 
 interface ContactFormData {
   name: string;
@@ -48,12 +44,6 @@ const CONTACT_DETAILS: ContactDetail[] = [
   },
 ];
 
-const SOCIAL_LINKS: SocialLinkItem[] = [
-  { icon: Facebook, label: "Facebook", href: "https://www.facebook.com/profile.php?id=61582733362555" },
-  { icon: Instagram, label: "Instagram", href: "https://www.instagram.com/the_khabar_express?igsh=a2V5eWYxazJmMWl6" },
-  { icon: Twitter, label: "Twitter", href: "https://x.com/khabar_express_" },
-  { icon: Send, label: "Telegram", href: "https://t.me/the_khabar_express_news" },
-];
 
 const ContactInfoItem = ({ icon: Icon, label, value, href }: ContactDetail) => (
   <div className="flex gap-4">
