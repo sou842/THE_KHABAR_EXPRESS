@@ -7,16 +7,21 @@ const QUICK_LINKS = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
   { label: "Contact Us", href: "/contact" },
+  { label: "Disclaimer", href: "/disclaimer" },
+  { label: "Health Disclaimer", href: "/health-disclaimer" },
+  { label: "Finance Disclaimer", href: "/finance-disclaimer" },
   { label: "Privacy Policy", href: "/privacy-policy" },
   { label: "Terms of Service", href: "/terms-of-service" },
-  { label: "Disclaimer", href: "/disclaimer" },
 ];
+
 
 const CATEGORY_LINKS = [
   { label: "Technology", href: "/category/technology" },
   { label: "Health", href: "/category/health" },
   { label: "Finance", href: "/category/finance" },
   { label: "Politics", href: "/category/politics" },
+  { label: "Entertainment", href: "/category/entertainment" },
+  { label: "Sports", href: "/category/sports" },
 ];
 
 const Footer: React.FC = () => {
@@ -82,7 +87,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
+        <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground" suppressHydrationWarning>
           © {currentYear} The Khabar Express. All rights reserved.
         </div>
       </div>

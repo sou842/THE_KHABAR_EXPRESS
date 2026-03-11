@@ -16,6 +16,7 @@ import FaqSchema, { IFaqItem } from "@/components/BlogEditor/FaqSchema";
 import AiSummarySection from "@/components/AI/AiSummarySection";
 import AskAiChat from "@/components/AI/AskAiChat";
 import TextToSpeech from "@/components/TextToSpeech";
+import ArticleDisclaimer from "@/components/Disclaimers/ArticleDisclaimer";
 
 interface BlogPost {
   _id: string;
@@ -141,15 +142,15 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
                       {/* Quick Actions Bar */}
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         {displayTag && (
-                            <span className="text-center gap-1 text-sm font-medium text-muted-foreground leading-snug">
-                              Love this story? Explore more trending news on {' '}
-                              <Link
-                                href={`/topic/${encodeURIComponent(displayTag)}`}
-                                className="font-semibold capitalize underline decoration-primary underline-offset-4"
-                              >
-                                {displayTag || ''}
-                              </Link>
-                            </span>
+                          <span className="text-center gap-1 text-sm font-medium text-muted-foreground leading-snug">
+                            Love this story? Explore more trending news on {' '}
+                            <Link
+                              href={`/topic/${encodeURIComponent(displayTag)}`}
+                              className="font-semibold capitalize underline decoration-primary underline-offset-4"
+                            >
+                              {displayTag || ''}
+                            </Link>
+                          </span>
                         )}
                         <div className="flex justify-center sm:justify-start">
                           <TextToSpeech title={blog?.title} contentBlocks={blog?.body} />
@@ -171,7 +172,7 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
                 </div>
 
                 {/* Article Footer & Social sharing */}
-                <div className="border-t border-b border-border py-6 mb-12 bg-muted/20">
+                <div className="border-t border-b border-border py-6 mt-12 mb-12 bg-muted/20">
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4">
                     <p className="text-sm font-bold uppercase tracking-widest text-primary border-l-2 border-primary pl-3">
                       Share this story
@@ -191,15 +192,19 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
                   </div>
                 </div>
 
+
                 {/* FAQ's section */}
                 {blog?.faqs?.length > 0 &&
                   <section className="mx-auto my-12 p-8 border border-border rounded-sm bg-muted/10">
                     <h3 className="text-xl font-bold font-serif mb-6 border-l-4 border-primary pl-4 text-foreground">Frequently Asked Questions</h3>
                     <FaqSchema faqs={blog?.faqs || []} />
-                  </section>}
+                  </section>
+                }
+
+                <ArticleDisclaimer category={blog?.category} />
 
                 {/* Related articles */}
-                <section aria-labelledby="related-articles-heading" className="mt-16 mb-12 border-t border-border pt-12">
+                <section aria-labelledby="related-articles-heading" className="mt-0 mb-12">
                   <div className="mb-8 flex items-baseline justify-between">
                     <div>
                       <h2 className="text-sm font-bold uppercase tracking-widest text-primary mb-2">Read More</h2>

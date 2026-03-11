@@ -35,14 +35,16 @@ const TextToSpeech: React.FC<TextToSpeechProps> = ({ title, contentBlocks }) => 
           case 'quote':
             if (block.data.text) {
               // Strip HTML tags (e.g., <b>, <i>, <a>)
-              const plainText = block.data.text.replace(/<[^>]*>?/gm, '');
+              const textValue = String(block.data.text);
+              const plainText = textValue.replace(/<[^>]*>?/gm, '');
               fullText += plainText + ' \n\n';
             }
             break;
           case 'list':
             if (block.data.items && Array.isArray(block.data.items)) {
-              block.data.items.forEach((item: string) => {
-                const plainText = item.replace(/<[^>]*>?/gm, '');
+              block.data.items.forEach((item: any) => {
+                const textValue = typeof item === 'string' ? item : (item?.content || String(item || ''));
+                const plainText = textValue.replace(/<[^>]*>?/gm, '');
                 fullText += plainText + ' \n';
               });
               fullText += '\n';

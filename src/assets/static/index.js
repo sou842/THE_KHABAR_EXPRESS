@@ -582,16 +582,282 @@ export const termsofservice = [
   },
 ];
 
+export const healthdisclaimer = [
+  {
+    type: "header",
+    value: "Health Information Disclaimer – The Khabar Express",
+  },
+  {
+    type: "text",
+    value: "<em>Last Updated: March 11, 2026</em><br><br>The Khabar Express (\"we,\" \"us,\" \"our,\" \"Website\") is a digital news and information platform. Our Health section provides <strong>NEWS REPORTING, ANALYSIS, and COMMENTARY</strong> about health, medical research, and wellness topics.<br><br>We are <strong>NOT</strong> a medical provider, medical facility, or healthcare organization. We do <strong>NOT</strong> provide medical advice, diagnosis, treatment recommendations, or medical services of any kind.<br><br>This disclaimer applies to all health-related content on our Website, including but not limited to: <ul class='list-disc pl-5 mt-2'><li>News articles about medical research and health studies</li><li>Analysis of health policies and public health initiatives</li><li>Information about medical developments and healthcare trends</li><li>Commentary on health-related news and events</li><li>Discussion of health conditions, treatments, or medications</li></ul>",
+  },
+  {
+    type: "header",
+    value: "1. What Our Content Is",
+  },
+  {
+    type: "text",
+    value: "Our health articles are: <ul class='list-disc pl-5 mt-2'><li>News reporting on medical research and health studies</li><li>Analysis of published health research</li><li>Commentary on health policy and public health news</li><li>Discussion of medical discoveries and innovations</li><li>Educational information about health topics</li><li>Summaries of health-related news events</li></ul>All our health content is based on: <ul class='list-disc pl-5 mt-2'><li>Published research and peer-reviewed studies</li><li>Official health organization statements</li><li>Credible medical news sources</li><li>Expert interviews and analysis</li><li>Public health announcements</li></ul>",
+  },
+  {
+    type: "header",
+    value: "2. What Our Content Is Not",
+  },
+  {
+    type: "text",
+    value: "Our health articles are <strong>NOT</strong>: <ul class='list-disc pl-5 mt-2'><li>Medical advice or medical recommendations</li><li>A substitute for professional medical consultation</li><li>Medical diagnosis or treatment guidance</li><li>Medical prescriptions or medication recommendations</li><li>Health instructions or how-to medical guides</li><li>Endorsement of specific medical treatments</li><li>Professional medical or healthcare services</li><li>Nutritional counseling or dietary advice</li><li>Mental health counseling or psychological treatment</li><li>Emergency medical guidance</li></ul>We do <strong>NOT</strong> recommend, promote, or endorse any specific: medical treatments or therapies, medications or supplements, healthcare providers or facilities, alternative medicine practices, or medical products or devices.",
+  },
+  {
+    type: "header",
+    value: "3. No Doctor-Patient Relationship",
+  },
+  {
+    type: "text",
+    value: "Reading our health content does <strong>NOT</strong> establish a doctor-patient relationship between you and any healthcare provider. We are not your doctor, and our content should not be treated as medical advice from a healthcare professional.",
+  },
+  {
+    type: "header",
+    value: "4. Important Health Warnings",
+  },
+  {
+    type: "text",
+    value: "<strong>DO NOT:</strong> <ul class='list-disc pl-5 mt-2'><li>Use our Website to diagnose any health condition</li><li>Delay seeking medical attention based on our content</li><li>Avoid prescribed medical treatment based on our articles</li><li>Self-medicate or self-treat based on our information</li><li>Replace professional medical advice with our content</li></ul><strong>DO:</strong> <ul class='list-disc pl-5 mt-2'><li>Consult a licensed healthcare provider about your health</li><li>Seek professional medical advice for any health concerns</li><li>Always follow your doctor's recommendations</li><li>Contact emergency services for medical emergencies</li><li>Discuss any health information with your physician</li></ul>",
+  },
+  {
+    type: "header",
+    value: "5. Medical Emergencies",
+  },
+  {
+    type: "text",
+    value: "If you are experiencing a medical emergency, immediately call your emergency number. In India: <strong>108 (AEMS)</strong>. Go to the nearest hospital or emergency department. <strong>DO NOT</strong> use this Website or any online resource during a medical emergency. Seek immediate professional medical help.",
+  },
+  {
+    type: "header",
+    value: "6. Individual Variation & Medical Differences",
+  },
+  {
+    type: "text",
+    value: "Health information varies based on individual medical history, current health status, ongoing medications, genetic factors, age, weight and lifestyle, geographic and cultural factors, and underlying health conditions.<br><br>What is appropriate for one person may <strong>NOT</strong> be appropriate for another. Only a qualified healthcare provider who knows your medical history can provide personalized medical advice.",
+  },
+  {
+    type: "header",
+    value: "7. Accuracy & Updates",
+  },
+  {
+    type: "text",
+    value: "We strive to provide accurate and current health information. However: <ul class='list-disc pl-5 mt-2'><li>Medical research and guidelines change frequently</li><li>Our articles may contain outdated information</li><li>We cannot guarantee the accuracy of all content</li><li>Articles reflect information at time of publication</li><li>New research may contradict previous information</li></ul>Always check with your healthcare provider for the most current medical information, as medical knowledge evolves continuously.",
+  },
+  {
+    type: "header",
+    value: "8. Third-Party Sources & Links",
+  },
+  {
+    type: "text",
+    value: "Our health articles may cite or link to medical journals, government health agencies (CDC, WHO, FDA, MOHFW, NITI Aayog), medical institutions, healthcare organizations, and academic medical centers.<br><br>We do <strong>NOT</strong> endorse or assume responsibility for third-party content, even when cited or linked. We are not responsible for the accuracy, availability, or security of external websites.",
+  },
+  {
+    type: "header",
+    value: "9. Special Populations",
+  },
+  {
+    type: "text",
+    value: "Special care should be taken by: <ul class='list-disc pl-5 mt-2'><li><strong>Pregnant & Nursing Women:</strong> Do NOT take any medications or supplements without consulting your OB-GYN.</li><li><strong>Children & Infants:</strong> Always consult a pediatrician for children's health concerns. Do NOT give any medication to children based on adult guidelines.</li><li><strong>Elderly Patients:</strong> Older adults may react differently to medications and treatments. Consult a geriatric specialist or primary care physician.</li><li><strong>People with Chronic Conditions:</strong> Those with diabetes, heart disease, kidney disease, or other chronic conditions need personalized medical care. Do NOT make health decisions without consulting your specialist.</li><li><strong>Mental Health:</strong> If you are experiencing mental health issues or suicidal thoughts, contact the National Suicide Prevention Helpline: 1-800-589-5556 or call 108 in India.</li></ul>",
+  },
+  {
+    type: "header",
+    value: "10. Author Qualifications",
+  },
+  {
+    type: "text",
+    value: "Our health articles are written and edited by journalists and content creators. Unless specifically noted, our authors are NOT licensed physicians, registered nurses, medical researchers, healthcare professionals, or medical specialists.<br><br>Even when articles are reviewed by or quote medical professionals, this does NOT constitute professional medical advice to you.",
+  },
+  {
+    type: "header",
+    value: "11. Research Limitations",
+  },
+  {
+    type: "text",
+    value: "When we report on health studies, please note: <ul class='list-disc pl-5 mt-2'><li>Single studies may NOT establish medical truth</li><li>Research may have limitations and biases</li><li>Results may not apply to your situation</li><li>Studies may later be contradicted</li><li>Effect sizes may be small or clinically insignificant</li></ul>Always discuss research findings with your healthcare provider to understand how they apply to you.",
+  },
+  {
+    type: "header",
+    value: "12. Limitations of Liability",
+  },
+  {
+    type: "text",
+    value: "To the fullest extent permitted by law, The Khabar Express is NOT liable for any health problems resulting from using our Website, medical decisions made based on our content, harm from following (or not following) our information, omissions or inaccuracies in our health content, consequences of relying on our articles, loss of life, injury, or illness related to our content, or any other damages related to this Website.<br><br>YOU assume all risk for using this Website and its health content.",
+  },
+  {
+    type: "header",
+    value: "13. Acknowledgment & Agreement",
+  },
+  {
+    type: "text",
+    value: "BY USING THE HEALTH SECTION OF OUR WEBSITE, YOU ACKNOWLEDGE AND AGREE THAT: <ul class='list-disc pl-5 mt-2'><li>You have read and understood this disclaimer</li><li>You will NOT rely on our content as medical advice</li><li>You will consult qualified healthcare providers</li><li>You assume all responsibility for your health decisions</li><li>You waive any claims against us for health-related harm</li><li>You understand we provide NEWS, not medical services</li></ul>",
+  },
+  {
+    type: "header",
+    value: "14. Contact Us",
+  },
+  {
+    type: "text",
+    value: "This Website is for informational purposes only. Health decisions should ALWAYS be made in consultation with qualified healthcare professionals who know your medical history and can provide personalized advice.<br><br>If you have questions about this disclaimer, contact us at:<br><br><strong>The Khabar Express</strong><br>Website: <a href='https://www.thekhabarexpress.com' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>https://www.thekhabarexpress.com</a><br>Email: <a href='mailto:thekhabarexpressnews@gmail.com' class='text-primary hover:underline'>thekhabarexpressnews@gmail.com</a>",
+  },
+  {
+    type: "header",
+    value: "15. Changes to This Disclaimer",
+  },
+  {
+    type: "text",
+    value: "We may update this disclaimer at any time. Continued use of the Website after changes constitutes acceptance of the updated disclaimer. Review this page periodically for changes.",
+  },
+];
+
+export const financedisclaimer = [
+  {
+    type: "header",
+    value: "Financial Information Disclaimer – The Khabar Express",
+  },
+  {
+    type: "text",
+    value: "<em>Last Updated: March 11, 2026</em><br><br>The Khabar Express (\"we,\" \"us,\" \"our,\" \"Website\") is a digital news and information platform. Our Finance section provides <strong>NEWS REPORTING, MARKET ANALYSIS, and COMMENTARY</strong> about finance, investment markets, and economic topics.<br><br>We are <strong>NOT</strong> a financial advisor, investment advisor, brokerage firm, or licensed financial services provider. We do <strong>NOT</strong> provide investment advice, financial recommendations, or financial planning services.<br><br>This disclaimer applies to all finance-related content on our Website, including but not limited to: <ul class='list-disc pl-5 mt-2'><li>News articles about financial markets and economic events</li><li>Analysis of stock market movements</li><li>Commentary on business and financial news</li><li>Discussion of economic policies and indicators</li><li>Information about cryptocurrencies and digital assets</li><li>Real estate and property market discussions</li><li>Insurance and banking information</li><li>Tax and budgetary policy analysis</li></ul>",
+  },
+  {
+    type: "header",
+    value: "1. What Our Content Is",
+  },
+  {
+    type: "text",
+    value: "Our finance articles are: <ul class='list-disc pl-5 mt-2'><li>News reporting on financial markets and economic events</li><li>Analysis of financial market movements</li><li>Commentary on business news and financial developments</li><li>Discussion of economic policies and their implications</li><li>Educational information about finance and investing</li><li>Summaries of financial market trends</li><li>Explanations of economic concepts</li><li>Historical financial data and trends</li></ul>All our finance content is based on published financial news and data, market data from exchanges and financial sources, government economic reports and statistics, expert analysis and commentary, company announcements and financial reports, and economic research and studies.",
+  },
+  {
+    type: "header",
+    value: "2. What Our Content Is Not",
+  },
+  {
+    type: "text",
+    value: "Our finance articles are <strong>NOT</strong>: <ul class='list-disc pl-5 mt-2'><li>Investment advice or investment recommendations</li><li>Financial advice or financial recommendations</li><li>A substitute for professional financial consultation</li><li>Stock picking or security recommendations</li><li>Buy/sell/hold recommendations</li><li>Portfolio management guidance</li><li>Personal financial planning advice</li><li>Tax advice or tax planning guidance</li><li>Legal financial advice</li><li>Endorsement of specific financial products</li></ul>We do <strong>NOT</strong> recommend, promote, or endorse specific stocks, bonds, or securities, particular mutual funds or ETFs, specific cryptocurrencies or digital assets, real estate investments, insurance products, forex trading or currency trading, commodities or futures, or any specific investment products.",
+  },
+  {
+    type: "header",
+    value: "3. No Financial Advisor Relationship",
+  },
+  {
+    type: "text",
+    value: "Reading our finance content does <strong>NOT</strong> establish a financial advisor-client relationship between you and any financial professional. We are not your financial advisor, and our content should not be treated as financial advice from a qualified professional.<br><br>Our content is <strong>GENERAL information only</strong>. It does NOT account for your financial situation and net worth, your investment goals and timeline, your risk tolerance, your income and expenses, your debt and liabilities, your tax situation, your family circumstances, or your personal preferences.",
+  },
+  {
+    type: "header",
+    value: "4. Risks of Investing & Financial Decisions",
+  },
+  {
+    type: "text",
+    value: "<strong>ALL INVESTMENTS INVOLVE RISK.</strong> You should understand that: <ul class='list-disc pl-5 mt-2'><li><strong>Loss of Principal:</strong> You can lose some or all of your money invested in any security. There is NO guarantee you will get your money back.</li><li><strong>Market Volatility:</strong> Markets fluctuate daily. Prices can fall significantly.</li><li><strong>Unpredictable Events:</strong> Wars, pandemics, political events, and other factors cause sudden market moves.</li><li><strong>Inflation Risk:</strong> Your money may lose purchasing power over time.</li><li><strong>Liquidity Risk:</strong> You may not be able to sell an investment quickly when needed.</li><li><strong>Opportunity Cost:</strong> Returns may lag behind alternative investments.</li></ul>",
+  },
+  {
+    type: "header",
+    value: "5. Past Performance Disclaimer",
+  },
+  {
+    type: "text",
+    value: "<strong>IMPORTANT: Past performance of any financial instrument, market index, investment, or strategy does NOT guarantee future results.</strong><br><br>Any historical data, performance charts, or trend analysis presented on this Website are for informational purposes only and should NOT be relied upon as indicators of future performance.",
+  },
+  {
+    type: "header",
+    value: "6. No Guarantee of Accuracy",
+  },
+  {
+    type: "text",
+    value: "Financial markets move rapidly. While we strive to provide accurate and timely information: <ul class='list-disc pl-5 mt-2'><li>Market data may be delayed or inaccurate</li><li>Economic projections are inherently uncertain</li><li>We cannot guarantee the accuracy of third-party data we cite</li><li>Information may become outdated quickly in fast-moving markets</li></ul>Always verify financial data directly with official market sources, exchanges, and regulatory filings before making financial decisions.",
+  },
+  {
+    type: "header",
+    value: "7. Professional Financial Advice Required",
+  },
+  {
+    type: "text",
+    value: "Before making any investment or financial decision, you should: <ul class='list-disc pl-5 mt-2'><li>Consult a SEBI-registered investment advisor or licensed financial planner</li><li>Speak with a qualified chartered accountant for tax-related matters</li><li>Consult a licensed insurance advisor for insurance products</li><li>Seek guidance from a qualified real estate professional for property investments</li><li>Consider your personal financial situation, goals, and risk tolerance</li></ul>",
+  },
+  {
+    type: "header",
+    value: "8. Regulatory Disclaimer",
+  },
+  {
+    type: "text",
+    value: "The Khabar Express is <strong>NOT registered with SEBI</strong> (Securities and Exchange Board of India), <strong>NOT an AMFI-registered distributor</strong>, <strong>NOT a registered investment advisor</strong>, and <strong>NOT affiliated with any financial regulatory body</strong>. Our content does not constitute research reports or investment analysis as defined under SEBI regulations.",
+  },
+  {
+    type: "header",
+    value: "9. Cryptocurrency & Digital Assets",
+  },
+  {
+    type: "text",
+    value: "Cryptocurrency and digital asset coverage on our Website is for informational purposes only. Cryptocurrencies are highly speculative, extremely volatile, and largely unregulated. Trading or investing in cryptocurrencies carries a very high risk of losing all capital. We do NOT provide any guidance on specific cryptocurrency investments. Consult a financial advisor before investing in any digital asset.",
+  },
+  {
+    type: "header",
+    value: "10. Third-Party Sources & Links",
+  },
+  {
+    type: "text",
+    value: "Our finance articles may cite or link to stock exchanges, financial news agencies, government economic departments, financial regulatory bodies, company annual reports and filings, and research firms.<br><br>We do <strong>NOT</strong> endorse or assume responsibility for third-party content. We are not responsible for the accuracy, availability, or completeness of external websites.",
+  },
+  {
+    type: "header",
+    value: "11. Limitations of Liability",
+  },
+  {
+    type: "text",
+    value: "To the fullest extent permitted by law, The Khabar Express is NOT liable for any financial losses resulting from using our Website, investment decisions made based on our content, any direct, indirect, incidental, or consequential damages, loss of profits, data, or business opportunities, or any other damages related to this Website.<br><br>YOU assume all financial risk for any decisions you make based on information from this Website.",
+  },
+  {
+    type: "header",
+    value: "12. Acknowledgment & Agreement",
+  },
+  {
+    type: "text",
+    value: "BY USING THE FINANCE SECTION OF OUR WEBSITE, YOU ACKNOWLEDGE AND AGREE THAT: <ul class='list-disc pl-5 mt-2'><li>You have read and understood this disclaimer</li><li>You will NOT rely on our content as financial or investment advice</li><li>You will consult qualified financial advisors before making financial decisions</li><li>You assume all responsibility for your financial decisions</li><li>You waive any claims against us for financial losses</li><li>You understand we provide NEWS, not financial services</li></ul>",
+  },
+  {
+    type: "header",
+    value: "13. Governing Law",
+  },
+  {
+    type: "text",
+    value: "This disclaimer is governed by the laws of India. Any disputes shall be resolved under Indian jurisdiction. These terms are subject to our Terms of Service and Privacy Policy.",
+  },
+  {
+    type: "header",
+    value: "14. Contact Us",
+  },
+  {
+    type: "text",
+    value: "If you have questions about this disclaimer, contact us at:<br><br><strong>The Khabar Express</strong><br>Website: <a href='https://www.thekhabarexpress.com' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>https://www.thekhabarexpress.com</a><br>Email: <a href='mailto:thekhabarexpressnews@gmail.com' class='text-primary hover:underline'>thekhabarexpressnews@gmail.com</a>",
+  },
+  {
+    type: "header",
+    value: "15. Changes to This Disclaimer",
+  },
+  {
+    type: "text",
+    value: "We may update this disclaimer at any time. Continued use of the Website after changes constitutes acceptance of the updated disclaimer. Review this page periodically for changes.",
+  },
+];
+
 export const staticPages = [
   "/",
   "/about",
   "/contact",
   "/privacy-policy",
   "/terms-of-service",
+  "/disclaimer",
+  "/health-disclaimer",
+  "/finance-disclaimer",
   "/category/technology",
   "/category/health",
   "/category/finance",
   "/category/politics",
+  "/category/entertainment",
   "/category/sports"
 ];
 

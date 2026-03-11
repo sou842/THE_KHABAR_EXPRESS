@@ -8,6 +8,7 @@ import { getter } from "@/lib/helper";
 import useSWRInfinite from "swr/infinite";
 import { useParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import CategoryDisclaimer from "@/components/Disclaimers/CategoryDisclaimer";
 
 const Category: FC = () => {
   const params = useParams<{ id: string }>();
@@ -77,11 +78,10 @@ const Category: FC = () => {
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setSortBy("recent")}
-                  className={`px-3 py-1.5 text-sm rounded-full transition-colors cursor-pointer ${
-                    sortBy === "recent"
+                  className={`px-3 py-1.5 text-sm rounded-full transition-colors cursor-pointer ${sortBy === "recent"
                       ? "bg-foreground text-background"
                       : "bg-transparent"
-                  }`}
+                    }`}
                 >
                   Most Recent
                 </button>
@@ -170,6 +170,9 @@ const Category: FC = () => {
                 </button>
               </div>
             )}
+
+            {/* Disclaimer Banner */}
+            <CategoryDisclaimer category={category!} />
 
             {isReachingEnd && !isEmpty && blogs.length > 0 && (
               <div className="text-center py-8">
