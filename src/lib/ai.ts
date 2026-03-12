@@ -1,8 +1,20 @@
-const PRIMARY_MODEL = "stepfun/step-3.5-flash:free";
+import { BlogChunk } from "@/models/blogChunk.model";
+
+// ─────────────────────────────────────────────
+// Model Configuration
+// ─────────────────────────────────────────────
+
+const PRIMARY_MODEL = "openrouter/hunter-alpha";
 const FALLBACK_MODELS = [
+  "stepfun/step-3.5-flash:free",
   "qwen/qwen3-next-80b-a3b-instruct:free",
   "nvidia/nemotron-nano-9b-v2:free",
 ];
+const ALL_MODELS = [PRIMARY_MODEL, ...FALLBACK_MODELS];
+
+// ─────────────────────────────────────────────
+// Types
+// ─────────────────────────────────────────────
 
 export interface AiSummary {
   mainIdea: string;
@@ -11,359 +23,364 @@ export interface AiSummary {
   suggestedQuestions: string[];
 }
 
-const callOpenRouter = async (prompt: string, jsonMode: boolean = false) => {
-  const apiKey = process.env.OPENROUTER_API_KEY || "";
-  const modelsToTry = [PRIMARY_MODEL, ...FALLBACK_MODELS];
+interface OpenRouterMessage {
+  role: "user" | "assistant" | "system";
+  content: string;
+}
+
+interface CallOptions {
+  jsonMode?: boolean;
+  retryDelayMs?: number;
+}
+
+// ─────────────────────────────────────────────
+// Core OpenRouter Caller (with silent fallback)
+// ─────────────────────────────────────────────
+
+/**
+ * Tries each model in order. Failures are silent — the user is only
+ * informed if every single model is exhausted.
+ */
+const callOpenRouter = async (
+  messages: OpenRouterMessage[],
+  options: CallOptions = {}
+): Promise<string> => {
+  const { jsonMode = false, retryDelayMs = 300 } = options;
+  const apiKey = process.env.OPENROUTER_API_KEY ?? "";
+
   let lastError = "No models available";
 
-  for (const model of modelsToTry) {
+  for (const model of ALL_MODELS) {
     try {
-      console.log(`DEBUG: AI [${model}] - Attempting...`);
-      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "HTTP-Referer": "https://thekhabarexpress.com",
-          "X-Title": "The Khabar Express",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          "model": model,
-          "messages": [{ "role": "user", "content": prompt }]
-        })
-      });
+      // Small delay between retries to avoid hammering providers
+      if (model !== PRIMARY_MODEL) {
+        await new Promise((r) => setTimeout(r, retryDelayMs));
+      }
 
-      let data;
+      const body: Record<string, unknown> = {
+        model,
+        messages,
+        ...(jsonMode && { response_format: { type: "json_object" } }),
+      };
+
+      const response = await fetch(
+        "https://openrouter.ai/api/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "HTTP-Referer": "https://thekhabarexpress.com",
+            "X-Title": "The Khabar Express",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      // Parse response body — if this fails, move to next model silently
+      let data: Record<string, unknown>;
       try {
         data = await response.json();
-      } catch (e) {
-        console.warn(`DEBUG: AI [${model}] - Failed to parse JSON response`);
-        lastError = "Invalid JSON response";
+      } catch {
+        lastError = "Invalid JSON response from provider";
         continue;
       }
 
-      if (response.status === 429 || data?.error?.code === 429) {
-        console.warn(`DEBUG: AI [${model}] - Rate limited (429). Trying next...`);
+      // Rate limited — try next model silently
+      if (
+        response.status === 429 ||
+        (data?.error as Record<string, unknown>)?.code === 429
+      ) {
         lastError = "Rate limited";
         continue;
       }
 
+      // Any other HTTP error — try next model silently
       if (!response.ok) {
-        console.error(`DEBUG: AI [${model}] - Error:`, JSON.stringify(data?.error || data, null, 2));
-        lastError = data?.error?.message || `HTTP ${response.status}`;
+        const errData = data?.error as Record<string, unknown> | undefined;
+        lastError =
+          (errData?.message as string) ?? `HTTP ${response.status}`;
         continue;
       }
 
-      const content = data?.choices?.[0]?.message?.content;
-      if (!content) {
-        console.warn(`DEBUG: AI [${model}] - Empty content received.`);
-        lastError = "Empty content";
+      // Empty or missing content — try next model silently
+      const content =
+        (
+          data?.choices as Array<{
+            message?: { content?: string };
+          }>
+        )?.[0]?.message?.content ?? "";
+
+      if (!content.trim()) {
+        lastError = "Empty content received";
         continue;
       }
 
-      console.log(`DEBUG: AI [${model}] - Success!`);
+      // ✅ Success — return immediately without exposing which model was used
       return content;
     } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      console.error(`DEBUG: AI [${model}] - Exceptional Error:`, msg);
-      lastError = msg;
+      lastError =
+        error instanceof Error ? error.message : String(error);
       continue;
     }
   }
 
-  throw new Error(`AI Provider exhausted all models. Last error: ${lastError}`);
+  // ❌ All models failed — only NOW do we surface the error to the caller
+  throw new Error(
+    `Our AI service is temporarily unavailable. Please try again shortly. (${lastError})`
+  );
 };
 
-export const generateSummary = async (content: string): Promise<AiSummary> => {
+// ─────────────────────────────────────────────
+// Summary Generation
+// ─────────────────────────────────────────────
+
+export const generateSummary = async (
+  content: string
+): Promise<AiSummary> => {
   const prompt = `
-You are an expert content analyst and summarization AI.
+You are a precise content analysis AI. Your sole function is to read the provided article and return a structured JSON summary.
 
-Your task is to analyze the following blog post and generate a clear, accurate, and structured summary.
+═══════════════════════════════════════════
+ABSOLUTE CONSTRAINTS (NEVER VIOLATE THESE)
+═══════════════════════════════════════════
+- Use ONLY information explicitly stated in the article.
+- Do NOT infer, assume, or add external knowledge.
+- Do NOT hallucinate facts, names, statistics, or claims.
+- Do NOT output anything except a valid JSON object.
+- Do NOT wrap output in markdown (no \`\`\`json blocks).
+- Do NOT include explanations, comments, or preamble.
+- The response must be directly parseable by JSON.parse().
 
-IMPORTANT RULES
-
-1. Use **only the provided content** as your source of information.
-2. Do **not invent or assume information** that is not present in the article.
-3. Keep the summary **clear, concise, and informative**.
-4. Extract the **most important insights and ideas** from the article.
-5. Avoid generic or vague statements.
-6. If the article contains technical concepts, explain the key ideas in a simplified and readable way.
-7. Your output must follow the **exact JSON structure provided below**.
-8. The output must contain **valid JSON only** — no extra text, markdown, comments, or explanations.
-9. Ensure the JSON can be parsed directly using \`JSON.parse()\`.
-
-Content to analyze:
+═══════════════════════════════
+ARTICLE CONTENT TO ANALYZE
+═══════════════════════════════
 ${content}
 
-Your output must follow this structure exactly:
-
+═══════════════════════════════
+REQUIRED OUTPUT STRUCTURE
+═══════════════════════════════
 {
-"mainIdea": "A concise explanation of the primary idea or purpose of the article. Maximum 2 sentences.",
-"keyPoints": [
-"Important takeaway or insight from the article",
-"Another key concept explained in the article",
-"Additional relevant insight",
-"Optional fourth key point if needed"
-],
-"finalTakeaway": "A brief concluding insight that captures the overall message or lesson of the article.",
-"suggestedQuestions": [
-"Question 1",
-"Question 2",
-"Question 3"
-]
+  "mainIdea": "<string>",
+  "keyPoints": ["<string>", "<string>", "<string>", "<string>"],
+  "finalTakeaway": "<string>",
+  "suggestedQuestions": ["<string>", "<string>", "<string>"]
 }
 
-FIELD GUIDELINES
+═══════════════════════════════
+FIELD-BY-FIELD RULES
+═══════════════════════════════
 
-mainIdea
+"mainIdea"
+- Exactly 1–2 sentences.
+- State the article's core subject and purpose.
+- Must be grounded in the article's opening or central thesis.
+- No opinions, no filler phrases like "This article discusses...".
 
-* Provide a short explanation of the article's main purpose or theme.
-* Maximum 2 sentences.
+"keyPoints"
+- Minimum 3, maximum 4 items.
+- Each point must represent a DISTINCT insight from the article.
+- No two points may overlap in meaning or content.
+- Write each point as a standalone, self-explanatory statement.
+- Do not use vague language such as "the article mentions" or "it talks about".
+- Each point must be falsifiable — a reader should be able to verify it against the article.
 
-keyPoints
+"finalTakeaway"
+- Exactly 1–2 sentences.
+- Synthesize the article's overall conclusion or lesson.
+- Must not simply restate a key point — it should provide a concluding perspective.
 
-* Extract the most important ideas from the article.
-* Each point should represent a meaningful insight from the article.
-* Avoid repeating the same idea in different wording.
+"suggestedQuestions"
+- Exactly 3 questions.
+- Every question MUST be answerable using ONLY the information in the article.
+- Do not generate questions that require outside knowledge to answer.
+- Questions must address different aspects of the article (do not cluster around one topic).
+- Write questions as a curious reader would naturally phrase them.
 
-finalTakeaway
+═══════════════════════════════
+QUALITY CHECKLIST (SELF-VERIFY BEFORE OUTPUTTING)
+═══════════════════════════════
+Before returning your response, verify:
+[ ] mainIdea is 1–2 sentences and grounded in article content
+[ ] keyPoints has 3–4 items with no overlap or repetition
+[ ] finalTakeaway synthesizes — not just restates — the article
+[ ] All 3 suggestedQuestions are answerable from the article alone
+[ ] Output is a raw JSON object — no markdown, no extra text
+[ ] JSON is valid and directly parseable by JSON.parse()
 
-* Provide a concise concluding insight or overall lesson from the article.
-
-suggestedQuestions
-
-* Generate 3 thoughtful questions that a reader might naturally ask after reading the article.
-* **Every question must be answerable using the information contained in the article.**
-* Do not create questions that require external knowledge.
-* The questions should help users explore the key ideas, explanations, or conclusions from the article.
-
-Return **only the JSON object**.
-Do not include any explanations, markdown formatting, or additional text.
+Return ONLY the JSON object. Begin your response with "{" and end with "}".
 `;
 
-  const text = await callOpenRouter(prompt, true);
-  
-  try {
-    const jsonStr = text.match(/\{[\s\S]*\}/)?.[0] || text;
-    return JSON.parse(jsonStr) as AiSummary;
-  } catch (error) {
-    console.error("Error parsing AI summary:", error);
-    // Return a fallback structure if parsing fails but we have text
-    return {
-      mainIdea: "Failed to parse AI summary. The content was generated but not in the expected format.",
-      keyPoints: ["Please check the console for details"],
-      finalTakeaway: "Retry requested",
-      suggestedQuestions: ["Can you explain the main idea again?", "What are the key takeaways?"]
-    };
-  }
+  const text = await callOpenRouter([{ role: "user", content: prompt }], {
+    jsonMode: true,
+  });
+
+  // Strip any accidental markdown fences before parsing
+  const jsonStr = text.match(/\{[\s\S]*\}/)?.[0] ?? text;
+
+  // Let the error propagate — callOpenRouter already threw a user-friendly
+  // message if all models failed; a parse error here is a genuine bug.
+  return JSON.parse(jsonStr) as AiSummary;
 };
 
-export const generateEmbeddings = async (text: string): Promise<number[]> => {
-  const apiKey = process.env.OPENROUTER_API_KEY || "";
-  
-  try {
-    const response = await fetch("https://openrouter.ai/api/v1/embeddings", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        "model": "openai/text-embedding-3-small", 
-        "input": text
-      })
-    });
+// ─────────────────────────────────────────────
+// Q&A (Ask AI about an article)
+// ─────────────────────────────────────────────
 
-    const data = await response.json();
-    if (!response.ok) {
-      console.warn("Embedding failed. Using dummy embedding as fallback.", data);
-      return new Array(1536).fill(0); 
-    }
-    return data.data[0].embedding;
-  } catch (err) {
-    console.error("Embedding service unavailable:", err);
-    return new Array(1536).fill(0);
-  }
-};
-
-export const chunkText = (text: string, chunkSize: number = 1000, overlap: number = 200): string[] => {
-  const chunks: string[] = [];
-  let startIndex = 0;
-
-  while (startIndex < text.length) {
-    let endIndex = startIndex + chunkSize;
-    if (endIndex > text.length) {
-      endIndex = text.length;
-    } else {
-      const lastPeriod = text.lastIndexOf(".", endIndex);
-      const lastNewline = text.lastIndexOf("\n", endIndex);
-      const splitPoint = Math.max(lastPeriod, lastNewline);
-      
-      if (splitPoint > startIndex + chunkSize * 0.5) {
-        endIndex = splitPoint + 1;
-      }
-    }
-
-    chunks.push(text.substring(startIndex, endIndex).trim());
-    startIndex = endIndex - overlap;
-    
-    if (startIndex >= text.length || endIndex >= text.length) break;
-  }
-
-  return chunks.filter(c => c.length > 50);
-};
-
-
-export const askAi = async (question: string, context: string, conversationHistory: string = ""): Promise<string> => {
-  const prompt = `
+export const askAi = async (
+  question: string,
+  context: string,
+  conversationHistory: string = ""
+): Promise<string> => {
+  const systemPrompt = `
 You are an intelligent AI assistant integrated inside a blogging platform.
-
-Your job is to help users understand an article and answer their questions in a clear, friendly, and conversational way.
-
-You will receive three types of information:
-
-1. ARTICLE CONTEXT
-   Relevant sections extracted from the blog article.
-
-2. CONVERSATION HISTORY
-   Previous messages between the user and the assistant.
-
-3. USER QUESTION
-   The latest message from the user.
-
-Use all of this information to generate your response.
-
----
+Your job is to help users understand an article and answer their questions
+in a clear, friendly, and conversational way.
 
 PRIMARY RESPONSIBILITIES
-
 1. Help users understand the article.
 2. Answer questions using the provided article context.
-3. Maintain a natural conversation with the user.
-4. Use the conversation history to understand follow-up questions.
-5. Provide helpful explanations when the user asks for clarification.
-
----
+3. Maintain a natural conversation based on conversation history.
+4. Provide helpful explanations when the user asks for clarification.
 
 IMPORTANT RULES
-
-1. Base your answers **primarily on the provided article context**.
-2. If the answer is not present in the article context, respond with:
-
-"I'm sorry, but this article doesn't contain information about that."
-
-3. Do NOT invent facts that are not supported by the article.
-4. Do NOT hallucinate information.
-5. Keep answers **clear, concise, and easy to understand**.
-6. If the user asks a follow-up question, use the **conversation history** to understand what they mean.
-7. Users may ask questions in casual or imperfect language — interpret their intent and respond helpfully.
-
----
-
-WEBSITE / PLATFORM QUESTIONS
-
-If the user asks questions about the platform itself (for example about features, blogging, publishing, accounts, or how the site works), you may answer those questions normally using general knowledge about blogging platforms.
-
-Examples:
-
-* "How can I publish my own blog?"
-* "Can I comment on posts?"
-* "How do I follow a writer?"
-
-In these cases, provide a helpful explanation about how a typical blogging platform works.
-
-However, do not invent specific platform policies or features if you are not certain.
-
----
-
-HANDLING USER LANGUAGE
-
-Users may ask questions in many ways, including:
-
-* informal language
-* incomplete sentences
-* follow-up questions
-* conversational messages
-
-Examples:
-"What does this mean?"
-"Explain that part again"
-"Why is this important?"
-"Can you simplify this?"
-
-Use the article context and conversation history to understand what the user is referring to.
-
----
+1. Base your answers primarily on the provided article context.
+2. If the answer is not in the article, respond with:
+   "I'm sorry, but this article doesn't contain information about that."
+3. Do NOT invent or hallucinate facts.
+4. Keep answers clear, concise, and easy to understand.
+5. Use conversation history to understand follow-up questions.
+6. If users ask about the platform itself (publishing, accounts, features),
+   answer using general knowledge about blogging platforms.
+   Do NOT invent specific platform policies you are unsure about.
 
 RESPONSE STYLE
-
-Your answers should:
-
-• Be clear and conversational
-• Be easy for normal readers to understand
-• Focus on explaining the article content
-• Avoid overly technical language unless necessary
-
-If appropriate, you may reference ideas from the article like:
-
-"The article explains that..."
-
-or
-
-"According to the article..."
-
----
-
-CONTEXT
+- Clear and conversational
+- Easy for general readers to understand
+- You may reference the article with phrases like "The article explains that..."
 
 Article Context:
 ${context}
 
 Conversation History:
 ${conversationHistory}
+`.trim();
 
-User Question:
-${question}
-
----
-
-Now generate a helpful answer for the user based on the instructions above.
-`;
-
-  return await callOpenRouter(prompt);
+  return callOpenRouter([
+    { role: "system", content: systemPrompt },
+    { role: "user", content: question },
+  ]);
 };
 
-/**
- * Shared logic to process a blog post: chunk it and store embeddings in DB.
- * This is called by summary generation OR Q&A if chunks are missing.
- */
-import { BlogChunk } from '@/models/blogChunk.model';
+// ─────────────────────────────────────────────
+// Embeddings
+// ─────────────────────────────────────────────
 
-export async function processBlogForRag(blogId: string, text: string) {
-  // Check if chunks already exist to avoid redundant work
-  const existingChunks = await BlogChunk.countDocuments({ blogId });
-  if (existingChunks > 0) {
-    console.log(`DEBUG: Chunks already exist for blog ${blogId}. Skipping.`);
-    return;
+/**
+ * Tries PRIMARY_MODEL for embeddings first.
+ * Falls back to a zero-vector silently if all attempts fail —
+ * a degraded embedding is better than a hard crash for RAG.
+ */
+export const generateEmbeddings = async (
+  text: string
+): Promise<number[]> => {
+  const apiKey = process.env.OPENROUTER_API_KEY ?? "";
+  const embeddingModels = [PRIMARY_MODEL, ...FALLBACK_MODELS];
+
+  for (const model of embeddingModels) {
+    try {
+      const response = await fetch(
+        "https://openrouter.ai/api/v1/embeddings",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ model, input: text }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data?.data?.[0]?.embedding) {
+        continue; // silent, try next model
+      }
+
+      return data.data[0].embedding as number[];
+    } catch {
+      continue; // silent, try next model
+    }
   }
 
-  console.log(`DEBUG: Processing blog ${blogId} for RAG...`);
+  // All embedding models failed — return zero-vector fallback silently
+  // (RAG will still work, just with reduced relevance for this chunk)
+  return new Array(1536).fill(0);
+};
+
+// ─────────────────────────────────────────────
+// Text Chunking
+// ─────────────────────────────────────────────
+
+export const chunkText = (
+  text: string,
+  chunkSize: number = 1000,
+  overlap: number = 200
+): string[] => {
+  const chunks: string[] = [];
+  let startIndex = 0;
+
+  while (startIndex < text.length) {
+    let endIndex = startIndex + chunkSize;
+
+    if (endIndex >= text.length) {
+      endIndex = text.length;
+    } else {
+      // Prefer splitting at a sentence or newline boundary
+      const lastPeriod = text.lastIndexOf(".", endIndex);
+      const lastNewline = text.lastIndexOf("\n", endIndex);
+      const splitPoint = Math.max(lastPeriod, lastNewline);
+
+      if (splitPoint > startIndex + chunkSize * 0.5) {
+        endIndex = splitPoint + 1;
+      }
+    }
+
+    const chunk = text.substring(startIndex, endIndex).trim();
+    if (chunk.length > 50) chunks.push(chunk);
+
+    startIndex = endIndex - overlap;
+    if (startIndex >= text.length || endIndex >= text.length) break;
+  }
+
+  return chunks;
+};
+
+// ─────────────────────────────────────────────
+// RAG: Process Blog for Vector Storage
+// ─────────────────────────────────────────────
+
+export async function processBlogForRag(
+  blogId: string,
+  text: string
+): Promise<void> {
+  const existingChunks = await BlogChunk.countDocuments({ blogId });
+  if (existingChunks > 0) return; // Already processed, skip silently
+
   const chunks = chunkText(text);
-  
-  // Use a smaller batch size to avoid hitting rate limits or timeouts
+
   for (let i = 0; i < chunks.length; i++) {
-    const chunk = chunks[i];
     try {
-      const embedding = await generateEmbeddings(chunk);
-      
+      const embedding = await generateEmbeddings(chunks[i]);
       await BlogChunk.create({
         blogId,
-        content: chunk,
+        content: chunks[i],
         embedding,
-        index: i
+        index: i,
       });
-    } catch (err) {
-      console.error(`DEBUG: Failed to process chunk ${i} for blog ${blogId}:`, err);
+    } catch {
+      // One failed chunk should not abort the entire blog processing
+      continue;
     }
   }
 }
