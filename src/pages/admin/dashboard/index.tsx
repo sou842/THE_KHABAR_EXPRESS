@@ -11,6 +11,7 @@ import TaskList from "@/components/admin/section/TaskList";
 import Automation from "@/components/admin/section/Automation";
 import ContactMessages from "@/components/admin/section/ContactMessages";
 import Reports from "@/components/admin/section/Reports";
+import Vault from "@/components/admin/section/Vault";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -50,6 +51,9 @@ export default function AdminDashboard() {
       case "users":
         return <UsersPage />;
 
+      case "vault":
+        return <Vault />;
+
       case "contributor":
         return <Contributor />;
 
@@ -61,10 +65,10 @@ export default function AdminDashboard() {
 
       case "automation":
         return <Automation />;
-      
+
       case "contact":
         return <ContactMessages />;
-      
+
       case "reports":
         return <Reports />;
 

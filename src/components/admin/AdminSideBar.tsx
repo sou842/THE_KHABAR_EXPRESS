@@ -12,6 +12,7 @@ import {
   Mail,
   Youtube,
   Flag,
+  Database,
 } from "lucide-react";
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
@@ -24,6 +25,7 @@ interface SidebarProps {
 
 const menuItems = [
   { label: "Overview", value: "overview", icon: LayoutDashboard },
+  { label: "Vault", value: "vault", icon: Database },
   { label: "Blogs", value: "blogs", icon: FilePlus },
   { label: "Auto Blogger", value: "auto-blogger", icon: Youtube },
   { label: "Automation", value: "automation", icon: Bot },
