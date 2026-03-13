@@ -11,6 +11,7 @@ import {
   PanelLeftClose,
   Mail,
   Youtube,
+  Flag,
 } from "lucide-react";
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
@@ -28,6 +29,7 @@ const menuItems = [
   { label: "Automation", value: "automation", icon: Bot },
   { label: "Users", value: "users", icon: Users },
   { label: "Contributor", value: "contributor", icon: HeartHandshake },
+  { label: "Reports", value: "reports", icon: Flag },
   { label: "Settings", value: "settings", icon: Settings },
   { label: "Contact", value: "contact", icon: Mail },
   { label: "Task List", value: "tasklist", icon: List },

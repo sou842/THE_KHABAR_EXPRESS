@@ -3,9 +3,25 @@ import Layout from "@/components/Layout";
 import Link from "next/link";
 import { toast } from "sonner";
 import { GetStaticProps, GetStaticPaths } from "next";
-import { Calendar, Share2, Sparkles, BrainCircuit } from "lucide-react";
+import { Calendar, Share2, Sparkles, BrainCircuit, MoreHorizontal, Flag, Link as LinkIcon, AlertTriangle } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
 import BlogCard from "@/components/BlogCard";
 import DateTimeDisplay from "@/components/DateTimeDisplay";
@@ -50,10 +66,48 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [displayTag] = blog?.tags || "";
 
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [isSubmittingReport, setIsSubmittingReport] = useState(false);
+
   const handleCopy = () => {
     const URL = window.location.href;
     navigator.clipboard.writeText(URL);
     toast.success("Link copied!!");
+  };
+
+  const handleReport = async () => {
+    if (!reportReason.trim()) {
+      toast.error("Please provide a reason for reporting");
+      return;
+    }
+
+    setIsSubmittingReport(true);
+    try {
+      const res = await fetch("/api/reports", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          blogId: blog._id,
+          reason: reportReason,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Report submitted successfully. Thank you for our feedback.");
+        setIsReportModalOpen(false);
+        setReportReason("");
+      } else {
+        toast.error(data.message || "Failed to submit report");
+      }
+    } catch (error) {
+      toast.error("An error occurred. Please try again later.");
+    } finally {
+      setIsSubmittingReport(false);
+    }
   };
 
   return (
@@ -178,16 +232,30 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
                       Share this story
                     </p>
 
-                    <div className="flex items-center space-x-4">
-                      <button
-                        onClick={handleCopy}
-                        title="Copy Link"
-                        aria-label="Copy article link to clipboard"
-                        className="flex items-center gap-2 bg-background border border-border px-4 py-2 rounded-sm text-sm font-semibold hover:bg-muted transition-colors text-foreground"
-                      >
-                        <Share2 className="h-4 w-4" aria-hidden="true" />
-                        <span>Copy Link</span>
-                      </button>
+                  <div className="flex items-center space-x-4">
+                      {/* Interactive Dropdown */}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button
+                            title="More actions"
+                            aria-label="More actions for this article"
+                            className="flex items-center gap-2 bg-background border border-border px-4 py-2 rounded-sm text-sm font-semibold hover:bg-muted transition-colors text-foreground"
+                          >
+                            <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
+                            <span>More</span>
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48 bg-background border-border shadow-lg font-serif">
+                          <DropdownMenuItem onClick={handleCopy} className="cursor-pointer gap-2 py-2.5 focus:bg-muted focus:text-foreground font-medium">
+                            <LinkIcon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                            <span>Copy Link</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setIsReportModalOpen(true)} className="cursor-pointer gap-2 py-2.5 text-destructive hover:bg-destructive/10 hover:text-destructive focus:bg-destructive/10 focus:text-destructive font-medium">
+                            <Flag className="h-4 w-4" aria-hidden="true" />
+                            <span>Report Article</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
                 </div>
@@ -315,6 +383,38 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
           }
         `}</style>
       )}
+
+      {/* Report Dialog */}
+      <Dialog open={isReportModalOpen} onOpenChange={setIsReportModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl font-serif">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              Report Article
+            </DialogTitle>
+            <DialogDescription className="text-sm">
+              We take your feedback seriously. Please share your concerns, and our editorial team will prioritize reviewing this content.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Textarea
+              id="reason"
+              placeholder="Please provide specific details so we can take the appropriate action..."
+              className="resize-none h-32 placeholder:text-gray-400"
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsReportModalOpen(false)} className="hover:bg-muted focus:bg-muted">
+              Cancel
+            </Button>
+            <Button onClick={handleReport} disabled={isSubmittingReport || !reportReason.trim()}>
+              {isSubmittingReport ? "Submitting..." : "Submit Report"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };

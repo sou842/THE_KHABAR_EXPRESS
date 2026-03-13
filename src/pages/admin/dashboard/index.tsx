@@ -10,6 +10,7 @@ import Settings from "@/components/admin/section/Settings";
 import TaskList from "@/components/admin/section/TaskList";
 import Automation from "@/components/admin/section/Automation";
 import ContactMessages from "@/components/admin/section/ContactMessages";
+import Reports from "@/components/admin/section/Reports";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -63,6 +64,9 @@ export default function AdminDashboard() {
       
       case "contact":
         return <ContactMessages />;
+      
+      case "reports":
+        return <Reports />;
 
       default:
         return null;
