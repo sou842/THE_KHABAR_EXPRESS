@@ -135,18 +135,17 @@ export default function Home() {
                 </div>
                 
                 <div className="relative z-10 flex flex-col xl:flex-row gap-6 mt-auto">
-                  <Link 
-                    href="/write" 
-                    className="flex-shrink-0 inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-sm font-semibold hover:bg-primary/90 transition-all hover:gap-3 group"
-                  >
-                    <span>Start Writing</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                  
                   <div className="flex items-center gap-3">
                     {SOCIAL_LINKS?.map(({ icon: Icon, href, label }) => (
-                      <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="bg-background/80 hover:bg-primary text-primary hover:text-primary-foreground p-3 rounded-full transition-all" aria-label={label}>
-                        <Icon className="w-4 h-4" />
+                      <a 
+                        key={label} 
+                        href={href} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="hover:bg-background/80 bg-primary text-primary-foreground hover:text-primary p-4 rounded-full transition-all" 
+                        aria-label={label}
+                      >
+                        <Icon className="w-5 h-5" />
                       </a>
                     ))}
                   </div>

@@ -30,9 +30,13 @@ import { BlogContent } from "@/components/BlogContent";
 import TopicCloud from "@/components/TopicCloud";
 import FaqSchema, { IFaqItem } from "@/components/BlogEditor/FaqSchema";
 import AiSummarySection from "@/components/AI/AiSummarySection";
-import AskAiChat from "@/components/AI/AskAiChat";
 import TextToSpeech from "@/components/TextToSpeech";
 import ArticleDisclaimer from "@/components/Disclaimers/ArticleDisclaimer";
+import dynamic from "next/dynamic";
+
+const AskAiChat = dynamic(() => import("@/components/AI/AskAiChat"), {
+  ssr: false,
+});
 
 interface BlogPost {
   _id: string;
@@ -109,6 +113,8 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
       setIsSubmittingReport(false);
     }
   };
+
+  if(!blog) return null;
 
   return (
     <Layout disableDefaultMeta>
@@ -245,7 +251,7 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
                             <span>More</span>
                           </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48 bg-background border-border shadow-lg font-serif">
+                        <DropdownMenuContent align="end" className="w-48 bg-background border-border shadow-lg">
                           <DropdownMenuItem onClick={handleCopy} className="cursor-pointer gap-2 py-2.5 focus:bg-muted focus:text-foreground font-medium">
                             <LinkIcon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                             <span>Copy Link</span>
@@ -386,13 +392,12 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
 
       {/* Report Dialog */}
       <Dialog open={isReportModalOpen} onOpenChange={setIsReportModalOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="w-[95vw] sm:max-w-[425px] h-fit md:h-auto max-h-[90vh] rounded-2xl sm:rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-xl font-serif">
-              <AlertTriangle className="h-5 w-5 text-destructive" />
+            <DialogTitle className="flex items-center gap-2 text-2xl">
               Report Article
             </DialogTitle>
-            <DialogDescription className="text-sm">
+            <DialogDescription className="text-sm text-start">
               We take your feedback seriously. Please share your concerns, and our editorial team will prioritize reviewing this content.
             </DialogDescription>
           </DialogHeader>
