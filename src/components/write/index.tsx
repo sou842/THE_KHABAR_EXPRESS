@@ -1,5 +1,5 @@
 import CommonEditor from "@/components/BlogEditor/CommonEditor";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Layout from "@/components/Layout";
 import CustomToggle from "@/components/CustomToggle";
@@ -12,13 +12,20 @@ import { useRouter } from "next/router";
 import { Skeleton } from "@/components/Skeleton";
 import { v4 as uuidv4 } from "uuid";
 import FileUploadDialog from "@/components/FileUploadDialog";
+import JsonEditor from "@/components/BlogEditor/JsonEditor";
 
 const TextEditor = dynamic(() => import("@/components/BlogEditor/EditorJS"), {
   ssr: false,
 });
 
 const Write: React.FC = () => {
-  const [selected, setSelected] = useState<string>("");
+  // Initialize from localStorage if available, default to "advance"
+  const [selected, setSelected] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("write-editor-preference") || "advance";
+    }
+    return "advance";
+  });
   const [category, setCategory] = useState<string>("");
   const [defaultCategory, setDefaultCategory] = useState<string[]>([
     "technology",
@@ -31,6 +38,13 @@ const Write: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user } = useAuth();
   const router = useRouter();
+
+  // Save selection whenever it changes
+  useEffect(() => {
+    if (selected) {
+      localStorage.setItem("write-editor-preference", selected);
+    }
+  }, [selected]);
 
   const formatString = (props: string) => {
     if (typeof props !== "string" || !props.trim()) {
@@ -55,19 +69,19 @@ const Write: React.FC = () => {
       setIsLoading(true);
 
       const data = {
-        title: content?.thumbnail?.title,
+        title: content?.thumbnail?.title || content?.title,
         body: content?.content,
         category: content?.category,
-        tags: content?.category,
-        author: user?.name,
-        authorId: user?.id,
-        editorType: content?.editorType,
+        tags: content?.tags || content?.category,
+        author: content?.author || user?.name,
+        authorId: content?.authorId || user?.id,
+        editorType: content?.editorType || "EDITORJS",
         thumbnail: content?.thumbnail,
-        views: 0,
-        videoUrl: "",
-        language: "en",
-        url: formatString(content?.thumbnail?.title),
-        faqs: content?.faqs
+        views: content?.views || 0,
+        videoUrl: content?.videoUrl || "",
+        language: content?.language || "en",
+        url: content?.url || formatString(content?.thumbnail?.title || content?.title),
+        faqs: content?.faqs || []
       };
 
       const apiResult = await poster("/api/blogs", data);
@@ -99,22 +113,29 @@ const Write: React.FC = () => {
     < >
       <div className="relative">
         <CustomToggle
-          defaultValue="advance"
-          options={["advance", "default"]}
+          defaultValue={selected || "advance"}
+          options={["advance", "default", "JSON"]}
           onChange={(value) => setSelected(value)}
           className="sticky top-22 left-0 z-50"
         />
-        {selected === "advance" ? (
-          <TextEditor
-            category={category}
-            defaultCategory={defaultCategory}
-            setCategory={setCategory}
-            handleContentSave={handleContentSave}
-            setDefaultCategory={setDefaultCategory}
-          />
-        ) : (
-          <CommonEditor />
-        )}
+        {(() => {
+          switch (selected.toLowerCase()) {
+            case "advance":
+              return (
+                <TextEditor
+                  category={category}
+                  defaultCategory={defaultCategory}
+                  setCategory={setCategory}
+                  handleContentSave={handleContentSave}
+                  setDefaultCategory={setDefaultCategory}
+                />
+              );
+            case "json":
+              return <JsonEditor handleContentSave={handleContentSave} />;
+            default:
+              return <CommonEditor />;
+          }
+        })()}
       </div>
 
       <FileUploadDialog />

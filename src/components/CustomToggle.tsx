@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FC } from "react";
 
 type ToggleProps = {
   options: string[];
@@ -7,9 +7,16 @@ type ToggleProps = {
   onChange?: (selected: string) => void;
 };
 
-const CustomToggle: React.FC<ToggleProps> = (props) => {
+const CustomToggle: FC<ToggleProps> = (props) => {
   const { options, defaultValue, className, onChange } = props;
   const [selected, setSelected] = useState<string>(defaultValue || options[0]);
+
+  // Sync internal state if defaultValue changes from parent
+  useEffect(() => {
+    if (defaultValue && defaultValue !== selected) {
+      setSelected(defaultValue);
+    }
+  }, [defaultValue]);
 
   useEffect(() => {
     onChange?.(selected);
