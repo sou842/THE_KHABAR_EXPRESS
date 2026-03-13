@@ -173,7 +173,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (method === 'POST' && action === 'create_update') {
     // Validate required fields upfront
-    const { profile_id, text, image_url, image_data, image_mime_type } = body || {};
+    const { profile_id, text, image_url, image_data, image_mime_type, service } = body || {};
 
     if (!profile_id) return apiError(res, 400, 'No Instagram account selected.', 'MISSING_PROFILE');
     if (!text?.trim()) return apiError(res, 400, 'Post text cannot be empty.', 'MISSING_TEXT');
@@ -195,12 +195,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
         `);
         const fields = introResult.data?.instagramMeta?.inputFields?.map((f: any) => f.name) || [];
-        const enums = introResult.data?.postType?.enumValues?.map((e: any) => e.name) || [];
+        const enumValues = introResult.data?.postType?.enumValues?.map((e: any) => e.name) || [];
         if (fields.length) instagramFields = fields;
-        if (enums.length) {
-          postTypeValue = ['post', 'feed', 'image', 'standard'].find(p =>
-            enums.map((v: string) => v.toLowerCase()).includes(p)
-          ) || enums[0];
+        if (enumValues.length) {
+          const preferred = ['post', 'feed', 'image', 'standard'];
+          const matched = enumValues.find((e: string) => 
+            preferred.includes(e.toLowerCase())
+          );
+          postTypeValue = matched || enumValues[0];
         }
       } catch (e: any) {
         // Non-fatal — use safe defaults above
@@ -243,7 +245,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         saveToDraft: false,
       };
 
-      if (Object.keys(instagramMetadata).length > 0) {
+      if (service === 'instagram') {
+        // Always ensure we have at least 'type' for Instagram
+        if (instagramFields.includes('type')) {
+          instagramMetadata.type = postTypeValue;
+        }
+        if (instagramFields.includes('shouldShareToFeed')) {
+          instagramMetadata.shouldShareToFeed = true;
+        }
+        
+        // Final fallback if introspection was totally empty
+        if (Object.keys(instagramMetadata).length === 0) {
+          instagramMetadata.type = 'post';
+        }
+
         input.metadata = { instagram: instagramMetadata };
       }
 

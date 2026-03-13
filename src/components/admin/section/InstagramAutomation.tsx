@@ -77,7 +77,11 @@ const InstagramAutomation: React.FC<InstagramAutomationProps> = ({ initialImageA
             const tagString = hashtags.length > 0 ? '\n\n' + hashtags.map(t => `#${t}`).join(' ') : '';
             const text = `${customMessage || `${selectedBlog.title}\n\n${selectedBlog.description || ''}`}\n\nRead more at thekhabarexpress.com/blog/${selectedBlog.url}${tagString}`;
 
-            const payload: Record<string, any> = { profile_id: selectedProfileId, text };
+            const payload: Record<string, any> = { 
+                profile_id: selectedProfileId, 
+                text,
+                service: 'instagram'
+            };
 
             if (customAsset) {
                 payload.image_data = customAsset;

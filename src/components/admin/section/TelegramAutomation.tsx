@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import SearchBlogs from './PosterController'; // Reusing the blog search logic
 import { useEffect } from 'react';
+import { poster } from '@/lib/helper';
 
 interface TelegramAutomationProps {
     initialBlog?: any;
@@ -21,8 +22,6 @@ const TelegramAutomation: React.FC<TelegramAutomationProps> = ({ initialBlog }) 
         }
     }, [initialBlog]);
 
-    const BOT_TOKEN = '8622451212:AAFGMHRiifGjwgJIcSYon_wyNxT9KRim5qY';
-
     const handleSend = async () => {
         if (!channelId) {
             toast.error('Please enter a Channel ID (e.g., @yourchannel)');
@@ -38,33 +37,22 @@ const TelegramAutomation: React.FC<TelegramAutomationProps> = ({ initialBlog }) 
         try {
             const caption = `${customMessage || `<b>${selectedBlog?.title}</b>\n\n${selectedBlog?.description || ''}`}\n\n Read more: https://www.thekhabarexpress.com/blog/${selectedBlog?.url}`;
 
-            const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: channelId,
-                    photo: selectedBlog.thumbnail,
-                    caption: caption,
-                    parse_mode: 'HTML',
-                }),
+            // Call our secure backend using the poster helper (which handles auth tokens)
+            const data = await poster('/api/automation/telegram', {
+                chat_id: channelId,
+                photo: selectedBlog.thumbnail,
+                caption: caption,
+                parse_mode: 'HTML',
             });
 
-            const data = await response.json();
-
-            if (data.ok) {
+            if (data?.success) {
                 toast.success('Message sent to Telegram successfully!');
             } else {
-                throw new Error(data.description || 'Failed to send message');
+                throw new Error(data?.message || 'Failed to send message');
             }
         } catch (err: any) {
             console.error('Telegram Error:', err);
-            let errorMessage = err.message;
-            if (errorMessage.includes('chat not found')) {
-                errorMessage = 'Channel not found. Ensure the ID is correct and the bot is an admin in the channel.';
-            } else if (errorMessage.includes('bot was kicked')) {
-                errorMessage = 'Bot was removed from the channel. Please add it back as an admin.';
-            }
-            toast.error(`Error: ${errorMessage}`);
+            toast.error(`Error: ${err.message}`);
         } finally {
             setIsSending(false);
         }

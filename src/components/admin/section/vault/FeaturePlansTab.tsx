@@ -217,15 +217,15 @@ export default function FeaturePlansTab({
 
                       {/* Footer: avatars + date */}
                       <div className="flex items-center justify-between">
-                        {item.assignedTo?.length > 0 ? (
+                        {item?.assignedTo && item?.assignedTo?.length > 0 ? (
                           <div className="flex">
-                            {item.assignedTo.map((u) => (
+                            {item?.assignedTo?.map((u) => (
                               <div
                                 key={u._id}
                                 title={u.name}
                                 className="w-[22px] h-[22px] rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 flex items-center justify-center text-[9px] font-semibold border-2 border-card uppercase -ml-1 first:ml-0 cursor-help"
                               >
-                                {u.name.substring(0, 2)}
+                                {u?.name?.substring(0, 2)}
                               </div>
                             ))}
                           </div>

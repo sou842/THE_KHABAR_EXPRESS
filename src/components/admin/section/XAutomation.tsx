@@ -81,6 +81,7 @@ const XAutomation: React.FC<XAutomationProps> = ({ initialBlog, initialImageUrl 
             const payload: Record<string, any> = {
                 profile_id: selectedProfileId,
                 text: fullText,
+                service: 'twitter',
             };
 
             // Use poster image (CDN URL) if available, fallback to blog thumbnail
