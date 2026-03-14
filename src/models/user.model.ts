@@ -11,7 +11,26 @@ export interface IUser extends Document {
     canAddBlog: boolean;
   };
   createdAt: Date;
-  status: { type: String, enum: ['active', 'inactive'] }
+  status: { type: String, enum: ['active', 'inactive'] };
+  
+  // Public Creator Profile Fields (Optional)
+  username?: string; // e.g., 'johndoe'
+  profilePhoto?: string;
+  bannerPhoto?: string;
+  shortBio?: string;
+  location?: string;
+  profession?: string;
+  expertise?: string[]; // Areas of Expertise / Topics
+  yearsOfExperience?: number;
+  longBio?: string;
+  socialLinks?: {
+    twitter?: string;
+    linkedin?: string;
+    website?: string;
+    instagram?: string;
+    youtube?: string;
+    github?: string;
+  };
 }
 
 export const UserSchema = new Schema<IUser>({
@@ -24,7 +43,29 @@ export const UserSchema = new Schema<IUser>({
     canAddBlog: { type: Boolean, default: true },
   },
   createdAt: { type: Date, default: Date.now },
-  status: { type: String, default: 'active' }
+  status: { type: String, default: 'active' },
+
+  // Public Creator Profile Fields
+  username: { type: String, unique: true, sparse: true },
+  profilePhoto: { type: String },
+  bannerPhoto: { type: String },
+  shortBio: { type: String, maxlength: 150 },
+  location: { type: String },
+  profession: { type: String },
+  expertise: [{ type: String }],
+  yearsOfExperience: { type: Number },
+  longBio: { type: String, maxlength: 1000 },
+  socialLinks: {
+    twitter: { type: String },
+    linkedin: { type: String },
+    website: { type: String },
+    instagram: { type: String },
+    youtube: { type: String },
+    github: { type: String },
+  }
 });
 
-export const User = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
+if (mongoose.models.User) {
+  delete mongoose.models.User;
+}
+export const User = mongoose.model<IUser>('User', UserSchema);

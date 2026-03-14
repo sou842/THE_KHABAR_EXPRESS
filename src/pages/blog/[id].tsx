@@ -3,7 +3,7 @@ import Layout from "@/components/Layout";
 import Link from "next/link";
 import { toast } from "sonner";
 import { GetStaticProps, GetStaticPaths } from "next";
-import { Calendar, Share2, Sparkles, BrainCircuit, MoreHorizontal, Flag, Link as LinkIcon, AlertTriangle } from "lucide-react";
+import { Calendar, Share2, Sparkles, BrainCircuit, MoreHorizontal, Flag, Link as LinkIcon, AlertTriangle, User } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
 import {
@@ -48,10 +48,8 @@ interface BlogPost {
   views: number;
   thumbnail: any;
   url: string;
-  author?: {
-    name: string;
-    image?: string;
-  };
+  author?: string;
+  authorId?: string;
   faqs: IFaqItem[];
   tags?: string[];
   aiSummary?: {
@@ -114,7 +112,7 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
     }
   };
 
-  if(!blog) return null;
+  if (!blog) return null;
 
   return (
     <Layout disableDefaultMeta>
@@ -126,7 +124,7 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
         category={blog?.category}
         createdAt={blog?.createdAt}
         updatedAt={blog?.updatedAt}
-        author={blog?.author?.name || blog?.author || ''}
+        author={blog?.author || ''}
       />
 
       <div className="flex w-full min-h-screen relative overflow-hidden">
@@ -170,11 +168,6 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
 
                   {/* Meta row — author + date, minimal */}
                   <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[11px] tracking-wide text-muted-foreground/70">
-                    {blog?.author?.name && (
-                      <span itemProp="author" className="font-semibold text-foreground/80">
-                        {blog?.author?.name}
-                      </span>
-                    )}
                     <div className="flex items-center gap-1.5">
                       <Calendar className="h-3 w-3 opacity-40" aria-hidden="true" />
                       <time
@@ -238,7 +231,7 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
                       Share this story
                     </p>
 
-                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-4">
                       {/* Interactive Dropdown */}
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -256,6 +249,14 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
                             <LinkIcon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                             <span>Copy Link</span>
                           </DropdownMenuItem>
+                          {blog.authorId && (
+                            <Link href={`/creator/${blog.authorId}`}>
+                              <DropdownMenuItem className="cursor-pointer gap-2 py-2.5 focus:bg-muted focus:text-foreground font-medium">
+                                <User className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                                <span>View Creator Profile</span>
+                              </DropdownMenuItem>
+                            </Link>
+                          )}
                           <DropdownMenuItem onClick={() => setIsReportModalOpen(true)} className="cursor-pointer gap-2 py-2.5 text-destructive hover:bg-destructive/10 hover:text-destructive focus:bg-destructive/10 focus:text-destructive font-medium">
                             <Flag className="h-4 w-4" aria-hidden="true" />
                             <span>Report Article</span>

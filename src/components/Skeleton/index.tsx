@@ -297,6 +297,78 @@ export const Skeleton: React.FC<skeletonProps> = (props) => {
           </div>
         </div>
       );
+    case "creator-profile":
+      return (
+        <div className="w-full animate-pulse space-y-8">
+          {/* Hero skeleton */}
+          <div className="w-full h-56 md:h-72 bg-gray-200 rounded-xl"></div>
+          
+          <div className="max-w-6xl mx-auto px-6">
+            {/* Avatar skeleton */}
+            <div className="flex flex-col md:flex-row md:items-end gap-6 -mt-14 md:-mt-16 relative z-10">
+              <div className="w-28 h-28 md:w-32 md:h-32 rounded-2xl ring-4 ring-white bg-gray-300"></div>
+            </div>
+
+            {/* Header info skeleton */}
+            <div className="mt-6 space-y-4">
+              <div className="h-10 w-64 bg-gray-300 rounded-lg"></div>
+              <div className="flex flex-wrap gap-3">
+                <div className="h-4 w-32 bg-gray-200 rounded"></div>
+                <div className="h-4 w-40 bg-gray-200 rounded"></div>
+                <div className="h-4 w-24 bg-gray-200 rounded"></div>
+              </div>
+              <div className="h-20 w-full max-w-2xl bg-gray-200 rounded-lg"></div>
+              <div className="flex gap-2">
+                <div className="h-6 w-20 bg-gray-200 rounded-full"></div>
+                <div className="h-6 w-24 bg-gray-200 rounded-full"></div>
+                <div className="h-6 w-16 bg-gray-200 rounded-full"></div>
+              </div>
+            </div>
+
+            <div className="mt-10 border-t border-gray-100" />
+
+            {/* Content grid skeleton */}
+            <div className="flex md:flex-row flex-col gap-10 mt-10 pb-24">
+              {/* Sidebar */}
+              <aside className="w-full max-w-[320px] space-y-8">
+                <div className="space-y-3">
+                  <div className="h-3 w-20 bg-gray-200 rounded"></div>
+                  <div className="h-32 w-full bg-gray-100 rounded-lg"></div>
+                </div>
+                <div className="space-y-3">
+                  <div className="h-3 w-20 bg-gray-200 rounded"></div>
+                  <div className="space-y-2">
+                    {[1, 2, 3, 4].map(i => (
+                      <div key={i} className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-gray-200"></div>
+                        <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </aside>
+
+              {/* Feed */}
+              <main className="flex-1 space-y-6">
+                <div className="flex justify-between items-center">
+                  <div className="h-6 w-48 bg-gray-300 rounded"></div>
+                  <div className="h-4 w-20 bg-gray-200 rounded"></div>
+                </div>
+                
+                {/* Featured card skeleton */}
+                <div className="w-full h-64 bg-gray-100 rounded-2xl border border-gray-100"></div>
+                
+                {/* Grid skeleton */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="h-64 bg-gray-100 rounded-2xl border border-gray-100"></div>
+                  ))}
+                </div>
+              </main>
+            </div>
+          </div>
+        </div>
+      );
     default:
       return (
         <div className="h-screen flex items-center justify-center">

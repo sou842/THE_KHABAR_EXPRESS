@@ -22,7 +22,7 @@ export default async function handler(
   switch (method) {
     case 'GET':
       try {
-        const blog = await Blog.findOne({ ...query, url: id });
+        const blog = await Blog.findOne({ ...query, url: id }).populate('authorId', 'username');
 
         if (!blog) {
           return res.status(200).json({ success: false, message: 'Blog not found' });
@@ -32,7 +32,13 @@ export default async function handler(
         blog.views += 1;
         await blog.save();
 
-        res.status(200).json({ success: true, data: blog });
+        // Transform for frontend: replace authorId object with username string
+        const blogData = blog.toObject();
+        if (blogData.authorId && typeof blogData.authorId === 'object') {
+          blogData.authorId = blogData.authorId.username || blogData.authorId._id.toString();
+        }
+
+        res.status(200).json({ success: true, data: blogData });
       } catch (error: any) {
         res.status(400).json({ success: false, error: error.message });
       }

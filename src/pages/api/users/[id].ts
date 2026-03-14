@@ -36,10 +36,21 @@ export default async function handler(
     case 'PUT':
       try {
         const updates = { ...req.body };
+        console.log('Received User Update Request for ID:', id);
+        console.log('Payload:', JSON.stringify(updates, null, 2));
         
         // If there's a password update, hash it
         if (updates.password) {
           updates.password = await bcrypt.hash(updates.password, 10);
+        }
+
+        // Handle empty username
+        if (updates.username === "") {
+           if (updates.name) {
+             updates.username = updates.name.toLowerCase().replace(/[^a-z0-9]/g, '') + Math.floor(1000 + Math.random() * 9000);
+           } else {
+             delete updates.username;
+           }
         }
         
         const user = await User.findByIdAndUpdate(id, updates, {

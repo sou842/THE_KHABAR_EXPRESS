@@ -52,14 +52,23 @@ export default async function handler(
           .sort({ createdAt: -1 })
           .limit(Number(limit))
           .skip(skip)
-          .select('-body');
+          .select('-body')
+          .populate('authorId', 'username');
 
         const total = await Blog.countDocuments(query);
 
-        // need send some description based on the category, sonu ???
+        // Transform for frontend: replace authorId object with username string
+        const transformedBlogs = blogs.map(blog => {
+          const blogData = blog.toObject();
+          if (blogData.authorId && typeof blogData.authorId === 'object') {
+            blogData.authorId = blogData.authorId.username || blogData.authorId._id.toString();
+          }
+          return blogData;
+        });
+
         res.status(200).json({
           success: true,
-          data: blogs,
+          data: transformedBlogs,
           isValidCategory: !!blogs?.length,
           pagination: {
             total,

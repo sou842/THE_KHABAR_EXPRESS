@@ -7,7 +7,15 @@ import DateTimeDisplay from "@/components/DateTimeDisplay";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
-const FallbackImage = ({ src, alt, className, priority, fallbackSrc }: { src: string; alt: string; className?: string; priority?: boolean; fallbackSrc: string }) => {
+interface FallbackImageProps {
+  src: string;
+  alt: string;
+  className?: string;
+  priority?: boolean;
+  fallbackSrc: string;
+}
+
+const FallbackImage = ({ src, alt, className, priority, fallbackSrc }: FallbackImageProps) => {
   const [imgSrc, setImgSrc] = useState(src);
 
   useEffect(() => {
@@ -296,7 +304,7 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
                 {blog?.title || blog?.thumbnail?.title}
               </h4>
               <p className="text-[13px] text-muted-foreground/80 font-medium">
-                {formatDate(blog?.publishedDate || (blog as any)?.createdAt)}
+                {formatDate(blog?.publishedDate || blog?.createdAt)}
               </p>
             </div>
           </div>
@@ -304,7 +312,8 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
 
       case "adminRow":
         {
-          const status = statusConfig[blog.status as unknown as string] ?? statusConfig.rejected;
+          const statusVal = blog.status as unknown as string;
+          const status = statusConfig[statusVal] ?? statusConfig.rejected;
           return (
             <motion.div
               initial={{ opacity: 0, y: 4 }}
