@@ -33,13 +33,7 @@ export default async function handler(
         blog.views += 1;
         await blog.save();
 
-        // Transform for frontend: replace authorId object with username string
-        const blogData = blog.toObject();
-        if (blogData.authorId && typeof blogData.authorId === 'object') {
-          blogData.authorId = blogData.authorId.username || blogData.authorId._id.toString();
-        }
-
-        res.status(200).json({ success: true, data: blogData });
+        res.status(200).json({ success: true, data: blog });
       } catch (error: any) {
         res.status(400).json({ success: false, error: error.message });
       }

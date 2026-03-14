@@ -1,6 +1,18 @@
 // lib/mongoose.ts
 import mongoose from 'mongoose';
 
+// Import all models here to ensure they are registered with Mongoose
+// This prevents "Schema hasn't been registered" errors in Next.js
+import '@/models/user.model';
+import '@/models/blog.model';
+import '@/models/category.model';
+import '@/models/vault.model';
+import '@/models/report.model';
+import '@/models/contact.model';
+import '@/models/contributor.model';
+import '@/models/tasklist.model';
+import '@/models/blogChunk.model';
+
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/blog-app';
 
 if (!MONGODB_URI) {

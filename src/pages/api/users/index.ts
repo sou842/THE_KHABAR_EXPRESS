@@ -26,14 +26,6 @@ export default async function handler(
         // Hash password
         const { password, ...rest } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
-        
-        // Auto-generate username if not provided
-        if (!rest.username && rest.name) {
-          rest.username = rest.name.toLowerCase().replace(/[^a-z0-9]/g, '') + Math.floor(1000 + Math.random() * 9000);
-        } else if (rest.username === "") {
-           // We'll filter it out in the creation or let it be undefined if optional
-           rest.username = undefined;
-        }
 
         const user = await User.create({
           ...rest,

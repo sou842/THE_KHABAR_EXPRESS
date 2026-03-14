@@ -58,18 +58,9 @@ export default async function handler(
 
         const total = await Blog.countDocuments(query);
 
-        // Transform for frontend: replace authorId object with username string
-        const transformedBlogs = blogs.map(blog => {
-          const blogData = blog.toObject();
-          if (blogData.authorId && typeof blogData.authorId === 'object') {
-            blogData.authorId = blogData.authorId.username || blogData.authorId._id.toString();
-          }
-          return blogData;
-        });
-
         res.status(200).json({
           success: true,
-          data: transformedBlogs,
+          data: blogs,
           isValidCategory: !!blogs?.length,
           pagination: {
             total,

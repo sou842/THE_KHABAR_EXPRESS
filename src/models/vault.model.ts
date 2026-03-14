@@ -20,10 +20,4 @@ const VaultSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Next.js Hot Reload frequently caches old Mongoose schemas.
-// We delete the cached Vault model so it picks up the newly added assignedTo field.
-if (mongoose.models.Vault) {
-  delete mongoose.models.Vault;
-}
-
-export const Vault = mongoose.model('Vault', VaultSchema);
+export const Vault = mongoose.models.Vault || mongoose.model('Vault', VaultSchema);
