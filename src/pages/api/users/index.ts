@@ -31,7 +31,8 @@ export default async function handler(
         if (!rest.username && rest.name) {
           rest.username = rest.name.toLowerCase().replace(/[^a-z0-9]/g, '') + Math.floor(1000 + Math.random() * 9000);
         } else if (rest.username === "") {
-           delete rest.username;
+           // We'll filter it out in the creation or let it be undefined if optional
+           rest.username = undefined;
         }
 
         const user = await User.create({
@@ -39,8 +40,7 @@ export default async function handler(
           password: hashedPassword
         });
         
-        const userResponse = user.toObject();
-        delete userResponse.password;
+        const { password: _p, ...userResponse } = user.toObject();
         
         res.status(201).json({ success: true, data: userResponse });
       } catch (error: any) {
