@@ -49,7 +49,10 @@ interface BlogPost {
   thumbnail: any;
   url: string;
   author?: string;
-  authorId?: string;
+  authorId?: {
+    _id: string;
+    username: string;
+  };
   faqs: IFaqItem[];
   tags?: string[];
   aiSummary?: {
@@ -250,7 +253,7 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
                             <span>Copy Link</span>
                           </DropdownMenuItem>
                           {blog.authorId && (
-                            <Link href={`/creator/${blog.authorId}`}>
+                            <Link href={`/creator/${blog.authorId?._id}`}>
                               <DropdownMenuItem className="cursor-pointer gap-2 py-2.5 focus:bg-muted focus:text-foreground font-medium">
                                 <User className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                                 <span>View Creator Profile</span>
