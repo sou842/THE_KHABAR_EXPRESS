@@ -55,13 +55,8 @@ export default async function handler(
     );
 
     // Send response without password
-    const userObject = user.toObject();
-    delete userObject.password;
-    delete userObject.access;
-    delete userObject.createdAt;
-    delete userObject.status;
-    userObject.id = userObject._id;
-    delete userObject._id;
+    const { password: _p, access: _a, createdAt: _c, status: _s, _id, ...userRest } = user.toObject();
+    const userObject = { ...userRest, id: _id };
 
     res.status(200).json({
       success: true,

@@ -22,6 +22,7 @@ const CATEGORY_LINKS = [
   { label: "Politics", href: "/category/politics" },
   { label: "Entertainment", href: "/category/entertainment" },
   { label: "Sports", href: "/category/sports" },
+  { label: "Coding", href: "/category/coding" },
 ];
 
 const Footer: React.FC = () => {
