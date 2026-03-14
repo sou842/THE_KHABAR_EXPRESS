@@ -1,7 +1,7 @@
 import type { NextApiResponse } from 'next';
 import dbConnect from '@/lib/mongoose';
 import { Report } from '@/models/report.model';
-import { Blog } from '@/models/blog.model'; // Added Blog import for populate
+import { Blog } from '@/models/blog.model';
 import authMiddleware, { AuthenticatedRequest } from '../middleware/auth';
 
 export default async function handler(

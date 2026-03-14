@@ -1,5 +1,5 @@
 import CommonEditor from "@/components/BlogEditor/CommonEditor";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FC } from "react";
 import dynamic from "next/dynamic";
 import Layout from "@/components/Layout";
 import CustomToggle from "@/components/CustomToggle";
@@ -18,8 +18,7 @@ const TextEditor = dynamic(() => import("@/components/BlogEditor/EditorJS"), {
   ssr: false,
 });
 
-const Write: React.FC = () => {
-  // Initialize from localStorage if available, default to "advance"
+const Write: FC = () => {
   const [selected, setSelected] = useState<string>(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("write-editor-preference") || "advance";

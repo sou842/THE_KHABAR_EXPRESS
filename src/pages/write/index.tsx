@@ -1,15 +1,11 @@
 
-import React from "react";
-
+import { FC } from "react";
 import Layout from "@/components/Layout";
-
 import PrivateRoute from "@/components/PrivateRoute/PrivateRoute";
-
-
 import Write from "@/components/write";
 
 
-const Index: React.FC = () => {
+const Index: FC = () => {
 
   return (
     <Layout>

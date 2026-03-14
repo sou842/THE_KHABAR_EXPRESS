@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import mongoose from 'mongoose';
 import dbConnect from '@/lib/mongoose';
 import { Blog } from '@/models/blog.model';
+import { User } from '@/models/user.model';
 
 export default async function handler(
   req: NextApiRequest,

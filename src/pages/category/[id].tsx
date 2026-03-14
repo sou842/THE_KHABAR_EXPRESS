@@ -6,18 +6,20 @@ import { Filter, SlidersHorizontal } from "lucide-react";
 import { Skeleton } from "@/components/Skeleton";
 import { getter } from "@/lib/helper";
 import useSWRInfinite from "swr/infinite";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
 import CategoryDisclaimer from "@/components/Disclaimers/CategoryDisclaimer";
 
 const Category: FC = () => {
-  const params = useParams<{ id: string }>();
-  const category = params?.id;
+  const router = useRouter();
+  const id = router.query.id;
+  const category = Array.isArray(id) ? id[0] : id;
   const [sortBy, setSortBy] = useState<"recent" | "popular">("recent");
   const [showFilters, setShowFilters] = useState(false);
   const PAGE_SIZE = 9;
 
   const getKey = (pageIndex: number, previousPageData: any) => {
+    if (!category) return null;
     if (previousPageData && !previousPageData.data.length) return null;
     return `/api/blogs?category=${category}&status=approved&page=${pageIndex + 1}&limit=${PAGE_SIZE}`;
   };
@@ -28,13 +30,13 @@ const Category: FC = () => {
   );
 
   const blogs = useMemo(() => {
-    return data ? data.flatMap((page) => page.data) : [];
+    return data ? data.flatMap((page) => page?.data || []) : [];
   }, [data]);
 
   const isLoadingMore =
     isLoading || (size > 0 && data && typeof data[size - 1] === "undefined");
   const isEmpty = data?.[0]?.data?.length === 0;
-  const isReachingEnd = isEmpty || (data && data[data.length - 1]?.data?.length < PAGE_SIZE);
+  const isReachingEnd = isEmpty || (data && (data[data.length - 1]?.data?.length ?? 0) < PAGE_SIZE);
 
   if (error) {
     return (

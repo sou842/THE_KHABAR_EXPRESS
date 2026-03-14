@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '@/lib/mongoose';
 import { Vault } from '@/models/vault.model';
+import { User } from '@/models/user.model';
 import { withAuth, AuthenticatedRequest } from '../../middleware/auth';
 
 export default withAuth(async function handler(
