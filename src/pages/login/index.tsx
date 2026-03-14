@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import ContributorForm from "@/components/ContributorForm";
 import AuthForm from "@/components/AuthForm";
 import { PenLine } from "lucide-react";
-import { motion } from "framer-motion";
 import { useRouter } from "next/router";
 import Logo from "@/components/Logo";
 
@@ -24,12 +23,7 @@ const Index = () => {
   };
 
   return (
-    <motion.div
-      className="w-full"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div>
       <div className="min-h-screen flex flex-col md:flex-row">
         {/* Left Side - Branding */}
         <div className="md:w-1/2 bg-gradient-to-br from-accent/5 to-accent/10 p-8 md:p-8 lg:p-10 flex flex-col justify-between">
@@ -86,7 +80,7 @@ const Index = () => {
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

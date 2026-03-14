@@ -19,6 +19,7 @@ import Layout from '@/components/Layout';
 import { Skeleton } from '@/components/Skeleton';
 import { IUser } from '@/models/user.model';
 import { IBlog } from '@/models/blog.model';
+import BlogCard from '@/components/BlogCard';
 
 const fetcher = (url: string) => fetch(url)?.then((res) => res?.json());
 
@@ -242,8 +243,8 @@ const CreatorProfile = () => {
           {/* ── RIGHT: BLOG GRID ── */}
           <main className="lg:col-span-9 space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-stone-900">
-                Latest from <span className="text-amber-600">{creator?.name}</span>
+              <h2 className="text-lg font-semibold text-stone-900">
+                Recent Articles
               </h2>
               <span className="text-xs text-stone-400 font-semibold uppercase tracking-wider">{blogs?.length} articles</span>
             </div>
@@ -256,80 +257,15 @@ const CreatorProfile = () => {
                 <p className="text-sm text-stone-400 font-medium">No articles published yet.</p>
               </div>
             ) : (
-              <>
-                {/* Featured first blog */}
-                {blogs?.[0] && (
-                  <div className="group">
-                    <article
-                      className="bg-white border border-stone-200 rounded-2xl overflow-hidden flex flex-col md:flex-row hover:shadow-lg hover:shadow-stone-200/60 transition-all duration-400 cursor-pointer"
-                      onClick={() => router.push(`/blog/${blogs?.[0]?.url}`)}
-                    >
-                      <div className="relative md:w-72 h-52 md:h-auto shrink-0 overflow-hidden bg-stone-100">
-                        <img
-                          src={blogs?.[0]?.thumbnail?.image || 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop'}
-                          alt={blogs?.[0]?.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                        />
-                        <span className="absolute top-3 left-3 px-2.5 py-1 bg-white text-[10px] font-bold uppercase tracking-widest text-stone-700 rounded-lg shadow-sm">
-                          {blogs?.[0]?.category}
-                        </span>
-                      </div>
-                      <div className="flex flex-col justify-between p-6 md:p-8 flex-1">
-                        <div className="space-y-3">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-amber-500">Featured</span>
-                          <h3 className="text-xl md:text-2xl font-bold text-stone-900 leading-snug group-hover:text-amber-600 transition-colors">
-                            {blogs[0].title}
-                          </h3>
-                        </div>
-                        <div className="flex items-center justify-between mt-6 text-stone-400 text-xs font-semibold uppercase tracking-wider">
-                          <time dateTime={new Date(blogs[0].createdAt).toISOString()}>{new Date(blogs[0].createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</time>
-                          <div className="flex items-center gap-1 text-stone-900 group-hover:text-amber-600 transition-colors font-bold">
-                            Read <ArrowUpRight size={14} aria-hidden="true" />
-                          </div>
-                        </div>
-                      </div>
-                    </article>
-                  </div>
-                )}
-
-                {/* Rest of blogs in 2-col grid */}
+              <div className="space-y-8">
                 {blogs?.length > 1 && (
-                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    {blogs?.slice(1).map((blog: IBlog, index: number) => (
-                      <div key={blog._id as string} className="group">
-                        <article
-                          className="bg-white border border-stone-200 rounded-2xl overflow-hidden flex flex-col h-full hover:shadow-lg hover:shadow-stone-200/60 transition-all duration-400 cursor-pointer"
-                          onClick={() => router.push(`/blog/${blog?.url}`)}
-                        >
-                          <div className="relative h-44 overflow-hidden bg-stone-100">
-                            <img
-                              src={blog?.thumbnail?.image || 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop'}
-                              alt={blog?.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                            />
-                            <span className="absolute top-3 left-3 px-2.5 py-1 bg-white text-[10px] font-bold uppercase tracking-widest text-stone-700 rounded-lg shadow-sm">
-                              {blog?.category}
-                            </span>
-                          </div>
-                          <div className="p-5 flex flex-col flex-1 space-y-3">
-                            <h3 className="text-base font-bold text-stone-900 leading-snug group-hover:text-amber-600 transition-colors line-clamp-2">
-                              {blog?.title}
-                            </h3>
-                            <div className="mt-auto flex items-center justify-between text-stone-400 text-[10px] font-bold uppercase tracking-wider pt-3 border-t border-stone-100">
-                              <time dateTime={new Date(blog?.createdAt).toISOString()}>{new Date(blog?.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</time>
-                              <ArrowUpRight
-                                size={15}
-                                className="text-stone-300 group-hover:text-amber-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all"
-                                aria-hidden="true"
-                              />
-                            </div>
-                          </div>
-                        </article>
-                      </div>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {blogs?.map((blog: IBlog, index: number) => (
+                      <BlogCard key={blog._id as string} blog={blog} variant="featured" index={index} />
                     ))}
                   </div>
                 )}
-              </>
+              </div>
             )}
           </main>
         </div>

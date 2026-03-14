@@ -25,11 +25,11 @@ interface SidebarProps {
 
 const menuItems = [
   { label: "Overview", value: "overview", icon: LayoutDashboard },
-  { label: "Vault", value: "vault", icon: Database },
   { label: "Blogs", value: "blogs", icon: FilePlus },
   { label: "Auto Blogger", value: "auto-blogger", icon: Youtube },
   { label: "Automation", value: "automation", icon: Bot },
   { label: "Users", value: "users", icon: Users },
+  { label: "Vault", value: "vault", icon: Database },
   { label: "Contributor", value: "contributor", icon: HeartHandshake },
   { label: "Reports", value: "reports", icon: Flag },
   { label: "Settings", value: "settings", icon: Settings },

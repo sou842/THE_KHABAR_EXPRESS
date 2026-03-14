@@ -54,10 +54,10 @@ const Logo = (props: logoProps) => {
     default:
       return (
         <span className="font-serif text-2xl md:text-3xl">
-          <span className="font-sans bg-clip-text text-white font-bold mx-1">
+          <span className="font-sans bg-clip-text text-gray-600 font-bold mx-1">
             Khabar
           </span>
-          <span className="text-xs text-white font-sans">Express</span>
+          <span className="text-xs text-gray-600 font-sans">Express</span>
         </span>
       );
   }

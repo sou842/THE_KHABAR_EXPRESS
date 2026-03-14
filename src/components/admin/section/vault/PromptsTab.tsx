@@ -35,7 +35,7 @@ export default function PromptsTab({ items, handleDelete }: PromptsTabProps) {
           <div className="flex justify-between items-start mb-2 group" >
             <div className="flex-1 flex items-start gap-2">
               <div className="mt-1 text-muted-foreground flex-shrink-0">
-                {expandedItems[item?._id] ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+                {expandedItems?.[item?._id] ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
               </div>
               <div>
                 <h3 className="text-base font-medium text-foreground mb-1 flex items-center gap-2 group-hover:text-primary transition-colors">
@@ -62,8 +62,8 @@ export default function PromptsTab({ items, handleDelete }: PromptsTabProps) {
             </div>
           </div>
 
-          {expandedItems[item?._id] && (
-            <div className="pl-7 pr-2 mt-4 animate-in slide-in-from-top-2 duration-200">
+          {expandedItems?.[item?._id] && (
+            <div onClick={(e)=> e.stopPropagation()} className="pl-7 pr-2 mt-4 animate-in slide-in-from-top-2 duration-200 cursor-default">
               <div className="overflow-hidden rounded-md text-sm border border-border/50 bg-[#282a36]">
                 <DynamicCodeBlock code={item?.content} language="json" />
               </div>
