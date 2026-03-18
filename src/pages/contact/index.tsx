@@ -28,7 +28,6 @@ interface SubmitStatus {
   message: string;
 }
 
-// --- Constants ---
 const CONTACT_DETAILS: ContactDetail[] = [
   {
     icon: Mail,
@@ -39,7 +38,7 @@ const CONTACT_DETAILS: ContactDetail[] = [
   {
     icon: Phone,
     label: "Phone",
-    value: "+91 9903149200",
+    value: "+91 9903149299",
     href: "tel:+9903149299",
   },
 ];
