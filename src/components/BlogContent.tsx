@@ -74,6 +74,7 @@ export const BlogContent: FC<{ block: any; isFirst?: boolean }> = ({ block, isFi
       case 1:
         return (
           <h1
+            title={safeText}
             id={headingId || undefined}
             className="w-full font-serif font-bold text-4xl md:text-5xl lg:text-6xl leading-[1.1] text-foreground mt-12 mb-6 tracking-tight"
             dangerouslySetInnerHTML={{ __html: safeText }}
@@ -81,7 +82,8 @@ export const BlogContent: FC<{ block: any; isFirst?: boolean }> = ({ block, isFi
         );
       case 2:
         return (
-          <h2
+          <h1
+            title={safeText}
             id={headingId || undefined}
             className="w-full font-serif font-bold text-3xl md:text-4xl leading-[1.15] text-foreground mt-10 mb-5 tracking-tight"
             dangerouslySetInnerHTML={{ __html: safeText }}
@@ -90,6 +92,7 @@ export const BlogContent: FC<{ block: any; isFirst?: boolean }> = ({ block, isFi
       case 3:
         return (
           <h3
+            title={safeText}
             id={headingId || undefined}
             className="w-full font-sans font-bold text-2xl md:text-3xl leading-[1.2] text-foreground mt-8 mb-4 tracking-tight"
             dangerouslySetInnerHTML={{ __html: safeText }}
@@ -98,6 +101,7 @@ export const BlogContent: FC<{ block: any; isFirst?: boolean }> = ({ block, isFi
       case 4:
         return (
           <h4
+            title={safeText}
             id={headingId || undefined}
             className="w-full font-sans font-bold text-xl md:text-2xl leading-[1.25] text-foreground mt-6 mb-3 tracking-tight"
             dangerouslySetInnerHTML={{ __html: safeText }}
@@ -106,6 +110,7 @@ export const BlogContent: FC<{ block: any; isFirst?: boolean }> = ({ block, isFi
       default:
         return (
           <h2
+            title={safeText}
             id={headingId || undefined}
             className="w-full font-serif font-bold text-3xl md:text-4xl leading-[1.15] text-foreground mt-10 mb-5 tracking-tight"
             dangerouslySetInnerHTML={{ __html: safeText }}
