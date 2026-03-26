@@ -68,7 +68,7 @@ const AskAiChat: React.FC<AskAiChatProps> = ({ blogId, articleTitle, initialSumm
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const questions = initialSummary?.suggestedQuestions || SUGGESTED_QUESTIONS;
+  const questions = !!initialSummary?.suggestedQuestions?.length ? initialSummary?.suggestedQuestions : SUGGESTED_QUESTIONS;
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>(questions);
 
 
