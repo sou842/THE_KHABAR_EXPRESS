@@ -97,7 +97,7 @@ const BlogRow = ({ blog, index, onAction, mutate }: { blog: any; index: number; 
                     </div>
                     
                     <h4 className="font-semibold text-[14px] md:text-[15px] text-foreground leading-snug line-clamp-1 group-hover:text-primary transition-colors duration-150 pr-4">
-                        {blog?.title}
+                        {blog?.title} <span className="px-1.5 text-xs bg-blue-100 text-blue-600 rounded-full">{blog?.views}</span>
                     </h4>
                     {blog?.author && (
                         <p className="text-[11px] text-muted-foreground/60 mt-0.5 font-medium flex items-center gap-1.5">

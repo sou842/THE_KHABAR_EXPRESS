@@ -1,9 +1,9 @@
-import { FC, useState } from "react";
+import { FC, useState, useRef } from "react";
 import Layout from "@/components/Layout";
 import Link from "next/link";
 import { toast } from "sonner";
 import { GetStaticProps, GetStaticPaths } from "next";
-import { Calendar, Share2, Sparkles, BrainCircuit, MoreHorizontal, Flag, Link as LinkIcon, AlertTriangle, User } from "lucide-react";
+import { Calendar, Share2, Sparkles, BrainCircuit, MoreHorizontal, Flag, Link as LinkIcon, AlertTriangle, User, FileDown } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
 import {
@@ -33,6 +33,7 @@ import AiSummarySection from "@/components/AI/AiSummarySection";
 import TextToSpeech from "@/components/TextToSpeech";
 import ArticleDisclaimer from "@/components/Disclaimers/ArticleDisclaimer";
 import dynamic from "next/dynamic";
+import { generateBlogPdf } from "@/lib/pdfUtils";
 
 const AskAiChat = dynamic(() => import("@/components/AI/AskAiChat"), {
   ssr: false,
@@ -74,6 +75,17 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [isSubmittingReport, setIsSubmittingReport] = useState(false);
+  const articleRef = useRef<HTMLDivElement>(null);
+
+  const handleDownloadPdf = async () => {
+    try {
+      await generateBlogPdf(blog);
+    } catch (error) {
+      console.error("PDF generation error:", error);
+      toast.error("Failed to generate PDF. Falling back to simple print...");
+      window.print();
+    }
+  };
 
   const handleCopy = () => {
     const URL = window.location.href;
@@ -95,12 +107,12 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          blogId: blog._id,
+          blogId: blog?._id,
           reason: reportReason,
         }),
       });
 
-      const data = await res.json();
+      const data = await res?.json();
       if (data.success) {
         toast.success("Report submitted successfully. Thank you for our feedback.");
         setIsReportModalOpen(false);
@@ -144,7 +156,7 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <article className="py-8 md:py-16" itemScope itemType="https://schema.org/NewsArticle">
+            <article ref={articleRef} className="py-8 md:py-16" itemScope itemType="https://schema.org/NewsArticle">
               <div className="w-full">
                 {/* Category, breadcrumbs, and metadata bar */}
                 <div className="mb-10 space-y-4">
@@ -248,18 +260,22 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
                           </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48 bg-background border-border shadow-lg">
-                          <DropdownMenuItem onClick={handleCopy} className="cursor-pointer gap-2 py-2.5 focus:bg-muted focus:text-foreground font-medium">
-                            <LinkIcon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                            <span>Copy Link</span>
-                          </DropdownMenuItem>
-                          {blog.authorId && (
-                            <Link href={`/creator/${blog.authorId?._id}`}>
+                          {blog?.authorId && (
+                            <Link href={`/creator/${blog?.authorId?._id}`}>
                               <DropdownMenuItem className="cursor-pointer gap-2 py-2.5 focus:bg-muted focus:text-foreground font-medium">
                                 <User className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                                 <span>View Creator Profile</span>
                               </DropdownMenuItem>
                             </Link>
                           )}
+                          <DropdownMenuItem onClick={handleDownloadPdf} className="cursor-pointer gap-2 py-2.5 focus:bg-muted focus:text-foreground font-medium">
+                            <FileDown className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                            <span>Download PDF</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={handleCopy} className="cursor-pointer gap-2 py-2.5 focus:bg-muted focus:text-foreground font-medium">
+                            <LinkIcon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                            <span>Copy Link</span>
+                          </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => setIsReportModalOpen(true)} className="cursor-pointer gap-2 py-2.5 text-destructive hover:bg-destructive/10 hover:text-destructive focus:bg-destructive/10 focus:text-destructive font-medium">
                             <Flag className="h-4 w-4" aria-hidden="true" />
                             <span>Report Article</span>

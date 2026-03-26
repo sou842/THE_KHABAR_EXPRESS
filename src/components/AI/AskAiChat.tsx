@@ -1,13 +1,23 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, FC } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Sparkles, X, Loader2, ArrowUpRight, Copy, Check } from 'lucide-react';
+import { Send, Sparkles, X, Loader2, ArrowUpRight, Copy, Check, ThumbsUp, ThumbsDown, Trash2, Ellipsis, RefreshCcw } from 'lucide-react';
 import { toast } from 'sonner';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import localforage from 'localforage';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Message {
+  id: string;
   role: 'user' | 'assistant';
   content: string;
+  timestamp?: Date;
+  feedback?: 'like' | 'dislike' | null;
 }
 
 interface AskAiChatProps {
@@ -22,6 +32,13 @@ interface AskAiChatProps {
   onClose?: () => void;
 }
 
+interface AssistantMessageProps {
+  content: string;
+  id: string;
+  initialFeedback?: 'like' | 'dislike' | null;
+  onFeedback: (id: string, type: 'like' | 'dislike') => void;
+}
+
 const SUGGESTED_QUESTIONS = [
   "What are the core concepts?",
   "Summarize the key takeaways.",
@@ -30,8 +47,10 @@ const SUGGESTED_QUESTIONS = [
   "Any counterarguments mentioned?",
 ];
 
-const AssistantMessage: React.FC<{ content: string }> = ({ content }) => {
+
+const AssistantMessage: FC<AssistantMessageProps> = ({ content, id, initialFeedback, onFeedback }) => {
   const [copied, setCopied] = useState(false);
+  const [feedback, setFeedback] = useState<'like' | 'dislike' | null>(initialFeedback || null);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(content);
@@ -39,25 +58,59 @@ const AssistantMessage: React.FC<{ content: string }> = ({ content }) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleFeedback = (type: 'like' | 'dislike') => {
+    setFeedback(prev => prev === type ? null : type);
+    onFeedback(id, type);
+    if (feedback !== type) {
+      toast.success(type === 'like' ? 'Glad you found it helpful!' : 'Thanks for the feedback. I\'ll try to improve.');
+    }
+  };
+
   return (
-    <div className="group relative">
-      <div className="prose prose-sm prose-neutral max-w-none 
+    <div className="group relative flex flex-col gap-3 w-full">
+      <div id="ai-chat-markdown" className="prose prose-sm prose-neutral max-w-none 
         prose-headings:font-bold prose-headings:text-neutral-900 prose-headings:tracking-tight prose-headings:mb-3 prose-headings:mt-6
         prose-h1:text-xl prose-h2:text-lg prose-h3:text-base
         prose-p:text-neutral-700 prose-p:leading-[1.7] prose-p:mb-4
         prose-ul:my-4 prose-ul:list-disc prose-li:my-1 prose-li:text-neutral-600
         prose-strong:text-neutral-900 prose-strong:font-bold
         prose-pre:bg-neutral-50 prose-pre:border prose-pre:border-neutral-200 prose-pre:rounded-xl">
-        <Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>
+        <Markdown  remarkPlugins={[remarkGfm]}>{content}</Markdown>
       </div>
       
-      <button
-        onClick={handleCopy}
-        className={`absolute -top-1 -right-1 p-1.5 rounded-lg bg-white border border-neutral-200 text-neutral-400 opacity-0 group-hover:opacity-100 transition-all hover:text-neutral-900 shadow-sm z-10 ${copied ? '!bg-green-50 !border-green-500 !text-green-500' : ''}`}
-        title="Copy response"
-      >
-        {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5 text-gray-500" />}
-      </button>
+      <div className="flex items-center gap-1 -ml-1">
+        <button
+          onClick={handleCopy}
+          className={`p-2 rounded-lg transition-all duration-200 hover:bg-neutral-100 text-neutral-400 hover:text-neutral-900 ${
+            copied ? 'text-gray-600 bg-green-50' : ''
+          }`}
+          title="Copy response"
+        >
+          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+        </button>
+        
+        <div className="w-px h-4 bg-neutral-200 mx-1" />
+
+        <button
+          onClick={() => handleFeedback('like')}
+          className={`p-2 rounded-lg transition-all duration-200 hover:bg-neutral-100 ${
+            feedback === 'like' ? 'text-gray-600' : 'text-neutral-400 hover:text-neutral-900'
+          }`}
+          title="Helpful"
+        >
+          <ThumbsUp className={`w-4 h-4 ${feedback === 'like' ? 'fill-current' : ''}`} />
+        </button>
+
+        <button
+          onClick={() => handleFeedback('dislike')}
+          className={`p-2 rounded-lg transition-all duration-200 hover:bg-neutral-100 ${
+            feedback === 'dislike' ? 'text-gray-600' : 'text-neutral-400 hover:text-neutral-900'
+          }`}
+          title="Not helpful"
+        >
+          <ThumbsDown className={`w-4 h-4 ${feedback === 'dislike' ? 'fill-current' : ''}`} />
+        </button>
+      </div>
     </div>
   );
 };
@@ -66,41 +119,127 @@ const AskAiChat: React.FC<AskAiChatProps> = ({ blogId, articleTitle, initialSumm
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('thinking...');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const questions = !!initialSummary?.suggestedQuestions?.length ? initialSummary?.suggestedQuestions : SUGGESTED_QUESTIONS;
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>(questions);
 
+  const STORAGE_KEY = `khabar_ask_ai_${blogId}`;
 
-  const handleSend = async (customMessage?: string) => {
+  useEffect(() => {
+    const loadChat = async () => {
+      try {
+        const stored = await localforage.getItem<string>(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          const withDates = parsed.map((m: any) => ({
+            ...m,
+            timestamp: m.timestamp ? new Date(m.timestamp) : undefined
+          }));
+          setMessages(withDates);
+        }
+      } catch (e) {
+        console.error("Failed to load chat history from IndexedDB", e);
+      }
+    };
+    loadChat();
+  }, [blogId, STORAGE_KEY]);
+
+  useEffect(() => {
+    localforage.setItem(STORAGE_KEY, JSON.stringify(messages))
+      .catch(e => console.error("Failed to save chat to IndexedDB", e));
+  }, [messages, STORAGE_KEY]);
+
+  const handleDeletePair = (index: number) => {
+    setMessages(prev => {
+      const newMessages = [...prev];
+      if (newMessages[index + 1]?.role === 'assistant') {
+        newMessages.splice(index, 2);
+      } else {
+        newMessages.splice(index, 1);
+      }
+      return newMessages;
+    });
+  };
+
+  const handleRetry = (index: number, content: string) => {
+    handleDeletePair(index);
+    setTimeout(() => {
+      handleSend(content);
+    }, 100);
+  };
+
+  const handleMessageFeedback = (id: string, type: 'like' | 'dislike') => {
+    setMessages(prev => prev.map(m => {
+      if (m.id === id) {
+        return { ...m, feedback: m.feedback === type ? null : type };
+      }
+      return m;
+    }));
+  };
+
+  const handleSend = async (customMessage?: string, retryCount = 0, passedHistory?: string) => {
     const text = (customMessage || input).trim();
-    if (!text || isLoading) return;
+    if (!text || (isLoading && retryCount === 0)) return;
 
-    const currentHistory = messages
-      ?.slice(-2)
-      ?.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`)
-      ?.join('\n');
+    let historyToUse = passedHistory;
 
-    if (!customMessage) setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: text }]);
-    setIsLoading(true);
+    if (retryCount === 0) {
+      historyToUse = messages
+        ?.slice(-2)
+        ?.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`)
+        ?.join('\n');
+
+      if (!customMessage) setInput('');
+      setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'user', content: text, timestamp: new Date() }]);
+      setLoadingMessage('thinking...');
+      setIsLoading(true);
+    } else {
+      setLoadingMessage(`The AI took too long to think, retrying... (Attempt ${retryCount + 1}/3)`);
+    }
 
     try {
       const response = await fetch('/api/blogs/ai/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ blogId, question: text, history: currentHistory }),
+        body: JSON.stringify({ blogId, question: text, history: historyToUse }),
       });
+
+      if (!response.ok) {
+        if (response.status === 504 || response.status === 500) {
+          if (retryCount < 2) {
+            console.log(`[AskAiChat] Server timeout (${response.status}). Retrying (${retryCount + 1}/2)...`);
+            await handleSend(text, retryCount + 1, historyToUse);
+            return;
+          } else {
+            toast.error("The AI took too long to think. Please try again.");
+            return;
+          }
+        } else {
+          toast.error(`Error: ${response.status} - Something went wrong.`);
+          return;
+        }
+      }
+
       const data = await response.json();
       if (data?.success) {
-        setMessages(prev => [...prev, { role: 'assistant', content: data?.answer }]);
+        setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: data?.answer, timestamp: new Date() }]);
       } else {
         toast.error(data?.message || 'Something went wrong');
       }
-    } catch {
-      toast.error('Failed to connect to AI service');
+    } catch (err) {
+      console.log(`[AskAiChat] Network error:`, err);
+      if (retryCount < 2) {
+        setLoadingMessage(`Network error, retrying... (Attempt ${retryCount + 1}/3)`);
+        await handleSend(text, retryCount + 1, historyToUse);
+      } else {
+        toast.error('Failed to connect to AI service');
+      }
     } finally {
-      setIsLoading(false);
+      if (retryCount === 0) {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -163,12 +302,14 @@ const AskAiChat: React.FC<AskAiChatProps> = ({ blogId, articleTitle, initialSumm
           </div>
           <span className="text-base font-semibold text-neutral-800 tracking-tight">AI Assistant</span>
         </div>
-        <button
-          onClick={onClose}
-          className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-all font-sans"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={onClose}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-all font-sans"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       {/* Body */}
@@ -182,31 +323,33 @@ const AskAiChat: React.FC<AskAiChatProps> = ({ blogId, articleTitle, initialSumm
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.97 }}
               transition={{ duration: 0.22 }}
-              className="flex flex-col items-center text-center pt-6 pb-4 gap-5"
+              className="flex flex-col items-center text-center pt-8 pb-4 gap-6"
             >
               {/* Icon + prompt */}
-              <div className="space-y-1.5">
-                <div className="w-10 h-10 rounded-2xl bg-neutral-900 flex items-center justify-center mx-auto">
-                  <Sparkles className="w-5 h-5 text-white" />
+              <div className="space-y-3">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-neutral-800 to-neutral-900 flex items-center justify-center mx-auto shadow-lg shadow-neutral-900/10 ring-4 ring-neutral-900/5">
+                  <Sparkles className="w-6 h-6 text-white" />
                 </div>
-                <p className="text-base font-semibold text-neutral-800">Ask about this article</p>
-                <p className="text-sm text-neutral-400 max-w-48 leading-snug">
-                  I've read it. Try one of these or write your own.
-                </p>
+                <div>
+                  <h3 className="text-lg font-semibold text-neutral-800 tracking-tight">Ask about this article</h3>
+                  <p className="text-sm text-neutral-500 mt-1 max-w-[240px] leading-relaxed mx-auto">
+                    I've analyzed the content. Choose a suggested question below or ask your own.
+                  </p>
+                </div>
               </div>
 
               {/* Suggestion chips */}
-              <div className="flex flex-wrap justify-center gap-2">
+              <div className="flex flex-wrap justify-center gap-2.5 max-w-[90%]">
                 {suggestedQuestions && suggestedQuestions?.map((q, i) => (
                   <motion.button
                     key={i}
-                    initial={{ opacity: 0, y: 4 }}
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.08 + i * 0.05 }}
+                    transition={{ delay: 0.1 + i * 0.05, duration: 0.2 }}
                     onClick={() => handleSend(q)}
-                    className="w-fit max-w-full flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white border border-neutral-200 text-sm text-neutral-600 font-medium hover:border-neutral-900 hover:text-neutral-900 hover:bg-neutral-50 transition-all group"
+                    className="w-fit max-w-full flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/60 backdrop-blur-sm border border-neutral-200/80 text-sm text-neutral-600 font-medium hover:border-neutral-400 hover:text-neutral-900 hover:bg-white hover:shadow-sm hover:-translate-y-0.5 transition-all duration-200 group text-left"
                   >
-                    {q || 'No Question'}
+                    <span className="line-clamp-2 text-center">{q || 'No Question'}</span>
                   </motion.button>
                 ))}
               </div>
@@ -215,59 +358,102 @@ const AskAiChat: React.FC<AskAiChatProps> = ({ blogId, articleTitle, initialSumm
         </AnimatePresence>
 
         {/* Chat messages */}
-        {messages && messages?.map((m, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.18 }}
-            className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div
-              className={`max-w-[90%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${m.role === 'user'
-                  ? 'bg-neutral-900 text-white rounded-br-sm shadow-md shadow-neutral-900/10'
-                  : 'bg-white border border-neutral-200 text-neutral-700 rounded-bl-sm shadow-sm'
-                }`}
-            >
-              {m.role === 'assistant' ? (
-                <AssistantMessage content={m.content} />
-              ) : (
-                <div className="font-medium">{m.content}</div>
-              )}
-            </div>
-          </motion.div>
-        ))}
-
-        {/* Loading dots */}
-        <AnimatePresence>
-          {isLoading && (
-            <motion.div
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="flex justify-start"
-            >
-              <div className="px-4 py-3 bg-white border border-neutral-200 rounded-2xl rounded-bl-sm flex gap-1 items-center shadow-sm">
-                {[0, 1, 2].map(n => (
-                  <span
-                    key={n}
-                    className="w-1.5 h-1.5 rounded-full bg-neutral-400 animate-bounce"
-                    style={{ animationDelay: `${n * 120}ms` }}
-                  />
-                ))}
+        <div className="space-y-6">
+          <AnimatePresence initial={false}>
+            {messages && messages?.map((m, i) => (
+              <motion.div
+                key={m.id}
+                initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95, y: -10, transition: { duration: 0.15 } }}
+                transition={{ duration: 0.2, type: 'spring', stiffness: 200, damping: 20 }}
+                className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'} mb-2 w-full group`}
+              >
+              <div className={`flex items-center gap-2 w-full ${m.role === 'user' ? 'justify-end flex-row' : 'justify-start'}`}>
+                <div
+                  className={`max-w-[88%] sm:max-w-[80%] min-w-[60px] px-4 py-3.5 rounded-2xl text-[15px] leading-relaxed transition-all ${
+                    m.role === 'user'
+                      ? 'bg-gradient-to-br from-neutral-800 to-neutral-900 text-white rounded-br-sm shadow-neutral-900/15 shadow-sm'
+                      : 'max-w-full sm:max-w-full w-full text-neutral-800 w-full'
+                    }`}
+                >
+                  {m.role === 'assistant' ? (
+                    <AssistantMessage 
+                      content={m.content} 
+                      id={m.id} 
+                      initialFeedback={m.feedback} 
+                      onFeedback={handleMessageFeedback} 
+                    />
+                  ) : (
+                    <div className="font-medium tracking-tight text-neutral-50 whitespace-pre-wrap">{m.content}</div>
+                  )}
+                </div>
               </div>
+              
+              {(m.role !== 'assistant' && m.timestamp) && (
+                <div className="flex items-center gap-1 mt-1.5">
+                  {m.role === 'user' && (
+                    <div className="opacity-60 group-hover:opacity-100 transition-opacity">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="p-1 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-md transition-colors outline-none cursor-pointer">
+                            <Ellipsis className="w-4 h-4" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-36">
+                          <DropdownMenuItem onClick={() => handleRetry(i, m.content)} className="cursor-pointer gap-2 focus:bg-gray-100">
+                            <RefreshCcw className="w-4 h-4" />
+                            <span>Retry</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleDeletePair(i)} className="cursor-pointer text-red-600 focus:text-red-700 focus:bg-red-50 gap-2">
+                            <Trash2 className="w-4 h-4" />
+                            <span>Delete</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  )}
+                  <span className={`text-[11px] font-medium text-neutral-400 px-1 tracking-wide ${m.role === 'user' ? 'mr-1' : 'ml-1'}`}>
+                    {m?.timestamp?.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+              )}
             </motion.div>
-          )}
-        </AnimatePresence>
+          ))}
+          </AnimatePresence>
 
-        <div ref={messagesEndRef} />
+          {/* Loading status indicator */}
+          <AnimatePresence>
+            {isLoading && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
+                className="flex justify-start"
+              >
+                <div className="px-2 py-3.5 rounded-2xl rounded-bl-sm flex gap-2 items-center">
+                  <div className="relative flex items-center justify-center w-5 h-5">
+                    <Loader2 className="w-4 h-4 text-neutral-400 animate-spin absolute" />
+                  </div>
+                  <span className="text-sm font-medium bg-clip-text text-transparent bg-gradient-to-r from-neutral-500 to-neutral-400 animate-pulse tracking-wide">
+                    {loadingMessage}
+                  </span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <div ref={messagesEndRef} className="h-2" />
+        </div>
       </div>
 
       {/* Input area */}
-      <div className="px-4 pb-4 pt-2 bg-neutral-50">
+      <div className="px-5 pb-5 pt-3 bg-gradient-to-t from-neutral-50 via-neutral-50 to-transparent">
         <div
-          className={`bg-white rounded-xl border transition-colors duration-200 overflow-hidden shadow-sm ${canSend ? 'border-neutral-400' : 'border-neutral-300'
-            }`}
+          className={`bg-white rounded-2xl border transition-all duration-300 overflow-hidden ${
+            canSend 
+              ? 'border-neutral-400 shadow-md shadow-neutral-200/50' 
+              : 'border-neutral-200 shadow-sm'
+            } focus-within:border-neutral-400 focus-within:shadow-md focus-within:ring-4 focus-within:ring-neutral-100`}
         >
           <textarea
             ref={textareaRef}
@@ -282,23 +468,28 @@ const AskAiChat: React.FC<AskAiChatProps> = ({ blogId, articleTitle, initialSumm
             placeholder="Ask anything about this article…"
             rows={1}
             style={{ maxHeight: '140px' }}
-            className="w-full bg-transparent border-none outline-none resize-none text-sm text-neutral-800 placeholder:text-neutral-400 font-medium leading-relaxed overflow-y-auto px-4 pt-4 pb-2 block"
+            className="w-full bg-transparent border-none outline-none resize-none text-[15px] text-neutral-800 placeholder:text-neutral-400 font-medium leading-relaxed overflow-y-auto px-5 pt-4 pb-2 block"
           />
 
-          <div className="flex items-center justify-between px-3 pb-3">
-            <span className="text-xs text-neutral-400 px-1 select-none tabular-nums">
+          <div className="flex items-center justify-between px-3 pb-3 pt-1">
+            <span className="text-[11px] font-medium text-neutral-400 px-2 tracking-wide uppercase select-none">
               {input?.length > 0 ? `${input?.length} chars · ↵ to send` : 'Shift + ↵ for new line'}
             </span>
             <button
               onClick={() => handleSend()}
               disabled={!canSend}
-              className={`flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-xs font-semibold transition-all duration-150 active:scale-95 ${canSend
-                  ? 'bg-neutral-900 text-white hover:bg-neutral-700 shadow-md shadow-neutral-900/10'
+              className={`flex items-center gap-2 px-4 h-9 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                  canSend
+                  ? 'bg-neutral-900 text-white hover:bg-neutral-800 shadow-md shadow-neutral-900/20 active:scale-[0.97]'
                   : 'bg-neutral-100 text-neutral-400 cursor-not-allowed'
                 }`}
             >
-              {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-              Send
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin text-neutral-400" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
+              <span>Send</span>
             </button>
           </div>
         </div>
