@@ -4,11 +4,11 @@ import { BlogChunk } from "@/models/blogChunk.model";
 // Model Configuration
 // ─────────────────────────────────────────────
 
-const PRIMARY_MODEL = "openrouter/hunter-alpha";
+const PRIMARY_MODEL = "stepfun/step-3.5-flash:free";
 const FALLBACK_MODELS = [
-  "stepfun/step-3.5-flash:free",
-  "qwen/qwen3-next-80b-a3b-instruct:free",
   "nvidia/nemotron-nano-9b-v2:free",
+  "nvidia/nemotron-3-super-120b-a12b:free",
+  "qwen/qwen3-next-80b-a3b-instruct:free",
 ];
 const ALL_MODELS = [PRIMARY_MODEL, ...FALLBACK_MODELS];
 
@@ -23,7 +23,7 @@ export interface AiSummary {
   suggestedQuestions: string[];
 }
 
-interface OpenRouterMessage {
+export interface OpenRouterMessage {
   role: "user" | "assistant" | "system";
   content: string;
 }
@@ -45,7 +45,7 @@ const callOpenRouter = async (
   messages: OpenRouterMessage[],
   options: CallOptions = {}
 ): Promise<string> => {
-  const { jsonMode = false, retryDelayMs = 300 } = options;
+  const { jsonMode = false, retryDelayMs = 150 } = options;
   const apiKey = process.env.OPENROUTER_API_KEY ?? "";
 
   let lastError = "No models available";

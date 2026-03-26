@@ -30,7 +30,6 @@ const TextToSpeech: React.FC<TextToSpeechProps> = ({ title, contentBlocks }) => 
         if (!block || !block.data) return;
         
         switch (block.type) {
-          case 'header':
           case 'paragraph':
           case 'quote':
             if (block.data.text) {

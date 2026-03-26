@@ -79,13 +79,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       }
 
-      if (!relevantChunks || relevantChunks.length === 0) {
-        return res.status(200).json({ 
-          success: true, 
-          answer: "I'm still analyzing this article. Please give me a few seconds to finish processing and try asking again!" 
-        });
+        if (!relevantChunks || relevantChunks.length === 0) {
+          return res.status(200).json({ 
+            success: true, 
+            answer: "I'm still analyzing this article. Please give me a few seconds to finish processing and try asking again!" 
+          });
+        }
       }
-    }
 
     const context = relevantChunks.map((c: any) => c.content).join('\n\n---\n\n');
 

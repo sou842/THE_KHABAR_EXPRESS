@@ -77,7 +77,7 @@ const AskAiChat: React.FC<AskAiChatProps> = ({ blogId, articleTitle, initialSumm
     if (!text || isLoading) return;
 
     const currentHistory = messages
-      ?.slice(-7)
+      ?.slice(-2)
       ?.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`)
       ?.join('\n');
 
