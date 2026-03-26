@@ -138,78 +138,29 @@ const callOpenRouter = async (
 export const generateSummary = async (
   content: string
 ): Promise<AiSummary> => {
-  const prompt = `
-You are a precise content analysis AI. Your sole function is to read the provided article and return a structured JSON summary.
+const prompt = `You are a JSON-only content analyzer. Output ONLY a raw JSON object — no markdown, no explanation, no preamble. Start with { and end with }.
 
-═══════════════════════════════════════════
-ABSOLUTE CONSTRAINTS (NEVER VIOLATE THESE)
-═══════════════════════════════════════════
-- Use ONLY information explicitly stated in the article.
-- Do NOT infer, assume, or add external knowledge.
-- Do NOT hallucinate facts, names, statistics, or claims.
-- Do NOT output anything except a valid JSON object.
-- Do NOT wrap output in markdown (no \`\`\`json blocks).
-- Do NOT include explanations, comments, or preamble.
-- The response must be directly parseable by JSON.parse().
+CONSTRAINTS:
+- Use ONLY information explicitly stated in the article. No inference. No external knowledge.
+- Every field must be grounded in article content.
 
-═══════════════════════════════
-ARTICLE CONTENT TO ANALYZE
-═══════════════════════════════
+ARTICLE:
 ${content}
 
-═══════════════════════════════
-REQUIRED OUTPUT STRUCTURE
-═══════════════════════════════
-{
-  "mainIdea": "<string>",
-  "keyPoints": ["<string>", "<string>", "<string>", "<string>"],
-  "finalTakeaway": "<string>",
-  "suggestedQuestions": ["<string>", "<string>", "<string>"]
-}
+REQUIRED OUTPUT:
+{"mainIdea":"...","keyPoints":["...","...","..."],"finalTakeaway":"...","suggestedQuestions":["...","...","..."]}
 
-═══════════════════════════════
-FIELD-BY-FIELD RULES
-═══════════════════════════════
+FIELD RULES:
 
-"mainIdea"
-- Exactly 1–2 sentences.
-- State the article's core subject and purpose.
-- Must be grounded in the article's opening or central thesis.
-- No opinions, no filler phrases like "This article discusses...".
+mainIdea: 1-2 sentences. State core subject and purpose grounded in the article's opening or central thesis. No opinions, no filler phrases like "This article discusses".
 
-"keyPoints"
-- Minimum 3, maximum 4 items.
-- Each point must represent a DISTINCT insight from the article.
-- No two points may overlap in meaning or content.
-- Write each point as a standalone, self-explanatory statement.
-- Do not use vague language such as "the article mentions" or "it talks about".
-- Each point must be falsifiable — a reader should be able to verify it against the article.
+keyPoints: 3-4 items. Each must be a DISTINCT, standalone insight with no overlap. No vague language like "the article mentions" or "it talks about". Each must be falsifiable against the article.
 
-"finalTakeaway"
-- Exactly 1–2 sentences.
-- Synthesize the article's overall conclusion or lesson.
-- Must not simply restate a key point — it should provide a concluding perspective.
+finalTakeaway: 1-2 sentences. Synthesize the overall conclusion — do not restate a keyPoint.
 
-"suggestedQuestions"
-- Exactly 3 questions.
-- Every question MUST be answerable using ONLY the information in the article.
-- Do not generate questions that require outside knowledge to answer.
-- Questions must address different aspects of the article (do not cluster around one topic).
-- Write questions as a curious reader would naturally phrase them.
+suggestedQuestions: Exactly 3. Each answerable using only the article. Each covering a different aspect. Phrased as a curious reader would naturally ask.
 
-═══════════════════════════════
-QUALITY CHECKLIST (SELF-VERIFY BEFORE OUTPUTTING)
-═══════════════════════════════
-Before returning your response, verify:
-[ ] mainIdea is 1–2 sentences and grounded in article content
-[ ] keyPoints has 3–4 items with no overlap or repetition
-[ ] finalTakeaway synthesizes — not just restates — the article
-[ ] All 3 suggestedQuestions are answerable from the article alone
-[ ] Output is a raw JSON object — no markdown, no extra text
-[ ] JSON is valid and directly parseable by JSON.parse()
-
-Return ONLY the JSON object. Begin your response with "{" and end with "}".
-`;
+Output must be valid JSON parseable by JSON.parse().`;
 
   const text = await callOpenRouter([{ role: "user", content: prompt }], {
     jsonMode: true,
