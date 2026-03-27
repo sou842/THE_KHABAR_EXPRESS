@@ -4,13 +4,22 @@ import { BlogChunk } from "@/models/blogChunk.model";
 // Model Configuration
 // ─────────────────────────────────────────────
 
-const PRIMARY_MODEL = "stepfun/step-3.5-flash:free";
-const FALLBACK_MODELS = [
+// Chat Models (Summaries, Q&A)
+const MISTRAL_CHAT_MODEL = "mistral-small-latest"; 
+const CHAT_MODELS = [
+  MISTRAL_CHAT_MODEL,
+  "stepfun/step-3.5-flash:free",
   "nvidia/nemotron-nano-9b-v2:free",
   "nvidia/nemotron-3-super-120b-a12b:free",
   "qwen/qwen3-next-80b-a3b-instruct:free",
 ];
-const ALL_MODELS = [PRIMARY_MODEL, ...FALLBACK_MODELS];
+
+// Embedding Models (Vector Search)
+const MISTRAL_EMBED_MODEL = "mistral-embed";
+const EMBEDDING_MODELS = [
+  MISTRAL_EMBED_MODEL,
+  "mistralai/mistral-embed", // OpenRouter fallback
+];
 
 // ─────────────────────────────────────────────
 // Types
@@ -41,21 +50,32 @@ interface CallOptions {
  * Tries each model in order. Failures are silent — the user is only
  * informed if every single model is exhausted.
  */
-const callOpenRouter = async (
+const callAiModel = async (
   messages: OpenRouterMessage[],
   options: CallOptions = {}
 ): Promise<string> => {
   const { jsonMode = false, retryDelayMs = 150 } = options;
-  const apiKey = process.env.OPENROUTER_API_KEY ?? "";
+  
+  const openRouterKey = process.env.OPENROUTER_API_KEY ?? "";
+  const mistralKey = process.env.MISTRAL_API_KEY ?? "";
+  const mistralBase = process.env.MISTRAL_BASE_URL ?? "https://admin.mistral.ai/v1";
 
   let lastError = "No models available";
 
-  for (const model of ALL_MODELS) {
+  for (const model of CHAT_MODELS) {
     try {
       // Small delay between retries to avoid hammering providers
-      if (model !== PRIMARY_MODEL) {
+      if (model !== CHAT_MODELS[0]) {
         await new Promise((r) => setTimeout(r, retryDelayMs));
       }
+
+      const isMistral = model.startsWith("mistral-");
+      const apiKey = isMistral ? mistralKey : openRouterKey;
+      const url = isMistral 
+        ? `${mistralBase}/chat/completions`
+        : "https://openrouter.ai/api/v1/chat/completions";
+
+      console.log(`[AI] Attempting ${model}...`);
 
       const body: Record<string, unknown> = {
         model,
@@ -63,19 +83,18 @@ const callOpenRouter = async (
         ...(jsonMode && { response_format: { type: "json_object" } }),
       };
 
-      const response = await fetch(
-        "https://openrouter.ai/api/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          ...(!isMistral && {
             "HTTP-Referer": "https://thekhabarexpress.com",
             "X-Title": "The Khabar Express",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(body),
-        }
-      );
+          }),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
 
       // Parse response body — if this fails, move to next model silently
       let data: Record<string, unknown>;
@@ -83,6 +102,7 @@ const callOpenRouter = async (
         data = await response.json();
       } catch {
         lastError = "Invalid JSON response from provider";
+        console.warn(`[AI] ${model} failed: ${lastError}`);
         continue;
       }
 
@@ -92,6 +112,7 @@ const callOpenRouter = async (
         (data?.error as Record<string, unknown>)?.code === 429
       ) {
         lastError = "Rate limited";
+        console.warn(`[AI] ${model} failed: ${lastError}`);
         continue;
       }
 
@@ -100,6 +121,7 @@ const callOpenRouter = async (
         const errData = data?.error as Record<string, unknown> | undefined;
         lastError =
           (errData?.message as string) ?? `HTTP ${response.status}`;
+        console.warn(`[AI] ${model} failed: ${lastError}`);
         continue;
       }
 
@@ -113,14 +135,17 @@ const callOpenRouter = async (
 
       if (!content.trim()) {
         lastError = "Empty content received";
+        console.warn(`[AI] ${model} failed: ${lastError}`);
         continue;
       }
 
       // ✅ Success — return immediately without exposing which model was used
+      console.log(`[AI] ✅ ${model} success!`);
       return content;
     } catch (error) {
       lastError =
         error instanceof Error ? error.message : String(error);
+      console.error(`[AI] ${model} critical error: ${lastError}`);
       continue;
     }
   }
@@ -162,7 +187,7 @@ suggestedQuestions: Exactly 3. Each answerable using only the article. Each cove
 
 Output must be valid JSON parseable by JSON.parse().`;
 
-  const text = await callOpenRouter([{ role: "user", content: prompt }], {
+  const text = await callAiModel([{ role: "user", content: prompt }], {
     jsonMode: true,
   });
 
@@ -217,7 +242,7 @@ Conversation History:
 ${conversationHistory}
 `.trim();
 
-  return callOpenRouter([
+  return callAiModel([
     { role: "system", content: systemPrompt },
     { role: "user", content: question },
   ]);
@@ -235,31 +260,40 @@ ${conversationHistory}
 export const generateEmbeddings = async (
   text: string
 ): Promise<number[]> => {
-  const apiKey = process.env.OPENROUTER_API_KEY ?? "";
-  const embeddingModels = [PRIMARY_MODEL, ...FALLBACK_MODELS];
+  const openRouterKey = process.env.OPENROUTER_API_KEY ?? "";
+  const mistralKey = process.env.MISTRAL_API_KEY ?? "";
+  const mistralBase = process.env.MISTRAL_BASE_URL ?? "https://api.mistral.ai/v1";
 
-  for (const model of embeddingModels) {
+  for (const model of EMBEDDING_MODELS) {
     try {
-      const response = await fetch(
-        "https://openrouter.ai/api/v1/embeddings",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ model, input: text }),
-        }
-      );
+      const isMistral = model === MISTRAL_EMBED_MODEL;
+      const apiKey = isMistral ? mistralKey : openRouterKey;
+      const url = isMistral 
+        ? `${mistralBase}/embeddings`
+        : "https://openrouter.ai/api/v1/embeddings";
+
+      console.log(`[AI-Embed] Attempting ${model}...`);
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ model, input: text }),
+      });
 
       const data = await response.json();
 
       if (!response.ok || !data?.data?.[0]?.embedding) {
+        console.warn(`[AI-Embed] ${model} failed or empty response.`);
         continue; // silent, try next model
       }
 
+      console.log(`[AI-Embed] ✅ ${model} success!`);
       return data.data[0].embedding as number[];
-    } catch {
+    } catch (error) {
+      console.error(`[AI-Embed] ${model} error: ${error instanceof Error ? error.message : String(error)}`);
       continue; // silent, try next model
     }
   }
