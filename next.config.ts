@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "cdn.qwenlm.ai" },
       { protocol: "https", hostname: "thekhabarexpress.s3.ap-southeast-2.amazonaws.com" },
       { protocol: "https", hostname: "images.pexels.com" },
+      { protocol: "https", hostname: "media.gettyimages.com" },
     ],
   },
 };

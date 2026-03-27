@@ -5,7 +5,7 @@ import { CheckCircle2, Clock, Archive, TrashIcon, PlusIcon, X, Users } from 'luc
 import { useState, useCallback, ReactNode } from 'react';
 import type { VaultItem } from './types';
 
-type ItemStatus = 'pending' | 'in-progress' | 'achieved' | 'archived';
+type ItemStatus = 'pending' | 'in-progress' | 'achieved' | 'approved';
 
 interface ColumnConfig {
   status: ItemStatus;
@@ -42,8 +42,8 @@ const COLUMNS: ColumnConfig[] = [
     dropHint: 'Drop here to mark as achieved',
   },
   {
-    status: 'archived',
-    label: 'Archived',
+    status: 'approved',
+    label: 'Approved',
     icon: <Archive className="w-4 h-4 text-gray-500" aria-hidden />,
     dropHint: 'Drop here to archive',
   },
@@ -53,7 +53,7 @@ const ACCENT_COLORS: Record<ItemStatus, string> = {
   pending: 'bg-yellow-400',
   'in-progress': 'bg-blue-400',
   achieved: 'bg-green-500',
-  archived: 'bg-gray-400',
+  approved: 'bg-gray-400',
 };
 
 export default function FeaturePlansTab({
