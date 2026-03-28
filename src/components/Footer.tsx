@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Logo from "./Logo";
 import { SOCIAL_LINKS } from "@/lib/constants";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const QUICK_LINKS = [
   { label: "Home", href: "/" },
@@ -50,6 +51,9 @@ const Footer: React.FC = () => {
                   <Icon className="w-5 h-5" />
                 </a>
               ))}
+            </div>
+            <div className="pt-4">
+              <LanguageSwitcher />
             </div>
           </div>
 
