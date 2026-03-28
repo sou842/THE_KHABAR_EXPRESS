@@ -25,38 +25,26 @@ export const LanguageSwitcher = ({ className }: { className?: string }) => {
   const { pathname, query } = router;
   const [currentLang, setCurrentLang] = useState("en");
 
-  console.log(currentLang, "tara currentLang")
-
-  // Sync with router state on mount and when query changes
+  // Sync with language cookie on mount
   useEffect(() => {
     if (router.isReady) {
-      // 1. Try route-based language (Priority for blogs)
-      const routeLang = query.lang as string;
-      if (routeLang) {
-        setCurrentLang(routeLang);
-        return;
-      }
-
-      // 2. Try cookie-based language (For home/non-localized pages)
+      // 1. Try cookie-based language
       const gTrans = Cookies.get("googtrans");
-      if (gTrans) {
-        // Handle values like "/en/hi" or just "hi" or quoted "/en/hi"
-        const lang = gTrans.split("/").pop()?.replace(/"/g, ""); 
-        if (lang && ["hi", "es", "bn"].includes(lang)) {
-          setCurrentLang(lang);
-          return;
-        }
-      }
+      const cookieLang = gTrans?.split("/").pop()?.replace(/"/g, ""); 
+      
+      // Determine final target language
+      const detectedLang = cookieLang || "en";
+      const validLangs = ["en", "hi", "es", "bn"];
+      const finalLang = validLangs.includes(detectedLang) ? detectedLang : "en";
 
-      // 3. Default to English
-      setCurrentLang("en");
+      if (finalLang !== currentLang) {
+        setCurrentLang(finalLang);
+      }
     }
-  }, [query.lang, router.isReady]);
+  }, [router.isReady, currentLang]);
 
   const handleLanguageChange = (newLang: string) => {
     if (newLang === currentLang) return;
-
-    console.log(`Switching language from ${currentLang} to ${newLang}`);
 
     const hostname = window.location.hostname;
     const cookieOptions = { path: "/" };
