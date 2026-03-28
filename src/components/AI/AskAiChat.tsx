@@ -33,6 +33,7 @@ interface AskAiChatProps {
     suggestedQuestions?: string[];
   };
   onClose?: () => void;
+  initialQuestion?: string | { id: string | number; text: string };
 }
 
 interface AssistantMessageProps {
@@ -126,9 +127,10 @@ const AssistantMessage: FC<AssistantMessageProps> = ({ content, id, initialFeedb
   );
 };
 
-const AskAiChat: React.FC<AskAiChatProps> = ({ blogId, articleTitle, initialSummary, onClose }) => {
+const AskAiChat: React.FC<AskAiChatProps> = ({ blogId, articleTitle, initialSummary, onClose, initialQuestion }) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
+  const lastProcessedQuestionRef = useRef<string | number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('thinking...');
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -191,7 +193,7 @@ const AskAiChat: React.FC<AskAiChatProps> = ({ blogId, articleTitle, initialSumm
     }));
   };
 
-  const handleSend = async (customMessage?: string, retryCount = 0, passedHistory?: string) => {
+  const handleSend = useCallback(async (customMessage?: string, retryCount = 0, passedHistory?: string) => {
     const text = (customMessage || input).trim();
     if (!text || (isLoading && retryCount === 0)) return;
 
@@ -253,7 +255,19 @@ const AskAiChat: React.FC<AskAiChatProps> = ({ blogId, articleTitle, initialSumm
         setIsLoading(false);
       }
     }
-  };
+  }, [blogId, input, isLoading, messages]);
+
+  useEffect(() => {
+    if (!initialQuestion) return;
+
+    const queryText = typeof initialQuestion === 'string' ? initialQuestion : initialQuestion.text;
+    const queryId = typeof initialQuestion === 'string' ? initialQuestion : initialQuestion.id;
+
+    if (queryId !== lastProcessedQuestionRef.current) {
+      handleSend(queryText);
+      lastProcessedQuestionRef.current = queryId;
+    }
+  }, [initialQuestion, handleSend]);
 
   const handleGenerateSummary = useCallback(async () => {
 

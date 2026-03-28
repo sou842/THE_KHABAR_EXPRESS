@@ -34,6 +34,7 @@ import TextToSpeech from "@/components/TextToSpeech";
 import ArticleDisclaimer from "@/components/Disclaimers/ArticleDisclaimer";
 import dynamic from "next/dynamic";
 import { generateBlogPdf } from "@/lib/pdfUtils";
+import TextSelectionTooltip from "@/components/AI/TextSelectionTooltip";
 
 const AskAiChat = dynamic(() => import("@/components/AI/AskAiChat"), {
   ssr: false,
@@ -70,12 +71,19 @@ interface BlogPostPageProps {
 
 const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatInitialQuestion, setChatInitialQuestion] = useState<{ id: number; text: string } | null>(null);
   const [displayTag] = blog?.tags || "";
 
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [isSubmittingReport, setIsSubmittingReport] = useState(false);
   const articleRef = useRef<HTMLDivElement>(null);
+
+  const handleAskAiFromSelection = (selectedText: string) => {
+    const questionText = `Tell me more about this line from the article: "${selectedText}"`;
+    setChatInitialQuestion({ id: Date.now(), text: questionText });
+    setIsChatOpen(true);
+  };
 
   const handleDownloadPdf = async () => {
     try {
@@ -199,6 +207,7 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
                 {/* Main content grid: sidebar on desktop */}
                 <div className="flex flex-col gap-12 mt-4 mb-8">
                   <div className="flex-grow min-w-0" itemProp="articleBody">
+                    <TextSelectionTooltip targetRef={articleRef} onAskAi={handleAskAiFromSelection} />
                     <div className="flex flex-col items-center gap-0">
                       {blog?.body?.map((block: any, index: number) => (
                         <BlogContent key={index} block={block} isFirst={index === 0} />
@@ -334,6 +343,7 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
                 blogId={blog._id}
                 articleTitle={blog.title}
                 initialSummary={blog.aiSummary}
+                initialQuestion={chatInitialQuestion || undefined}
                 onClose={() => setIsChatOpen(false)}
               />
             </motion.aside>
