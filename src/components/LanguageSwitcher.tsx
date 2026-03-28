@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import {
   Select,
@@ -22,26 +21,23 @@ const languages = [
 
 export const LanguageSwitcher = ({ className }: { className?: string }) => {
   const router = useRouter();
-  const { pathname, query } = router;
   const [currentLang, setCurrentLang] = useState("en");
 
   // Sync with language cookie on mount
+  // Fix #1: Removed `currentLang` from deps to prevent infinite re-render loop.
+  // Fix #2: Removed unused `pathname` and `query` destructuring from router.
   useEffect(() => {
-    if (router.isReady) {
-      // 1. Try cookie-based language
-      const gTrans = Cookies.get("googtrans");
-      const cookieLang = gTrans?.split("/").pop()?.replace(/"/g, ""); 
-      
-      // Determine final target language
-      const detectedLang = cookieLang || "en";
-      const validLangs = ["en", "hi", "es", "bn"];
-      const finalLang = validLangs.includes(detectedLang) ? detectedLang : "en";
+    if (!router.isReady) return;
 
-      if (finalLang !== currentLang) {
-        setCurrentLang(finalLang);
-      }
-    }
-  }, [router.isReady, currentLang]);
+    const gTrans = Cookies.get("googtrans");
+    // The cookie value may come quoted (e.g. `"hi"`), so we strip quotes.
+    const cookieLang = gTrans?.split("/").pop()?.replace(/"/g, "");
+    const validLangs = ["en", "hi", "es", "bn"];
+    const finalLang =
+      cookieLang && validLangs.includes(cookieLang) ? cookieLang : "en";
+
+    setCurrentLang(finalLang);
+  }, [router.isReady]);
 
   const handleLanguageChange = (newLang: string) => {
     if (newLang === currentLang) return;
@@ -51,22 +47,17 @@ export const LanguageSwitcher = ({ className }: { className?: string }) => {
     const domainOptions = { path: "/", domain: hostname };
     const dottedDomainOptions = { path: "/", domain: "." + hostname };
 
-    if (newLang === "en") {
-      // Aggressively clear all possible cookie variants
-      Cookies.remove("googtrans", cookieOptions);
-      Cookies.remove("googtrans", domainOptions);
-      Cookies.remove("googtrans", dottedDomainOptions);
-      
-      // Force reload to clear Google Translate state
-      window.location.href = window.location.pathname; 
-    } else {
-      // Clear first to avoid duplicates, then set the new one
-      Cookies.remove("googtrans", cookieOptions);
-      Cookies.remove("googtrans", domainOptions);
-      Cookies.remove("googtrans", dottedDomainOptions);
+    // Aggressively clear all possible cookie variants to avoid duplicates
+    Cookies.remove("googtrans", cookieOptions);
+    Cookies.remove("googtrans", domainOptions);
+    Cookies.remove("googtrans", dottedDomainOptions);
 
+    if (newLang === "en") {
+      // Fix #3: Preserve query string when redirecting back to English
+      window.location.href =
+        window.location.pathname + window.location.search;
+    } else {
       Cookies.set("googtrans", `/en/${newLang}`, cookieOptions);
-      
       window.location.reload();
     }
   };
@@ -74,26 +65,29 @@ export const LanguageSwitcher = ({ className }: { className?: string }) => {
   return (
     <div className="flex items-center gap-2">
       <Select value={currentLang} onValueChange={handleLanguageChange}>
-        <SelectTrigger 
+        <SelectTrigger
           translate="no"
           className={cn(
-            "w-fit min-w-[130px] h-9 bg-white/10 text-gray-500 border-gray-300 rounded-full hover:bg-white/20 transition-all duration-200 notranslate", 
+            "w-fit min-w-[130px] h-9 bg-white/10 text-gray-500 border-gray-300 rounded-full hover:bg-white/20 transition-all duration-200 notranslate",
             className
           )}
         >
           <div className="flex items-center gap-2 overflow-hidden pr-2">
             <Globe className="h-4 w-4 shrink-0 text-gray-500" />
-            <SelectValue placeholder="Select Language" className="notranslate" />
+            <SelectValue
+              placeholder="Select Language"
+              className="notranslate"
+            />
           </div>
         </SelectTrigger>
-        <SelectContent 
-          translate="no" 
-          align="end" 
+        <SelectContent
+          translate="no"
+          align="end"
           className="bg-background border-border shadow-2xl z-[100] notranslate"
         >
           {languages.map((lang) => (
-            <SelectItem 
-              key={lang.code} 
+            <SelectItem
+              key={lang.code}
               value={lang.code}
               className="cursor-pointer hover:bg-accent focus:bg-gray-100 py-2.5 notranslate"
             >
