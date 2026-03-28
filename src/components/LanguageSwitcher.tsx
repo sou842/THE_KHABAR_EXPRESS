@@ -38,15 +38,10 @@ export const LanguageSwitcher = ({ className }: { className?: string }) => {
       }
 
       // 2. Try cookie-based language (For home/non-localized pages)
-      const getCookie = (name: string) => {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop()?.split(";").shift();
-      };
-
-      const gTrans = getCookie("googtrans");
+      const gTrans = Cookies.get("googtrans");
       if (gTrans) {
-        const lang = gTrans.split("/").pop(); // e.g., /en/hi -> hi
+        // Handle values like "/en/hi" or just "hi" or quoted "/en/hi"
+        const lang = gTrans.split("/").pop()?.replace(/"/g, ""); 
         if (lang && ["hi", "es", "bn"].includes(lang)) {
           setCurrentLang(lang);
           return;
