@@ -10,7 +10,6 @@ import {
 import { Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/router";
-import Cookies from "js-cookie";
 
 const languages = [
   { code: "en", name: "English" },
@@ -27,50 +26,28 @@ export const LanguageSwitcher = ({ className }: { className?: string }) => {
   useEffect(() => {
     if (!router.isReady) return;
 
-    // 1. Try LocalStorage (Primary persistence)
+    // Read from master store (LocalStorage)
     const storedLang = localStorage.getItem("the-khabar-lang");
-    
-    // 2. Fallback to Cookie (Compatibility/Detect)
-    const gTrans = Cookies.get("googtrans");
-    const cookieLang = gTrans?.split("/").pop()?.replace(/"/g, "");
-
     const validLangs = ["en", "hi", "es", "bn"];
-    const detectedLang = storedLang || cookieLang || "en";
-    const finalLang = validLangs.includes(detectedLang) ? detectedLang : "en";
+    const finalLang = storedLang && validLangs.includes(storedLang) ? storedLang : "en";
 
     // Update state to match our master store
     setCurrentLang(finalLang);
-    
-    // Sync cookie if it's missing but we have a stored preference (Recovery)
-    if (finalLang !== "en" && !gTrans) {
-      Cookies.set("googtrans", `/en/${finalLang}`, { path: "/" });
-    }
   }, [router.isReady]);
 
   const handleLanguageChange = (newLang: string) => {
     if (newLang === currentLang) return;
 
-    console.log(`Switching language to ${newLang} (localStorage persistent)`);
+    console.log(`Switching language to ${newLang} (100% localStorage)`);
 
     // 1. Persist to master store (LocalStorage)
     localStorage.setItem("the-khabar-lang", newLang);
 
-    // 2. Google Translate cookie sync logic
-    const hostname = window.location.hostname;
-    const cookieOptions = { path: "/" };
-    const domainOptions = { path: "/", domain: hostname };
-    const dottedDomainOptions = { path: "/", domain: "." + hostname };
-
-    // Aggressively clear all possible cookie variants to avoid duplicates
-    Cookies.remove("googtrans", cookieOptions);
-    Cookies.remove("googtrans", domainOptions);
-    Cookies.remove("googtrans", dottedDomainOptions);
-
+    // 2. Clear state and reload
     if (newLang === "en") {
       // Preserve query string when redirecting back to English
       window.location.href = window.location.pathname + window.location.search; 
     } else {
-      Cookies.set("googtrans", `/en/${newLang}`, cookieOptions);
       window.location.reload();
     }
   };

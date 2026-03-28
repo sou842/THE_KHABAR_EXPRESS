@@ -2,15 +2,39 @@
 
 import Script from "next/script";
 import { useEffect } from "react";
+import Cookies from "js-cookie";
 
 export const GoogleTranslateScript = () => {
   useEffect(() => {
-    // Initializer function for Google Translate
+    // 1. Sync localStorage to Cookie (Bridge logic)
+    // This allows the rest of the app to be 100% cookie-free
+    const storedLang = localStorage.getItem("the-khabar-lang");
+    const gTrans = Cookies.get("googtrans");
+    const currentCookieLang = gTrans?.split("/").pop()?.replace(/"/g, "");
+
+    if (storedLang && storedLang !== "en") {
+      if (currentCookieLang !== storedLang) {
+        // Clear all variants first to be safe
+        const hostname = window.location.hostname;
+        Cookies.remove("googtrans", { path: "/" });
+        Cookies.remove("googtrans", { path: "/", domain: hostname });
+        Cookies.remove("googtrans", { path: "/", domain: "." + hostname });
+        
+        // Set the new cookie
+        Cookies.set("googtrans", `/en/${storedLang}`, { path: "/" });
+      }
+    } else if (storedLang === "en" && gTrans) {
+      const hostname = window.location.hostname;
+      Cookies.remove("googtrans", { path: "/" });
+      Cookies.remove("googtrans", { path: "/", domain: hostname });
+      Cookies.remove("googtrans", { path: "/", domain: "." + hostname });
+    }
+
+    // 2. Initializer function for Google Translate
     (window as any).googleTranslateElementInit = () => {
       new (window as any).google.translate.TranslateElement(
         {
           pageLanguage: "en",
-          // Including Hindi, Spanish, and Bengali as requested
           includedLanguages: "en,hi,es,bn",
           layout: (window as any).google.translate.TranslateElement.InlineLayout.SIMPLE,
           autoDisplay: false,

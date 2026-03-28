@@ -1,22 +1,16 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import Cookies from "js-cookie";
 
 export type LanguageCode = "en" | "hi" | "es" | "bn";
-
 export const useGoogleTranslate = () => {
   const [currentLanguage, setCurrentLanguage] = useState<LanguageCode>("en");
 
   // Sync with store on mount
   useEffect(() => {
     const storedLang = localStorage.getItem("the-khabar-lang") as LanguageCode;
-    const gTrans = Cookies.get("googtrans");
-    const cookieLang = gTrans?.split("/").pop()?.replace(/"/g, "") as LanguageCode;
-
-    const detectedLang = storedLang || cookieLang || "en";
     const validLangs: LanguageCode[] = ["en", "hi", "es", "bn"];
-    const finalLang = validLangs.includes(detectedLang) ? detectedLang : "en";
+    const finalLang = storedLang && validLangs.includes(storedLang) ? storedLang : "en";
 
     setCurrentLanguage(finalLang);
   }, []);
@@ -29,19 +23,10 @@ export const useGoogleTranslate = () => {
     localStorage.setItem("the-khabar-lang", langCode);
     setCurrentLanguage(langCode);
 
-    // 2. Google Translate cookie sync logic
-    const hostname = window.location.hostname;
-    const cookieValue = `/en/${langCode}`;
-
-    // Aggressively clear all possible cookie variants to avoid duplicates
-    Cookies.remove("googtrans", { path: "/" });
-    Cookies.remove("googtrans", { path: "/", domain: hostname });
-    Cookies.remove("googtrans", { path: "/", domain: "." + hostname });
-
+    // 2. Clear state and reload
     if (langCode === "en") {
       window.location.reload();
     } else {
-      Cookies.set("googtrans", cookieValue, { path: "/" });
       window.location.reload();
     }
   }, [currentLanguage]);
