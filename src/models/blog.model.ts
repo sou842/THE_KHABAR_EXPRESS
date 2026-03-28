@@ -32,12 +32,6 @@ export interface IBlog extends Document {
         finalTakeaway: string;
         suggestedQuestions: string[];
     };
-    translations?: {
-        [lang: string]: {
-            title: string;
-            body: any;
-        }
-    };
 }
 
 
@@ -72,10 +66,6 @@ const BlogSchema = new Schema<IBlog>({
         keyPoints: [{ type: String }],
         finalTakeaway: { type: String },
         suggestedQuestions: [{ type: String }],
-    },
-    translations: {
-        type: Schema.Types.Mixed,
-        default: {}
     }
 });
 
