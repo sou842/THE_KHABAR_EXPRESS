@@ -11,7 +11,7 @@ const VaultSchema = new mongoose.Schema({
   content: { type: String, required: true },
   status: {
     type: String,
-    enum: ['pending', 'in-progress', 'achieved', 'archived'],
+    enum: ['pending', 'in-progress', 'achieved', 'discussion'],
     default: 'pending'
   },
   assignedTo: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
@@ -20,4 +20,9 @@ const VaultSchema = new mongoose.Schema({
   timestamps: true
 });
 
-export const Vault = mongoose.models.Vault || mongoose.model('Vault', VaultSchema);
+// Delete model if already registered to ensure latest schema is used during development
+if (mongoose.models && mongoose.models.Vault) {
+  delete (mongoose.models as any).Vault;
+}
+
+export const Vault = mongoose.model('Vault', VaultSchema);

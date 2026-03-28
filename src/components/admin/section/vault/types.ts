@@ -3,7 +3,7 @@ export interface VaultItem {
   title: string;
   type: 'prompt' | 'feature_plan';
   content: string;
-  status: 'pending' | 'in-progress' | 'achieved' | 'archived';
+  status: 'pending' | 'in-progress' | 'achieved' | 'discussion';
   assignedTo?: { _id: string; name: string; email: string }[];
   createdAt: string;
 }

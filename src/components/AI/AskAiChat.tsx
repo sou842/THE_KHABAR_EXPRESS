@@ -11,6 +11,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Typewriter from '../common/Typewriter';
+import { useCopyToClipboard } from '../common/CopyToClipboard';
 
 interface Message {
   id: string;
@@ -18,6 +20,7 @@ interface Message {
   content: string;
   timestamp?: Date;
   feedback?: 'like' | 'dislike' | null;
+  shouldAnimate?: boolean;
 }
 
 interface AskAiChatProps {
@@ -37,6 +40,7 @@ interface AssistantMessageProps {
   id: string;
   initialFeedback?: 'like' | 'dislike' | null;
   onFeedback: (id: string, type: 'like' | 'dislike') => void;
+  shouldAnimate?: boolean;
 }
 
 const SUGGESTED_QUESTIONS = [
@@ -48,21 +52,19 @@ const SUGGESTED_QUESTIONS = [
 ];
 
 
-const AssistantMessage: FC<AssistantMessageProps> = ({ content, id, initialFeedback, onFeedback }) => {
-  const [copied, setCopied] = useState(false);
+const AssistantMessage: FC<AssistantMessageProps> = ({ content, id, initialFeedback, onFeedback, shouldAnimate = false }) => {
   const [feedback, setFeedback] = useState<'like' | 'dislike' | null>(initialFeedback || null);
+  const { copy, copied, error } = useCopyToClipboard();
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(content);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    copy(content);
   };
 
   const handleFeedback = (type: 'like' | 'dislike') => {
     setFeedback(prev => prev === type ? null : type);
     onFeedback(id, type);
-    if (feedback !== type) {
-      toast.success(type === 'like' ? 'Glad you found it helpful!' : 'Thanks for the feedback. I\'ll try to improve.');
+    if (feedback !== type && type === 'dislike') {
+      toast.success('Thanks for the feedback. I\'ll try to improve.');
     }
   };
 
@@ -75,7 +77,16 @@ const AssistantMessage: FC<AssistantMessageProps> = ({ content, id, initialFeedb
         prose-ul:my-4 prose-ul:list-disc prose-li:my-1 prose-li:text-neutral-600
         prose-strong:text-neutral-900 prose-strong:font-bold
         prose-pre:bg-neutral-50 prose-pre:border prose-pre:border-neutral-200 prose-pre:rounded-xl">
-        <Markdown  remarkPlugins={[remarkGfm]}>{content}</Markdown>
+        <Typewriter 
+          text={content} 
+          shouldAnimate={shouldAnimate} 
+          render={(text, isTyping) => (
+            <>
+              <Markdown  remarkPlugins={[remarkGfm]}>{text}</Markdown>
+              {isTyping && <span className="inline-block w-1.5 h-4 ml-1 bg-neutral-400 animate-pulse align-middle" />}
+            </>
+          )} 
+        />
       </div>
       
       <div className="flex items-center gap-1 -ml-1">
@@ -94,21 +105,21 @@ const AssistantMessage: FC<AssistantMessageProps> = ({ content, id, initialFeedb
         <button
           onClick={() => handleFeedback('like')}
           className={`p-2 rounded-lg transition-all duration-200 hover:bg-neutral-100 ${
-            feedback === 'like' ? 'text-gray-600' : 'text-neutral-400 hover:text-neutral-900'
+            feedback === 'like' ? 'text-gray-900' : 'text-neutral-400 hover:text-neutral-900'
           }`}
           title="Helpful"
         >
-          <ThumbsUp className={`w-4 h-4 ${feedback === 'like' ? 'fill-current' : ''}`} />
+          <ThumbsUp className={`w-4 h-4`} />
         </button>
 
         <button
           onClick={() => handleFeedback('dislike')}
           className={`p-2 rounded-lg transition-all duration-200 hover:bg-neutral-100 ${
-            feedback === 'dislike' ? 'text-gray-600' : 'text-neutral-400 hover:text-neutral-900'
+            feedback === 'dislike' ? 'text-gray-900' : 'text-neutral-400 hover:text-neutral-900'
           }`}
           title="Not helpful"
         >
-          <ThumbsDown className={`w-4 h-4 ${feedback === 'dislike' ? 'fill-current' : ''}`} />
+          <ThumbsDown className={`w-4 h-4`} />
         </button>
       </div>
     </div>
@@ -135,7 +146,8 @@ const AskAiChat: React.FC<AskAiChatProps> = ({ blogId, articleTitle, initialSumm
           const parsed = JSON.parse(stored);
           const withDates = parsed.map((m: any) => ({
             ...m,
-            timestamp: m.timestamp ? new Date(m.timestamp) : undefined
+            timestamp: m.timestamp ? new Date(m.timestamp) : undefined,
+            shouldAnimate: false // Ensure historical messages don't re-animate
           }));
           setMessages(withDates);
         }
@@ -224,7 +236,7 @@ const AskAiChat: React.FC<AskAiChatProps> = ({ blogId, articleTitle, initialSumm
 
       const data = await response.json();
       if (data?.success) {
-        setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: data?.answer, timestamp: new Date() }]);
+        setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: data?.answer, timestamp: new Date(), shouldAnimate: true }]);
       } else {
         toast.error(data?.message || 'Something went wrong');
       }
@@ -383,6 +395,7 @@ const AskAiChat: React.FC<AskAiChatProps> = ({ blogId, articleTitle, initialSumm
                       id={m.id} 
                       initialFeedback={m.feedback} 
                       onFeedback={handleMessageFeedback} 
+                      shouldAnimate={m.shouldAnimate}
                     />
                   ) : (
                     <div className="font-medium tracking-tight text-neutral-50 whitespace-pre-wrap">{m.content}</div>

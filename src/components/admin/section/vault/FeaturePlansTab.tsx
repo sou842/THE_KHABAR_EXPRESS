@@ -1,11 +1,11 @@
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, Clock, Archive, TrashIcon, PlusIcon, X, Users } from 'lucide-react';
+import { CheckCircle2, Clock, MessageSquare, TrashIcon, PlusIcon, X, Users } from 'lucide-react';
 import { useState, useCallback, ReactNode } from 'react';
 import type { VaultItem } from './types';
 
-type ItemStatus = 'pending' | 'in-progress' | 'achieved' | 'approved';
+type ItemStatus = 'pending' | 'in-progress' | 'achieved' | 'discussion';
 
 interface ColumnConfig {
   status: ItemStatus;
@@ -42,10 +42,10 @@ const COLUMNS: ColumnConfig[] = [
     dropHint: 'Drop here to mark as achieved',
   },
   {
-    status: 'approved',
-    label: 'Approved',
-    icon: <Archive className="w-4 h-4 text-gray-500" aria-hidden />,
-    dropHint: 'Drop here to archive',
+    status: 'discussion',
+    label: 'Discussion',
+    icon: <MessageSquare className="w-4 h-4 text-purple-500" aria-hidden />,
+    dropHint: 'Drop here for discussion',
   },
 ];
 
@@ -53,7 +53,7 @@ const ACCENT_COLORS: Record<ItemStatus, string> = {
   pending: 'bg-yellow-400',
   'in-progress': 'bg-blue-400',
   achieved: 'bg-green-500',
-  approved: 'bg-gray-400',
+  discussion: 'bg-purple-400',
 };
 
 export default function FeaturePlansTab({

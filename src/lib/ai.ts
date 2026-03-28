@@ -18,7 +18,7 @@ const CHAT_MODELS = [
 const MISTRAL_EMBED_MODEL = "mistral-embed";
 const EMBEDDING_MODELS = [
   MISTRAL_EMBED_MODEL,
-  "mistralai/mistral-embed", // OpenRouter fallback
+  "stepfun/step-3.5-flash:free", // OpenRouter fallback
 ];
 
 // ─────────────────────────────────────────────
@@ -183,6 +183,8 @@ keyPoints: 3-4 items. Each must be a DISTINCT, standalone insight with no overla
 
 finalTakeaway: 1-2 sentences. Synthesize the overall conclusion — do not restate a keyPoint.
 
+Do NOT use em dashes (—) in any paragraph.
+
 suggestedQuestions: Exactly 3. Each answerable using only the article. Each covering a different aspect. Phrased as a curious reader would naturally ask.
 
 Output must be valid JSON parseable by JSON.parse().`;
@@ -234,6 +236,8 @@ RESPONSE STYLE
 - Clear and conversational
 - Easy for general readers to understand
 - You may reference the article with phrases like "The article explains that..."
+- Do NOT use em dashes (—) in any paragraph.
+- Use a comma, period, or rewrite the sentence.
 
 Article Context:
 ${context}
