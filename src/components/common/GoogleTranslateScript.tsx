@@ -1,58 +1,72 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect } from "react";
-import Cookies from "js-cookie";
+
+// The inline bridge script that runs SYNCHRONOUSLY before Google's script loads.
+// This reads localStorage and syncs the googtrans cookie before Google can read it.
+const BRIDGE_SCRIPT = `
+  (function() {
+    try {
+      var lang = localStorage.getItem("the-khabar-lang");
+      var hostname = window.location.hostname;
+
+      // Helper to clear all possible cookie variants
+      function clearCookie() {
+        document.cookie = "googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        document.cookie = "googtrans=; path=/; domain=" + hostname + "; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        document.cookie = "googtrans=; path=/; domain=." + hostname + "; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      }
+
+      if (lang && lang !== "en") {
+        // Set the cookie so Google Translate sees it immediately on load
+        clearCookie();
+        document.cookie = "googtrans=/en/" + lang + "; path=/";
+      } else {
+        // No language preference or English — clear the cookie
+        clearCookie();
+      }
+    } catch(e) {
+      // localStorage not available (e.g., SSR or private mode)
+    }
+  })();
+`;
 
 export const GoogleTranslateScript = () => {
-  useEffect(() => {
-    // 1. Sync localStorage to Cookie (Bridge logic)
-    // This allows the rest of the app to be 100% cookie-free
-    const storedLang = localStorage.getItem("the-khabar-lang");
-    const gTrans = Cookies.get("googtrans");
-    const currentCookieLang = gTrans?.split("/").pop()?.replace(/"/g, "");
-
-    if (storedLang && storedLang !== "en") {
-      if (currentCookieLang !== storedLang) {
-        // Clear all variants first to be safe
-        const hostname = window.location.hostname;
-        Cookies.remove("googtrans", { path: "/" });
-        Cookies.remove("googtrans", { path: "/", domain: hostname });
-        Cookies.remove("googtrans", { path: "/", domain: "." + hostname });
-        
-        // Set the new cookie
-        Cookies.set("googtrans", `/en/${storedLang}`, { path: "/" });
-      }
-    } else if (storedLang === "en" && gTrans) {
-      const hostname = window.location.hostname;
-      Cookies.remove("googtrans", { path: "/" });
-      Cookies.remove("googtrans", { path: "/", domain: hostname });
-      Cookies.remove("googtrans", { path: "/", domain: "." + hostname });
-    }
-
-    // 2. Initializer function for Google Translate
-    (window as any).googleTranslateElementInit = () => {
-      new (window as any).google.translate.TranslateElement(
-        {
-          pageLanguage: "en",
-          includedLanguages: "en,hi,es,bn",
-          layout: (window as any).google.translate.TranslateElement.InlineLayout.SIMPLE,
-          autoDisplay: false,
-        },
-        "google_translate_element"
-      );
-    };
-  }, []);
-
   return (
     <>
+      {/* Bridge: runs synchronously BEFORE Google's script to sync localStorage → cookie */}
+      <Script
+        id="googtrans-bridge"
+        strategy="beforeInteractive"
+        dangerouslySetInnerHTML={{ __html: BRIDGE_SCRIPT }}
+      />
+
+      {/* Google Translate initializer */}
+      <Script
+        id="google-translate-init"
+        strategy="beforeInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.googleTranslateElementInit = function() {
+              new google.translate.TranslateElement({
+                pageLanguage: "en",
+                includedLanguages: "en,hi,es,bn",
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false,
+              }, "google_translate_element");
+            };
+          `,
+        }}
+      />
+
       <div id="google_translate_element" style={{ display: "none" }} />
+
       <Script
         src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
         strategy="afterInteractive"
       />
+
       <style jsx global>{`
-        /* Hide Google Translate top banner */
         .goog-te-banner-frame.skiptranslate,
         .goog-te-gadget-icon,
         .goog-te-gadget-simple span,
@@ -68,7 +82,6 @@ export const GoogleTranslateScript = () => {
           box-shadow: none !important;
         }
 
-        /* Hide "Translated to..." popup */
         #google_translate_element {
           display: none !important;
         }
@@ -76,12 +89,11 @@ export const GoogleTranslateScript = () => {
         body {
           top: 0px !important;
         }
-        
-        /* General cleanup of Google Translate injected styles */
+
         .skiptranslate {
           display: none !important;
         }
-        
+
         iframe.goog-te-banner-frame {
           display: none !important;
         }
