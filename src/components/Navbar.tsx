@@ -6,6 +6,7 @@ import SearchDialog from "./SearchDialog";
 import Link from "next/link";
 import Head from "next/head";
 import Logo from "./Logo";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const Navbar: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -81,6 +82,10 @@ const Navbar: FC = () => {
 
             {/* Right side icons */}
             <div className="flex items-center space-x-1 md:space-x-4">
+              {/* <div className="hidden sm:block">
+                <LanguageSwitcher />
+              </div> */}
+
               <button
                 onClick={toggleSearch}
                 title="Search"
@@ -164,6 +169,9 @@ const Navbar: FC = () => {
                   </Link>
                 ))}
                 <div className="border-t border-primary-foreground/20 pt-4 mt-4">
+                  {/* <div className="mb-4">
+                    <LanguageSwitcher className="w-full bg-white/10" />
+                  </div> */}
                   <Link
                     href="/about"
                     aria-label="About Us"
