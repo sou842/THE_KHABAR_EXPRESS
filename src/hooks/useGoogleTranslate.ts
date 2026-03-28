@@ -1,62 +1,53 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Cookies from "js-cookie";
 
 export type LanguageCode = "en" | "hi" | "es" | "bn";
 
 export const useGoogleTranslate = () => {
   const [currentLanguage, setCurrentLanguage] = useState<LanguageCode>("en");
-  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Sync with store on mount
+  useEffect(() => {
+    const storedLang = localStorage.getItem("the-khabar-lang") as LanguageCode;
+    const gTrans = Cookies.get("googtrans");
+    const cookieLang = gTrans?.split("/").pop()?.replace(/"/g, "") as LanguageCode;
+
+    const detectedLang = storedLang || cookieLang || "en";
+    const validLangs: LanguageCode[] = ["en", "hi", "es", "bn"];
+    const finalLang = validLangs.includes(detectedLang) ? detectedLang : "en";
+
+    setCurrentLanguage(finalLang);
+  }, []);
 
   // Function to change language programmatically
   const changeLanguage = useCallback((langCode: LanguageCode) => {
-    // 1. Set the cookie for persistence across reloads
-    // Format: /source/target (e.g., /en/hi)
-    const cookieValue = `/en/${langCode}`;
-    document.cookie = `googtrans=${cookieValue}; path=/;`;
-    document.cookie = `googtrans=${cookieValue}; path=/; domain=.${window.location.hostname};`;
-    
-    // 2. Update localStorage for our internal UI state
-    localStorage.setItem("preferred_language", langCode);
+    if (langCode === currentLanguage) return;
+
+    // 1. Persist to master store (LocalStorage)
+    localStorage.setItem("the-khabar-lang", langCode);
     setCurrentLanguage(langCode);
 
-    // 3. Trigger the hidden Google Translate combo box change
-    const googleCombo = document.querySelector(".goog-te-combo") as HTMLSelectElement;
-    if (googleCombo) {
-      googleCombo.value = langCode;
-      googleCombo.dispatchEvent(new Event("change"));
+    // 2. Google Translate cookie sync logic
+    const hostname = window.location.hostname;
+    const cookieValue = `/en/${langCode}`;
+
+    // Aggressively clear all possible cookie variants to avoid duplicates
+    Cookies.remove("googtrans", { path: "/" });
+    Cookies.remove("googtrans", { path: "/", domain: hostname });
+    Cookies.remove("googtrans", { path: "/", domain: "." + hostname });
+
+    if (langCode === "en") {
+      window.location.reload();
     } else {
-      // If combo isn't ready yet, we might need to reload or wait
-      // But usually it's ready after initialization
-      console.warn("Google Translate combo box not found.");
-      // Fallback: Reload if selection changed and combo won't trigger
-      if (langCode !== currentLanguage) {
-        window.location.reload();
-      }
+      Cookies.set("googtrans", cookieValue, { path: "/" });
+      window.location.reload();
     }
   }, [currentLanguage]);
-
-  // Initialize language from localStorage/cookie
-  useEffect(() => {
-    const savedLang = localStorage.getItem("preferred_language") as LanguageCode;
-    if (savedLang) {
-      setCurrentLanguage(savedLang);
-    }
-
-    // Check if google object is ready
-    const checkInterval = setInterval(() => {
-      if (window && (window as any).google && (window as any).google.translate) {
-        setIsInitialized(true);
-        clearInterval(checkInterval);
-      }
-    }, 500);
-
-    return () => clearInterval(checkInterval);
-  }, []);
 
   return {
     currentLanguage,
     changeLanguage,
-    isInitialized,
   };
 };

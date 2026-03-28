@@ -23,25 +23,39 @@ export const LanguageSwitcher = ({ className }: { className?: string }) => {
   const router = useRouter();
   const [currentLang, setCurrentLang] = useState("en");
 
-  // Sync with language cookie on mount
-  // Fix #1: Removed `currentLang` from deps to prevent infinite re-render loop.
-  // Fix #2: Removed unused `pathname` and `query` destructuring from router.
+  // Sync with language store on mount
   useEffect(() => {
     if (!router.isReady) return;
 
+    // 1. Try LocalStorage (Primary persistence)
+    const storedLang = localStorage.getItem("the-khabar-lang");
+    
+    // 2. Fallback to Cookie (Compatibility/Detect)
     const gTrans = Cookies.get("googtrans");
-    // The cookie value may come quoted (e.g. `"hi"`), so we strip quotes.
     const cookieLang = gTrans?.split("/").pop()?.replace(/"/g, "");
-    const validLangs = ["en", "hi", "es", "bn"];
-    const finalLang =
-      cookieLang && validLangs.includes(cookieLang) ? cookieLang : "en";
 
+    const validLangs = ["en", "hi", "es", "bn"];
+    const detectedLang = storedLang || cookieLang || "en";
+    const finalLang = validLangs.includes(detectedLang) ? detectedLang : "en";
+
+    // Update state to match our master store
     setCurrentLang(finalLang);
+    
+    // Sync cookie if it's missing but we have a stored preference (Recovery)
+    if (finalLang !== "en" && !gTrans) {
+      Cookies.set("googtrans", `/en/${finalLang}`, { path: "/" });
+    }
   }, [router.isReady]);
 
   const handleLanguageChange = (newLang: string) => {
     if (newLang === currentLang) return;
 
+    console.log(`Switching language to ${newLang} (localStorage persistent)`);
+
+    // 1. Persist to master store (LocalStorage)
+    localStorage.setItem("the-khabar-lang", newLang);
+
+    // 2. Google Translate cookie sync logic
     const hostname = window.location.hostname;
     const cookieOptions = { path: "/" };
     const domainOptions = { path: "/", domain: hostname };
@@ -53,9 +67,8 @@ export const LanguageSwitcher = ({ className }: { className?: string }) => {
     Cookies.remove("googtrans", dottedDomainOptions);
 
     if (newLang === "en") {
-      // Fix #3: Preserve query string when redirecting back to English
-      window.location.href =
-        window.location.pathname + window.location.search;
+      // Preserve query string when redirecting back to English
+      window.location.href = window.location.pathname + window.location.search; 
     } else {
       Cookies.set("googtrans", `/en/${newLang}`, cookieOptions);
       window.location.reload();
