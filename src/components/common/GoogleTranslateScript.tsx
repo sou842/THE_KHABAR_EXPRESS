@@ -10,23 +10,33 @@ const BRIDGE_SCRIPT = `
       var lang = localStorage.getItem("the-khabar-lang");
       var hostname = window.location.hostname;
 
-      // Helper to clear all possible cookie variants
-      function clearCookie() {
-        document.cookie = "googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-        document.cookie = "googtrans=; path=/; domain=" + hostname + "; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-        document.cookie = "googtrans=; path=/; domain=." + hostname + "; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      // Also compute root domain (e.g. "thekhabarexpress.com" from "www.thekhabarexpress.com")
+      var parts = hostname.split('.');
+      var rootDomain = parts.length > 2 ? parts.slice(-2).join('.') : hostname;
+
+      // Helper to clear ALL possible cookie variants across every domain scope
+      function clearAllCookies() {
+        var expiry = "expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        // Path only (current hostname)
+        document.cookie = "googtrans=; path=/; " + expiry;
+        // www subdomain
+        document.cookie = "googtrans=; path=/; domain=" + hostname + "; " + expiry;
+        document.cookie = "googtrans=; path=/; domain=." + hostname + "; " + expiry;
+        // Root domain (catches cookies set on bare domain)
+        document.cookie = "googtrans=; path=/; domain=" + rootDomain + "; " + expiry;
+        document.cookie = "googtrans=; path=/; domain=." + rootDomain + "; " + expiry;
       }
 
       if (lang && lang !== "en") {
-        // Set the cookie so Google Translate sees it immediately on load
-        clearCookie();
+        // Clear all stale cookies first, then set the correct one
+        clearAllCookies();
         document.cookie = "googtrans=/en/" + lang + "; path=/";
       } else {
-        // No language preference or English — clear the cookie
-        clearCookie();
+        // No preference or English — clear everything
+        clearAllCookies();
       }
     } catch(e) {
-      // localStorage not available (e.g., SSR or private mode)
+      // localStorage not available (SSR or private mode)
     }
   })();
 `;
