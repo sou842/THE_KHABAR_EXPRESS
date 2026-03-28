@@ -60,39 +60,55 @@ export const LanguageSwitcher = ({ className }: { className?: string }) => {
 
     if (newLang === "en") {
       // Clear cookie for legacy widget
-      Cookies.remove("googtrans", { path: "/", domain: `.${window.location.hostname}` });
+      const domain = `.${window.location.hostname}`;
+      Cookies.remove("googtrans", { path: "/", domain });
       Cookies.remove("googtrans", { path: "/" });
+      
+      // Specifically for localhost or non-dotted domains
+      if (window.location.hostname === "localhost") {
+        Cookies.remove("googtrans", { path: "/" });
+      }
+      
       window.location.href = window.location.pathname; // Reload current path without cookie
     } else {
       // Set cookie for legacy widget and reload
-      Cookies.set("googtrans", `/en/${newLang}`, { path: "/", domain: `.${window.location.hostname}` });
-      Cookies.set("googtrans", `/en/${newLang}`, { path: "/" });
+      const domain = `.${window.location.hostname}`;
+      const cookieValue = `/en/${newLang}`;
+      
+      Cookies.set("googtrans", cookieValue, { path: "/", domain });
+      Cookies.set("googtrans", cookieValue, { path: "/" });
+      
       window.location.reload();
     }
   };
 
   return (
-    <div translate="no" className="flex items-center gap-2">
+    <div className="flex items-center gap-2">
       <Select value={currentLang} onValueChange={handleLanguageChange}>
         <SelectTrigger 
+          translate="no"
           className={cn(
-            "w-fit min-w-[130px] h-9 bg-white/10 text-gray-500 border-gray-300 rounded-full hover:bg-white/20 transition-all duration-200", 
+            "w-fit min-w-[130px] h-9 bg-white/10 text-gray-500 border-gray-300 rounded-full hover:bg-white/20 transition-all duration-200 notranslate", 
             className
           )}
         >
           <div className="flex items-center gap-2 overflow-hidden pr-2">
             <Globe className="h-4 w-4 shrink-0 text-gray-500" />
-            <SelectValue placeholder="Select Language" />
+            <SelectValue placeholder="Select Language" className="notranslate" />
           </div>
         </SelectTrigger>
-        <SelectContent align="end" className="bg-background border-border shadow-2xl z-[100]">
+        <SelectContent 
+          translate="no" 
+          align="end" 
+          className="bg-background border-border shadow-2xl z-[100] notranslate"
+        >
           {languages.map((lang) => (
             <SelectItem 
               key={lang.code} 
               value={lang.code}
-              className="cursor-pointer hover:bg-accent focus:bg-gray-100 py-2.5"
+              className="cursor-pointer hover:bg-accent focus:bg-gray-100 py-2.5 notranslate"
             >
-              <span translate="no" className="font-medium text-sm">{lang.name}</span>
+              <span className="font-medium text-sm">{lang.name}</span>
             </SelectItem>
           ))}
         </SelectContent>
