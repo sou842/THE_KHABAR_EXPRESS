@@ -58,25 +58,26 @@ export const LanguageSwitcher = ({ className }: { className?: string }) => {
 
     console.log(`Switching language from ${currentLang} to ${newLang}`);
 
+    const hostname = window.location.hostname;
+    const cookieOptions = { path: "/" };
+    const domainOptions = { path: "/", domain: hostname };
+    const dottedDomainOptions = { path: "/", domain: "." + hostname };
+
     if (newLang === "en") {
-      // Clear cookie for legacy widget
-      const domain = `.${window.location.hostname}`;
-      Cookies.remove("googtrans", { path: "/", domain });
-      Cookies.remove("googtrans", { path: "/" });
+      // Aggressively clear all possible cookie variants
+      Cookies.remove("googtrans", cookieOptions);
+      Cookies.remove("googtrans", domainOptions);
+      Cookies.remove("googtrans", dottedDomainOptions);
       
-      // Specifically for localhost or non-dotted domains
-      if (window.location.hostname === "localhost") {
-        Cookies.remove("googtrans", { path: "/" });
-      }
-      
-      window.location.href = window.location.pathname; // Reload current path without cookie
+      // Force reload to clear Google Translate state
+      window.location.href = window.location.pathname; 
     } else {
-      // Set cookie for legacy widget and reload
-      const domain = `.${window.location.hostname}`;
-      const cookieValue = `/en/${newLang}`;
-      
-      Cookies.set("googtrans", cookieValue, { path: "/", domain });
-      Cookies.set("googtrans", cookieValue, { path: "/" });
+      // Clear first to avoid duplicates, then set the new one
+      Cookies.remove("googtrans", cookieOptions);
+      Cookies.remove("googtrans", domainOptions);
+      Cookies.remove("googtrans", dottedDomainOptions);
+
+      Cookies.set("googtrans", `/en/${newLang}`, cookieOptions);
       
       window.location.reload();
     }
