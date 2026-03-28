@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Logo from "./Logo";
 import { SOCIAL_LINKS } from "@/lib/constants";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const QUICK_LINKS = [
   { label: "Home", href: "/" },
@@ -36,7 +37,8 @@ const Footer: React.FC = () => {
           <div className="col-span-1 sm:col-span-2 space-y-4 mb-4 md:mb-0">
             <Link
               href="/"
-              className="text-2xl font-bold bg-gradient-to-r from-khabar-600 to-khabar-400 bg-clip-text text-transparent inline-block"
+              className="text-2xl font-bold bg-gradient-to-r from-khabar-600 to-khabar-400 bg-clip-text text-transparent inline-block notranslate"
+              translate="no"
             >
               <Logo type={"footer-logo"} />
             </Link>
@@ -50,6 +52,9 @@ const Footer: React.FC = () => {
                   <Icon className="w-5 h-5" />
                 </a>
               ))}
+            </div>
+            <div className="pt-4">
+              <LanguageSwitcher />
             </div>
           </div>
 

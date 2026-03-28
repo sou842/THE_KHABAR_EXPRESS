@@ -373,3 +373,59 @@ export async function processBlogForRag(
     }
   }
 }
+
+// ─────────────────────────────────────────────
+// AI Translation
+// ─────────────────────────────────────────────
+
+/**
+ * Translates text into the target language while maintaining tone and style.
+ * Uses the existing AI fallback system for reliability.
+ */
+export const translateContent = async (
+  text: string,
+  targetLang: string
+): Promise<string> => {
+  if (!text) return "";
+  const trimmed = text.trim();
+  if (!trimmed) return text;
+
+  // Skip strings that look like IDs, URLs, or hex codes (already handled by translate.ts)
+  if (trimmed.startsWith("http") || trimmed.match(/^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/)) {
+    return text;
+  }
+
+  const langMap: Record<string, string> = {
+    hi: "Hindi (हिन्दी)",
+    es: "Spanish (Español)",
+    bn: "Bengali (বাংলা)",
+  };
+
+  const targetName = langMap[targetLang] || targetLang;
+
+  const prompt = `You are a professional, high-fidelity translator. 
+Translate the following text into ${targetName}.
+
+RULES:
+1. Maintain the exact same tone, nuance, and formality as the source.
+2. Preserve any technical terms or brand names (like "Meta", "West Texas", "AI") in their original form.
+3. DO NOT add any preamble, conversational filler, or explanations. 
+4. Output ONLY the translated text.
+
+TEXT TO TRANSLATE:
+${text}`;
+
+  try {
+    const translated = await callAiModel([
+      { role: "system", content: "You are a precise translator. Output only the translated result." },
+      { role: "user", content: prompt }
+    ]);
+
+    // Clean up any accidental wrapping quotes
+    return translated.trim().replace(/^"(.*)"$/, '$1');
+  } catch (error) {
+    console.error(`[AI-Translate] Translation to ${targetLang} failed:`, error);
+    // Return original text if translation fails to avoid breaking the UI
+    return text;
+  }
+};

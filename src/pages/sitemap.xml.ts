@@ -22,13 +22,31 @@ function generateSitemap(staticPages: string[], blogs: Blog[] = [], tags: string
     .join("");
 
   const blogUrls = blogs
-    .map((blog: any) =>
-      generateUrlEntry(`/blog/${blog?.url}`, {
-        changefreq: "weekly",
-        priority: "0.8",
-        lastmod: format(new Date(blog?.updatedAt), "yyyy-MM-dd"),
-      })
-    )
+    .map((blog: any) => {
+      // 1. English version (default)
+      const entries = [
+        generateUrlEntry(`/blog/${blog?.url}`, {
+          changefreq: "weekly",
+          priority: "0.8",
+          lastmod: format(new Date(blog?.updatedAt || blog?.createdAt), "yyyy-MM-dd"),
+        })
+      ];
+
+      // 2. Add translated versions if they exist in DB
+      if (blog.translations) {
+        Object.keys(blog.translations).forEach((lang) => {
+          entries.push(
+            generateUrlEntry(`/${lang}/blog/${blog?.url}`, {
+              changefreq: "weekly",
+              priority: "0.8",
+              lastmod: format(new Date(blog?.updatedAt || blog?.createdAt), "yyyy-MM-dd"),
+            })
+          );
+        });
+      }
+
+      return entries.join("");
+    })
     .join("");
 
   const tagUrls = (tags as any[])
