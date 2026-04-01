@@ -7,7 +7,19 @@ import Script from "next/script";
 const BRIDGE_SCRIPT = `
   (function() {
     try {
-      var lang = localStorage.getItem("the-khabar-lang");
+      // 1. Check URL for ?lang=XX parameter first (takes precedence)
+      var urlParams = new URLSearchParams(window.location.search);
+      var queryLang = urlParams.get("lang");
+      var storedLang = localStorage.getItem("the-khabar-lang");
+      
+      var validLangs = ["en", "hi", "es", "bn", "mr"];
+      var lang = (queryLang && validLangs.indexOf(queryLang) !== -1) ? queryLang : storedLang;
+
+      // 2. Sync localStorage if query changed it
+      if (queryLang && validLangs.indexOf(queryLang) !== -1 && queryLang !== storedLang) {
+        localStorage.setItem("the-khabar-lang", queryLang);
+      }
+
       var hostname = window.location.hostname;
 
       // Also compute root domain (e.g. "thekhabarexpress.com" from "www.thekhabarexpress.com")
@@ -60,7 +72,7 @@ export const GoogleTranslateScript = () => {
             window.googleTranslateElementInit = function() {
               new google.translate.TranslateElement({
                 pageLanguage: "en",
-                includedLanguages: "en,hi,es,bn",
+                includedLanguages: "en,hi,es,bn,mr",
                 layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
                 autoDisplay: false,
               }, "google_translate_element");

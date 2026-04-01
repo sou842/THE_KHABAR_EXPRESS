@@ -2,15 +2,26 @@
 
 import { useEffect, useState, useCallback } from "react";
 
-export type LanguageCode = "en" | "hi" | "es" | "bn";
+export type LanguageCode = "en" | "hi" | "es" | "bn" | "mr";
 export const useGoogleTranslate = () => {
   const [currentLanguage, setCurrentLanguage] = useState<LanguageCode>("en");
 
   // Sync with store on mount
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryLang = urlParams.get("lang") as LanguageCode;
     const storedLang = localStorage.getItem("the-khabar-lang") as LanguageCode;
-    const validLangs: LanguageCode[] = ["en", "hi", "es", "bn"];
-    const finalLang = storedLang && validLangs.includes(storedLang) ? storedLang : "en";
+    const validLangs: LanguageCode[] = ["en", "hi", "es", "bn", "mr"];
+    
+    let finalLang: LanguageCode = "en";
+    if (queryLang && validLangs.includes(queryLang)) {
+      finalLang = queryLang;
+      if (queryLang !== storedLang) {
+        localStorage.setItem("the-khabar-lang", queryLang);
+      }
+    } else if (storedLang && validLangs.includes(storedLang)) {
+      finalLang = storedLang;
+    }
 
     setCurrentLanguage(finalLang);
   }, []);
@@ -23,12 +34,14 @@ export const useGoogleTranslate = () => {
     localStorage.setItem("the-khabar-lang", langCode);
     setCurrentLanguage(langCode);
 
-    // 2. Clear state and reload
+    // 2. Update URL with query param and reload
+    const url = new URL(window.location.href);
     if (langCode === "en") {
-      window.location.reload();
+      url.searchParams.delete("lang");
     } else {
-      window.location.reload();
+      url.searchParams.set("lang", langCode);
     }
+    window.location.href = url.toString();
   }, [currentLanguage]);
 
   return {

@@ -16,6 +16,7 @@ const languages = [
   { code: "hi", name: "Hindi (हिन्दी)" },
   { code: "es", name: "Spanish (Español)" },
   { code: "bn", name: "Bengali (বাংলা)" },
+  { code: "mr", name: "Marathi (मराठी)" },
 ];
 
 export const LanguageSwitcher = ({ className }: { className?: string }) => {
@@ -38,18 +39,21 @@ export const LanguageSwitcher = ({ className }: { className?: string }) => {
   const handleLanguageChange = (newLang: string) => {
     if (newLang === currentLang) return;
 
-    console.log(`Switching language to ${newLang} (100% localStorage)`);
+    console.log(`Switching language to ${newLang} (URL + localStorage)`);
 
     // 1. Persist to master store (LocalStorage)
     localStorage.setItem("the-khabar-lang", newLang);
 
-    // 2. Clear state and reload
+    // 2. Update URL with query param and reload
+    const url = new URL(window.location.href);
     if (newLang === "en") {
-      // Preserve query string when redirecting back to English
-      window.location.href = window.location.pathname + window.location.search; 
+      url.searchParams.delete("lang");
     } else {
-      window.location.reload();
+      url.searchParams.set("lang", newLang);
     }
+    
+    // Redirect to the new URL (triggers a full reload)
+    window.location.href = url.toString();
   };
 
   return (
