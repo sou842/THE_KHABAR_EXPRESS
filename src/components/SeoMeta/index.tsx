@@ -170,6 +170,7 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
       <meta property="og:url" content={url} />
       <meta property="og:type" content={category ? "article" : "website"} />
       <meta property="og:locale" content="en_US" />
+      <meta name="google-adsense-account" content="ca-pub-5434867604639566" />
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
