@@ -14,15 +14,6 @@ export default function App({ Component, pageProps }: AppProps) {
       <AuthProvider>
         <GoogleAnalytics />
         <GoogleTranslateScript />
-
-        <Script
-          id="adsense-script"
-          async
-          strategy="afterInteractive"
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5434867604639566"
-          crossOrigin="anonymous"
-        />
-
         <Toaster />
         <Sonner />
         <Component {...pageProps} />
