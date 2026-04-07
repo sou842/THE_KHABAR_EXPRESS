@@ -36,10 +36,10 @@ export const CookieConsentBanner = () => {
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-[90] border-t border-slate-200 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-3 py-2 sm:py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold text-slate-900">Cookie consent</p>
-          <p className="mt-1 text-sm leading-6 text-slate-600">
+          <p className="mt-1 text-xs sm:text-sm leading-6 text-slate-600">
             We only enable optional services like Google Translate, Google
             Analytics, and AdSense-related resources after you choose. You can
             update your preference anytime in{" "}
@@ -57,7 +57,7 @@ export const CookieConsentBanner = () => {
             <Link href="/cookie-settings">Manage cookies</Link>
           </Button>
           <Button variant="outline" onClick={() => handleSave("reject")}>
-            Reject optional
+            optional
           </Button>
           <Button onClick={() => handleSave("accept")}>Accept all</Button>
         </div>
