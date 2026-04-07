@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { GoogleGenAI } from '@google/genai';
 
-export const maxDuration = 300; // Allow function to run for up to 5 minutes
+export const maxDuration = 60; // Allow function to run for up to 1 minutes
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
