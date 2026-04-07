@@ -849,6 +849,8 @@ export const staticPages = [
   "/about",
   "/contact",
   "/privacy-policy",
+  "/cookie-policy",
+  "/cookie-settings",
   "/terms-of-service",
   "/disclaimer",
   "/health-disclaimer",
@@ -874,5 +876,116 @@ export const DefaultEditorJS = [
     data: {
       text: "A paragraph is a distinct section of writing, typically consisting of several sentences, that focuses on a single idea or topic, usually indicated by an indent at the beginning of the first sentence",
     },
+  },
+];
+
+export const cookiepolicy = [
+  {
+    type: "header",
+    value: "Cookie Policy - The Khabar Express",
+  },
+  {
+    type: "text",
+    value: "<em>Last updated: 8 April 2026</em><br><br>This Cookie Policy explains how <strong>The Khabar Express</strong> (\"we\", \"us\", \"our\") uses cookies and similar technologies on <a href='https://www.thekhabarexpress.com' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>https://www.thekhabarexpress.com</a>. It should be read together with our <a href='/privacy-policy' class='text-primary hover:underline'>Privacy Policy</a>, which explains how we handle personal information more broadly.<br><br>We use cookies and similar technologies to keep our website secure, remember certain preferences, understand website usage where permitted, and support advertising-related services where enabled.",
+  },
+  {
+    type: "header",
+    value: "1. What Are Cookies?",
+  },
+  {
+    type: "text",
+    value: "Cookies are small text files placed on your browser or device when you visit a website. Similar technologies, such as local storage, pixels, or tags, can perform comparable functions. In this policy, we use the term <strong>cookies</strong> broadly to describe these technologies where they are used to recognise your browser, store settings, or support website features.",
+  },
+  {
+    type: "header",
+    value: "2. Why We Use Cookies",
+  },
+  {
+    type: "text",
+    value: "We use cookies and similar technologies for the following purposes: <ul class='list-disc pl-5 mt-2'><li>To keep the website functioning properly and securely.</li><li>To remember settings and preferences, such as language choices.</li><li>To understand website traffic and performance, where you have allowed analytics cookies.</li><li>To support advertising-related services and measurement, where you have allowed advertising cookies and such services are active on the website.</li></ul>",
+  },
+  {
+    type: "header",
+    value: "3. Cookie Categories We Use",
+  },
+  {
+    type: "header",
+    value: "3.1 Strictly Necessary Cookies",
+  },
+  {
+    type: "text",
+    value: "These cookies or similar storage technologies are required for the core operation of the website. They may be used for security, session management, authentication-related behaviour, and essential page functionality. Because they are necessary for the website to work properly, these cannot be switched off through our cookie controls.",
+  },
+  {
+    type: "header",
+    value: "3.2 Functional Cookies",
+  },
+  {
+    type: "text",
+    value: "Functional cookies help remember choices you make on the website. On The Khabar Express, this includes language-related preferences used with Google Translate. If you enable language translation features, a <code>googtrans</code> cookie and related local browser storage may be used to remember your selected language.",
+  },
+  {
+    type: "header",
+    value: "3.3 Analytics Cookies",
+  },
+  {
+    type: "text",
+    value: "If you allow analytics cookies, we may use Google Analytics to understand how visitors use the website, such as which pages are visited, approximate usage trends, and general performance signals. These cookies help us improve the website and understand audience behaviour. If you do not allow analytics cookies, Google Analytics will not be loaded by our cookie controls.",
+  },
+  {
+    type: "header",
+    value: "3.4 Advertising Cookies",
+  },
+  {
+    type: "text",
+    value: "If you allow advertising cookies, we may load Google AdSense or related advertising resources to support ads, advertising measurement, and related services when ad placements are active on the website. Depending on how those services are configured, these technologies may support ad delivery, frequency management, measurement, or personalisation. If you do not allow advertising cookies, these advertising resources will not be loaded by our cookie controls.",
+  },
+  {
+    type: "header",
+    value: "4. Third-Party Cookies and Services",
+  },
+  {
+    type: "text",
+    value: "Some cookies may be set or read by third-party service providers when you enable certain optional categories. Based on the current website implementation, those services may include: <ul class='list-disc pl-5 mt-2'><li><strong>Google Analytics</strong> for analytics and site measurement.</li><li><strong>Google Translate</strong> for language translation functionality.</li><li><strong>Google AdSense</strong> or related Google advertising resources for advertising features when active.</li></ul>These third parties may process information according to their own privacy and cookie practices. We recommend reviewing their policies for additional details.",
+  },
+  {
+    type: "header",
+    value: "5. How to Manage Cookies",
+  },
+  {
+    type: "text",
+    value: "You can manage optional cookies on The Khabar Express at any time through our <a href='/cookie-settings' class='text-primary hover:underline'>Cookie Settings</a> page. Our controls allow you to manage optional categories for functional, analytics, and advertising cookies.<br><br>You can also control cookies through your browser settings. Most browsers allow you to view, block, or delete cookies. Please note that disabling certain cookies may affect parts of the website, such as translation preferences or other optional features.",
+  },
+  {
+    type: "header",
+    value: "6. Consent Choices",
+  },
+  {
+    type: "text",
+    value: "When you first visit the website, optional cookie categories are not enabled until you make a choice through our consent controls. You can later update your preferences by returning to the <a href='/cookie-settings' class='text-primary hover:underline'>Cookie Settings</a> page.",
+  },
+  {
+    type: "header",
+    value: "7. More Information",
+  },
+  {
+    type: "text",
+    value: "For more information about how we collect, use, and protect personal data, please read our <a href='/privacy-policy' class='text-primary hover:underline'>Privacy Policy</a>. If you contact us through the website, we may also process the details you provide in accordance with that policy.",
+  },
+  {
+    type: "header",
+    value: "8. Contact Us",
+  },
+  {
+    type: "text",
+    value: "If you have questions about this Cookie Policy or how cookies are used on The Khabar Express, contact us at:<br><br><strong>The Khabar Express</strong><br>Website: <a href='https://www.thekhabarexpress.com' target='_blank' rel='noopener noreferrer' class='text-primary hover:underline'>https://www.thekhabarexpress.com</a><br>Email: <a href='mailto:thekhabarexpressnews@gmail.com' class='text-primary hover:underline'>thekhabarexpressnews@gmail.com</a>",
+  },
+  {
+    type: "header",
+    value: "9. Changes to This Cookie Policy",
+  },
+  {
+    type: "text",
+    value: "We may update this Cookie Policy from time to time to reflect changes in the law, our services, or the technologies used on the website. When we make updates, we will revise the “Last updated” date shown at the top of this page.",
   },
 ];

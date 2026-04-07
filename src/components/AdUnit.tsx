@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useCookiePreferences } from "@/hooks/useCookiePreferences";
 
 interface AdUnitProps {
   /** AdSense client ID — defaults to the site's publisher ID */
@@ -25,8 +26,13 @@ export default function AdUnit({
 }: AdUnitProps) {
   const adRef = useRef<HTMLModElement>(null);
   const pushed = useRef(false);
+  const { preferences, isReady } = useCookiePreferences();
 
   useEffect(() => {
+    if (!preferences?.advertising) {
+      return;
+    }
+
     // Only push once and only when the element is present in the DOM
     if (!pushed.current && adRef.current) {
       try {
@@ -37,7 +43,11 @@ export default function AdUnit({
         console.error("AdSense error:", e);
       }
     }
-  }, []);
+  }, [preferences?.advertising]);
+
+  if (!isReady || !preferences?.advertising) {
+    return null;
+  }
 
   return (
     <div className={`ad-unit my-8 text-center overflow-hidden ${className}`}>
