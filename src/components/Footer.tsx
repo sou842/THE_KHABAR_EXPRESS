@@ -12,6 +12,8 @@ const QUICK_LINKS = [
   { label: "Health Disclaimer", href: "/health-disclaimer" },
   { label: "Finance Disclaimer", href: "/finance-disclaimer" },
   { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Cookie Policy", href: "/cookie-policy" },
+  { label: "Cookie Settings", href: "/cookie-settings" },
   { label: "Terms of Service", href: "/terms-of-service" },
 ];
 
