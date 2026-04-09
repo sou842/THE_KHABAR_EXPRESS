@@ -1,13 +1,12 @@
 import { staticPages } from "@/assets/static";
 import { GetServerSideProps } from "next";
 import { format } from "date-fns";
+import { getBlogPaths, getBlogTags } from "@/lib/blogData";
+import { buildSiteUrl } from "@/lib/site";
 
 interface Blog {
   url: string;
-}
-
-interface BlogApiResponse {
-  data?: Blog[];
+  updatedAt?: string;
 }
 
 function generateSitemap(staticPages: string[], blogs: Blog[] = [], tags: string[] = []): string {
@@ -57,9 +56,7 @@ function generateUrlEntry(
   path: string,
   { changefreq, priority, lastmod }: { changefreq: string; priority: string, lastmod?: string }
 ): string {
-  // Ensure the path itself is XML-safe by replacing & with &amp;
-  // although URI encoding usually handles this, naked & in loc is forbidden.
-  const fullUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.thekhabarexpress.com'}${path}`.replace(/&/g, '&amp;');
+  const fullUrl = buildSiteUrl(path).replace(/&/g, '&amp;');
 
   return `
       <url>
@@ -75,16 +72,11 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     return { props: {} };
   }
   try {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.thekhabarexpress.com';
-    const [blogRes, tagRes] = await Promise.all([
-      fetch(`${siteUrl}/api/sitemap`),
-      fetch(`${siteUrl}/api/blogs/tags?sitemap=true`)
+    const [blogs, tagData] = await Promise.all([
+      getBlogPaths(),
+      getBlogTags(),
     ]);
-
-    const [{ data: blogs = [] }, { data: tags = [] }] = await Promise.all([
-      blogRes.json(),
-      tagRes.json()
-    ]);
+    const tags = tagData.map((item: { tag: string }) => item.tag);
 
     const sitemap = generateSitemap(staticPages, blogs, tags);
 

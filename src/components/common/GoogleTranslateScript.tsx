@@ -66,7 +66,7 @@ export const GoogleTranslateScript = () => {
       {/* Google Translate initializer */}
       <Script
         id="google-translate-init"
-        strategy="beforeInteractive"
+        strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
             window.googleTranslateElementInit = function() {
@@ -85,7 +85,7 @@ export const GoogleTranslateScript = () => {
 
       <Script
         src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
       />
 
       <style jsx global>{`

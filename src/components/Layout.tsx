@@ -1,9 +1,9 @@
 import { FC, ReactNode } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import { motion } from "framer-motion";
 import SeoMeta from "./SeoMeta";
 import dynamic from "next/dynamic";
+import { buildSiteUrl } from "@/lib/site";
 
 const SocialFollowDialog = dynamic(() => import("./SocialFollowDialog"), {
   ssr: false,
@@ -20,7 +20,7 @@ interface LayoutProps {
 }
 
 const Layout: FC<LayoutProps> = ({ children, disableDefaultMeta, title, description, image, path, jsonLd }) => {
-  const url = `${process.env.NEXT_PUBLIC_SITE_URL}/${path || ""}`;
+  const url = buildSiteUrl(path);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -35,14 +35,9 @@ const Layout: FC<LayoutProps> = ({ children, disableDefaultMeta, title, descript
       )}
 
       <Navbar />
-      <motion.main
-        className="flex-grow khabar-container my-2 md:my-6"
-        initial={{ opacity: 0, y: 5 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-      >
+      <main className="flex-grow khabar-container my-2 md:my-6">
         {children}
-      </motion.main>
+      </main>
       <Footer />
       <SocialFollowDialog />
     </div>

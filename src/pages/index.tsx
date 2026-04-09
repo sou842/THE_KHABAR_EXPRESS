@@ -1,3 +1,4 @@
+import { GetStaticProps } from "next";
 import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
 import Link from "next/link";
@@ -6,38 +7,27 @@ import { Skeleton } from "@/components/Skeleton";
 import { getter, preventRerendering } from "@/lib/helper";
 import { IBlog } from "@/models/blog.model";
 import Layout from "@/components/Layout";
-import { ArrowRight } from "lucide-react";
 import { SOCIAL_LINKS } from "@/lib/constants";
+import { getBlogs } from "@/lib/blogData";
 
-export default function Home() {
-  // 1. Fetch general top articles
-  const { data: generalData, isLoading: isGeneralLoading } = useSWR<any>(
-    "/api/blogs?limit=15&status=approved",
-    getter,
-    preventRerendering
-  );
+interface HomeProps {
+  generalArticles: IBlog[];
+  technologyArticles: IBlog[];
+  financeArticles: IBlog[];
+  sportsArticles: IBlog[];
+  initialArchive: IBlog[];
+}
 
-  // 2. Separate API calls for categories
-  const { data: techData } = useSWR<any>(
-    "/api/blogs?category=technology&limit=4&status=approved",
-    getter,
-    preventRerendering
-  );
-  const { data: financeData } = useSWR<any>(
-    "/api/blogs?category=finance&limit=4&status=approved",
-    getter,
-    preventRerendering
-  );
-  const { data: sportsData } = useSWR<any>(
-    "/api/blogs?category=sports&limit=4&status=approved",
-    getter,
-    preventRerendering
-  );
-
-  // 3. Infinite scrolling for All Stories
+export default function Home({
+  generalArticles,
+  technologyArticles,
+  financeArticles,
+  sportsArticles,
+  initialArchive,
+}: HomeProps) {
   const getInfiniteKey = (pageIndex: number, previousPageData: any) => {
     if (previousPageData && (!previousPageData.data || previousPageData.data.length === 0)) return null;
-    return `/api/blogs?limit=8&page=${pageIndex + 1}&status=approved`;
+    return `/api/blogs?limit=8&page=${pageIndex + 2}&status=approved`;
   };
   
   const { data: infiniteData, size, setSize, isLoading: isInfiniteLoading } = useSWRInfinite<any>(
@@ -46,8 +36,7 @@ export default function Home() {
     preventRerendering
   );
 
-  // Parse general articles
-  const articles: IBlog[] = generalData?.data || [];
+  const articles: IBlog[] = generalArticles || [];
   
   const featuredBlog = articles[0] || null;
   const topStories = articles.slice(1, 4) || [];
@@ -55,24 +44,15 @@ export default function Home() {
   const mostReadBlogs = articles.slice(7, 10) || [];
   const editorsPicks = articles.slice(10, 13) || [];
   
-  // Parse category arrays
-  const designBlogs: IBlog[] = techData?.data || [];
-  const financeBlogs: IBlog[] = financeData?.data || [];
-  const webDevBlogs: IBlog[] = sportsData?.data || [];
+  const designBlogs: IBlog[] = technologyArticles || [];
+  const financeBlogs: IBlog[] = financeArticles || [];
+  const webDevBlogs: IBlog[] = sportsArticles || [];
   
-  // Flatten infinite scroll data
-  const latestAll: IBlog[] = infiniteData ? infiniteData.reduce((acc, val) => [...acc, ...(val?.data || [])], []) : [];
+  const latestAll: IBlog[] = [
+    ...initialArchive,
+    ...(infiniteData ? infiniteData.reduce((acc, val) => [...acc, ...(val?.data || [])], []) : []),
+  ];
   const isReachingEnd = infiniteData && infiniteData[infiniteData.length - 1]?.data?.length < 8;
-
-  // Helper functions moved to BlogCard.tsx
-
-  if (isGeneralLoading && !articles.length) {
-    return (
-      <Layout title="Loading..." disableDefaultMeta>
-         <Skeleton type="home" />
-      </Layout>
-    );
-  }
 
   return (
     <Layout 
@@ -258,7 +238,7 @@ export default function Home() {
               <div 
                 className="mt-12 w-full flex justify-center py-8 border-t border-border"
               >
-                {!isReachingEnd && (
+                {(!isReachingEnd || !infiniteData) && (
                    <button 
                      onClick={() => setSize(size + 1)}
                      disabled={isInfiniteLoading}
@@ -343,3 +323,30 @@ export default function Home() {
     </Layout>
   );
 }
+
+export const getStaticProps: GetStaticProps<HomeProps> = async () => {
+  const [
+    generalArticles,
+    technologyArticles,
+    financeArticles,
+    sportsArticles,
+    initialArchive,
+  ] = await Promise.all([
+    getBlogs({ limit: 15, status: "approved" }),
+    getBlogs({ category: "technology", limit: 4, status: "approved" }),
+    getBlogs({ category: "finance", limit: 4, status: "approved" }),
+    getBlogs({ category: "sports", limit: 4, status: "approved" }),
+    getBlogs({ limit: 8, page: 1, status: "approved" }),
+  ]);
+
+  return {
+    props: {
+      generalArticles: generalArticles as unknown as IBlog[],
+      technologyArticles: technologyArticles as unknown as IBlog[],
+      financeArticles: financeArticles as unknown as IBlog[],
+      sportsArticles: sportsArticles as unknown as IBlog[],
+      initialArchive: initialArchive as unknown as IBlog[],
+    },
+    revalidate: 60 * 10,
+  };
+};
