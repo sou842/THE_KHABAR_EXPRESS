@@ -35,7 +35,6 @@ const FallbackImage = ({ src, alt, className, priority, fallbackSrc }: FallbackI
   );
 };
 
-
 interface BlogCardProps {
   blog: IBlog;
   variant?: 
