@@ -21,6 +21,15 @@ type BlogTag = {
   count: number;
 };
 
+type SerializedBlog = Record<string, unknown> & {
+  _id?: string;
+  url?: string;
+  category?: string;
+  tags?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+};
+
 function serialize<T>(value: T): T {
   return JSON.parse(JSON.stringify(value));
 }
@@ -33,7 +42,7 @@ export async function getBlogs({
   tag,
   selectBody = false,
   populateAuthor = false,
-}: BlogQueryOptions = {}) {
+}: BlogQueryOptions = {}): Promise<SerializedBlog[]> {
   await dbConnect();
 
   const query: Record<string, unknown> = {};
@@ -64,7 +73,7 @@ export async function getBlogs({
     blogsQuery = blogsQuery.populate("authorId", "username");
   }
 
-  const blogs = await blogsQuery.lean();
+  const blogs = await blogsQuery.lean<SerializedBlog[]>();
   return serialize(blogs);
 }
 
@@ -74,17 +83,29 @@ export async function getBlogPaths(): Promise<BlogPath[]> {
   const blogs = await Blog.find({ status: "approved" })
     .sort({ createdAt: -1 })
     .select("url updatedAt")
-    .lean();
+    .lean<Array<{ url?: unknown; updatedAt?: unknown }>>();
 
-  return serialize(blogs);
+  const normalizedBlogs: BlogPath[] = blogs
+    .filter((blog): blog is { url: string; updatedAt?: unknown } => typeof blog.url === "string")
+    .map((blog) => ({
+      url: blog.url,
+      updatedAt:
+        blog.updatedAt instanceof Date
+          ? blog.updatedAt.toISOString()
+          : typeof blog.updatedAt === "string"
+            ? blog.updatedAt
+            : undefined,
+    }));
+
+  return serialize(normalizedBlogs);
 }
 
-export async function getBlogByUrl(url: string) {
+export async function getBlogByUrl(url: string): Promise<SerializedBlog | null> {
   await dbConnect();
 
   const blog = await Blog.findOne({ url, status: "approved" })
     .populate("authorId", "username")
-    .lean();
+    .lean<SerializedBlog | null>();
 
   return blog ? serialize(blog) : null;
 }
@@ -99,12 +120,12 @@ export async function getRelatedBlogs({
   primaryTag?: string;
   category?: string;
   limit?: number;
-}) {
+}): Promise<SerializedBlog[]> {
   await dbConnect();
 
   const baseQuery = { status: "approved", _id: { $ne: currentBlogId } };
 
-  let blogs: unknown[] = [];
+  let blogs: SerializedBlog[] = [];
 
   if (primaryTag) {
     blogs = await Blog.find({
@@ -114,7 +135,7 @@ export async function getRelatedBlogs({
       .sort({ createdAt: -1 })
       .limit(limit)
       .select("-body")
-      .lean();
+      .lean<SerializedBlog[]>();
   }
 
   if ((!blogs || blogs.length === 0) && category) {
@@ -125,7 +146,7 @@ export async function getRelatedBlogs({
       .sort({ createdAt: -1 })
       .limit(limit)
       .select("-body")
-      .lean();
+      .lean<SerializedBlog[]>();
   }
 
   return serialize(blogs);
