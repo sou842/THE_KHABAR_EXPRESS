@@ -1,29 +1,39 @@
 import Link from "next/link";
 import { getImageUrl, formatDate, formatShortDate } from "@/lib/blogUtils";
 import { IBlog } from "@/models/blog.model";
+import { motion } from "framer-motion";
 import { Eye, ArrowUpRight } from "lucide-react";
 import DateTimeDisplay from "@/components/DateTimeDisplay";
 import Image from "next/image";
-import { MouseEvent } from "react";
+import { useState, useEffect } from "react";
 
-interface BlogImageProps {
+interface FallbackImageProps {
   src: string;
   alt: string;
   className?: string;
   priority?: boolean;
-  sizes?: string;
+  fallbackSrc: string;
 }
 
-const BlogImage = ({ src, alt, className, priority, sizes }: BlogImageProps) => (
-  <Image
-    src={src}
-    alt={alt}
-    fill
-    sizes={sizes || "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"}
-    className={`object-cover ${className || ""}`}
-    priority={priority}
-  />
-);
+const FallbackImage = ({ src, alt, className, priority, fallbackSrc }: FallbackImageProps) => {
+  const [imgSrc, setImgSrc] = useState(src);
+
+  useEffect(() => {
+    setImgSrc(src);
+  }, [src]);
+
+  return (
+    <Image 
+      src={imgSrc} 
+      alt={alt} 
+      fill
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      className={`object-cover ${className || ""}`}
+      priority={priority}
+      onError={() => setImgSrc(fallbackSrc)}
+    />
+  );
+};
 
 
 interface BlogCardProps {
@@ -68,11 +78,6 @@ const statusConfig: Record<string, { label: string; color: string; bg: string; d
 
 export default function BlogCard({ blog, variant = "editorPick", index = 0 }: BlogCardProps) {
   if (!blog) return null;
-  const imageSrc = getImageUrl(blog);
-
-  const handleTagClick = (event: MouseEvent<HTMLAnchorElement>) => {
-    event.stopPropagation();
-  };
 
   switch (variant) {
     case "hero-section":
@@ -82,12 +87,12 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
           <div className="lg:col-span-3">
             <Link href={`/blog/${blog.url}`} className="group block">
               <div className="bg-muted aspect-video rounded-sm overflow-hidden group-hover:opacity-75 transition-opacity relative">
-                {imageSrc ? (
-                  <BlogImage
-                    src={imageSrc}
-                    alt={blog.title}
+                {getImageUrl(blog) ? (
+                  <FallbackImage 
+                    src={getImageUrl(blog)!} 
+                    alt={blog.title} 
                     priority={true}
-                    sizes="(max-width: 1024px) 100vw, 60vw"
+                    fallbackSrc="https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop"
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20" />
@@ -102,9 +107,9 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
               </span>
             </div>
             <Link href={`/blog/${blog?.url}`}>
-              <h2 className="text-4xl md:text-5xl font-bold text-foreground leading-tight hover:text-primary transition-colors line-clamp-3">
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight hover:text-primary transition-colors line-clamp-3">
                 {blog?.title}
-              </h2>
+              </h1>
             </Link>
             <p className="text-lg text-muted-foreground leading-relaxed line-clamp-3">
               A comprehensive look at why {blog?.category} is shifting paradigms in the modern digital ecosystem.
@@ -129,12 +134,12 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
         <Link href={`/blog/${blog.url}`} className="group flex gap-6 pb-6 border-b border-border last:border-0 hover:opacity-75 transition-opacity">
           <div className="hidden sm:block flex-shrink-0 w-24 md:w-32">
             <div className="relative w-full aspect-square bg-muted rounded-sm overflow-hidden">
-              {imageSrc && (
-                <BlogImage
-                  src={imageSrc}
-                  alt={blog.title}
-                  className="grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all"
-                  sizes="128px"
+              {getImageUrl(blog) && (
+                <FallbackImage 
+                  src={getImageUrl(blog)!} 
+                  alt={blog.title} 
+                  className="grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" 
+                  fallbackSrc="https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop"
                 />
               )}
             </div>
@@ -166,57 +171,53 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
     case "default":
     case "editorPick":
       return (
-        <article className="group">
+        <Link href={`/blog/${blog?.url}`} className="group">
           <div className="bg-muted aspect-video rounded-sm overflow-hidden mb-4 group-hover:opacity-75 transition-opacity relative">
-            <Link href={`/blog/${blog?.url}`} className="block h-full">
-              {imageSrc ? (
-                <BlogImage
-                  src={imageSrc}
-                  alt={blog?.title || "Blog cover image"}
-                  className="grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-primary/10 to-accent/10" />
-              )}
-            </Link>
+            {getImageUrl(blog) ? (
+              <FallbackImage 
+                src={getImageUrl(blog)!} 
+                alt={blog?.title || "Blog cover image"} 
+                className="grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all" 
+                fallbackSrc="https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-primary/10 to-accent/10" />
+            )}
           </div>
           <div className="space-y-2">
-            <Link href={`/blog/${blog?.url}`} className="block">
-              <span className="inline-block text-xs font-bold uppercase tracking-widest text-primary">
-                {blog?.category}
-              </span>
-              <h4 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                {blog?.title}
-              </h4>
-            </Link>
+            <span className="inline-block text-xs font-bold uppercase tracking-widest text-primary">
+              {blog?.category}
+            </span>
+            <h4 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+              {blog?.title}
+            </h4>
             
             {blog?.tags && blog?.tags?.length > 0 && (
               <div className="flex flex-wrap gap-1.5 pt-1">
                 {blog?.tags?.slice(0, 3)?.map((tag, idx) => (
-                  <Link
+                  <span 
                     key={idx}
-                    href={`/topic/${encodeURIComponent(tag)}`}
-                    onClick={handleTagClick}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.href = `/topic/${tag}`;
+                    }}
                     className="px-2 py-0.5 bg-primary/10 hover:bg-primary hover:text-primary-foreground text-[10px] font-bold uppercase tracking-wider text-primary/50 rounded transition-colors cursor-pointer"
                   >
                     {tag || '#'}
-                  </Link>
+                  </span>
                 ))}
               </div>
             )}
 
-            <Link href={`/blog/${blog?.url}`} className="block">
-              <div className="space-y-6">
-                <p className="text-sm text-muted-foreground line-clamp-1">Explore the latest insights and deep dives.</p>
-                <div className="flex items-center justify-between pt-2 border-t border-border">
-                  <span className="text-xs text-muted-foreground">{blog?.author}</span>
-                  <span className="text-xs font-medium text-muted-foreground">{formatShortDate(blog?.publishedDate)}</span>
-                </div>
+            <div className="space-y-6">
+              <p className="text-sm text-muted-foreground line-clamp-1">Explore the latest insights and deep dives.</p>
+              <div className="flex items-center justify-between pt-2 border-t border-border">
+                <span className="text-xs text-muted-foreground">{blog?.author}</span>
+                <span className="text-xs font-medium text-muted-foreground">{formatShortDate(blog?.publishedDate)}</span>
               </div>
-            </Link>
+            </div>
           </div>
-        </article>
+        </Link>
       );
 
     case "mostRead":
@@ -227,12 +228,12 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
               {index + 1}
             </div>
             <div className="relative bg-muted aspect-video rounded-sm overflow-hidden">
-              {imageSrc ? (
-                <BlogImage
-                  src={imageSrc}
-                  alt={blog?.title || "Blog cover image"}
-                  className="grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all"
-                  sizes="(max-width: 768px) 100vw, 33vw"
+              {getImageUrl(blog) ? (
+                <FallbackImage 
+                  src={getImageUrl(blog)!} 
+                  alt={blog?.title || "Blog cover image"} 
+                  className="grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all" 
+                  fallbackSrc="https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop"
                 />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-secondary/20 to-primary/20" />
@@ -294,7 +295,7 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
 
       case "searchItem":
         return (
-          <article className="group block p-5 border border-border/60 rounded-lg hover:border-primary/50 hover:shadow-sm hover:bg-muted/30 transition-all bg-background">
+          <div className="group block p-5 border border-border/60 rounded-lg hover:border-primary/50 hover:shadow-sm hover:bg-muted/30 transition-all bg-background">
             <div className="flex flex-col gap-2.5">
               <span className="inline-block text-[11px] font-bold uppercase tracking-[0.15em] text-foreground">
                 {blog?.category}
@@ -306,7 +307,7 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
                 {formatDate(blog?.publishedDate || blog?.createdAt)}
               </p>
             </div>
-          </article>
+          </div>
         );
 
       case "adminRow":
@@ -314,7 +315,10 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
           const statusVal = blog.status as unknown as string;
           const status = statusConfig[statusVal] ?? statusConfig.rejected;
           return (
-            <div
+            <motion.div
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.035, duration: 0.25, ease: 'easeOut' }}
               className="group relative flex items-center gap-4 px-4 py-3.5 rounded-xl hover:bg-muted/40 transition-colors duration-150 cursor-default"
             >
               {/* Left accent line on hover */}
@@ -322,11 +326,11 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
 
               {/* Thumbnail */}
               <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-border/30 bg-muted shadow-sm">
-                {imageSrc && <BlogImage
-                  src={imageSrc}
-                  alt={blog.title || "Blog thumbnail"}
+                {getImageUrl(blog) && <FallbackImage
+                  src={getImageUrl(blog)!}
+                  alt="Thumbnail"
                   className="group-hover:scale-105 transition-transform duration-500 ease-out"
-                  sizes="48px"
+                  fallbackSrc="https://images.unsplash.com/photo-1495020689067-958852a7765e?w=200"
                 />}
               </div>
 
@@ -372,15 +376,13 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
                   {status.label}
                 </span>
 
-                <Link
-                  href={`/blog/${blog.url}`}
-                  aria-label={`Open ${blog.title}`}
-                  className="opacity-0 group-hover:opacity-100 w-8 h-8 rounded-lg bg-primary/8 hover:bg-primary hover:text-white text-primary flex items-center justify-center transition-all duration-150"
-                >
-                  <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={2} />
+                <Link href={`/blog/${blog.url}`}>
+                  <button className="opacity-0 group-hover:opacity-100 w-8 h-8 rounded-lg bg-primary/8 hover:bg-primary hover:text-white text-primary flex items-center justify-center transition-all duration-150">
+                    <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={2} />
+                  </button>
                 </Link>
               </div>
-            </div>
+            </motion.div>
           );
         }
 
