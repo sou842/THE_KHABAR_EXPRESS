@@ -16,15 +16,15 @@ interface FallbackImageProps {
 }
 
 const FallbackImage = ({ src, alt, className, priority, fallbackSrc, sizes }: FallbackImageProps & { sizes?: string }) => {
-  const [imgSrc, setImgSrc] = useState(src);
+  const [imgSrc, setImgSrc] = useState(src?.trim());
 
   useEffect(() => {
-    setImgSrc(src);
+    setImgSrc(src?.trim());
   }, [src]);
 
   return (
     <Image 
-      src={imgSrc} 
+      src={imgSrc || "/placeholder.png"} 
       alt={alt} 
       fill
       sizes={sizes || "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"}

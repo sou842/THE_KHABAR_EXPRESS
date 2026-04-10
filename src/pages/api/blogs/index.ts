@@ -33,7 +33,6 @@ export default async function handler(
           limit: limit ? Number(limit) : undefined,
           page: page ? Number(page) : undefined,
           category: category as string,
-          isApproved: isApproved === 'true',
           language: language as string,
           tag: tag as string,
           authorId: authorId as string,

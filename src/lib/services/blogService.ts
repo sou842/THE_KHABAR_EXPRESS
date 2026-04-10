@@ -23,7 +23,6 @@ export const getBlogs = async (filter: BlogFilter = {}) => {
     limit = 10,
     page = 1,
     category,
-    isApproved,
     language,
     tag,
     authorId,
@@ -40,7 +39,6 @@ export const getBlogs = async (filter: BlogFilter = {}) => {
   if (trending === 'true' || trending === true) query.isTrending = true;
   if (status) query.status = status;
   if (category) query.category = category;
-  if (isApproved !== undefined) query.isApproved = isApproved;
   if (language) query.language = language;
   if (tag) query.tags = { $in: [tag] };
   if (authorId && mongoose.Types.ObjectId.isValid(authorId as string)) {

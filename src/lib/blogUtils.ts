@@ -186,7 +186,8 @@ export const getImageUrl = (blog: IBlog) => {
   const hashString = blog?.title || String(Math.random());
   const hash = hashString?.split("")?.reduce((acc: number, char: string) => acc + char?.charCodeAt(0), 0);
   const randomIndex = hash % images?.length;
-  return !blog?.thumbnail?.image?.includes('thekhabarexpress.s3.ap-southeast-2') ? blog?.thumbnail?.image : images?.[randomIndex];
+  const res = !blog?.thumbnail?.image?.includes('thekhabarexpress.s3.ap-southeast-2') ? blog?.thumbnail?.image : images?.[randomIndex];
+  return res?.trim() || "";
 };
 
 export const formatDate = (dateString?: Date | string) => {
