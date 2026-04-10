@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import Image from "next/image";
-import Link from "next/link";
 import useSWR from "swr";
 import { CommandDialog } from "@/components/ui/command";
 import { X, Search, Loader } from "lucide-react";
@@ -77,6 +75,10 @@ const SearchDialog = ({ open }: SearchDialogProps) => {
     preventRerendering
   );
 
+  const handleSelect = (productId: string) => {
+    router.push(`/blog/${productId}`);
+  };
+
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -122,8 +124,6 @@ const SearchDialog = ({ open }: SearchDialogProps) => {
         <input
           ref={inputRef}
           value={search}
-          type="search"
-          aria-label="Search articles"
           placeholder="Search all topics here"
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={handleSearch}
@@ -152,14 +152,13 @@ const SearchDialog = ({ open }: SearchDialogProps) => {
           ) : (
             <div className="space-y-4">
               {searchResult?.data?.map((result: any, index: number) => (
-                <Link
+                <div
                   key={index}
-                  href={`/blog/${result?.url}`}
-                  className="block"
-                  onClick={handleResetBack}
+                  onClick={() => handleSelect(result?.url)}
+                  className="cursor-pointer"
                 >
                   <BlogCard blog={result} variant="searchItem" />
-                </Link>
+                </div>
               ))}
             </div>
           )
@@ -175,12 +174,11 @@ const SearchDialog = ({ open }: SearchDialogProps) => {
                 }}
                 className="relative overflow-hidden aspect-[4/3] rounded-lg group"
               >
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={category?.thumbnail?.image}
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   alt={category?.thumbnail?.title}
-                  fill
-                  sizes="(max-width: 640px) 50vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors" />
                 <div className="absolute inset-0 flex items-center justify-center p-4">

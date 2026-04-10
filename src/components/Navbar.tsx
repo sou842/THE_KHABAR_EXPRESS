@@ -6,7 +6,6 @@ import SearchDialog from "./SearchDialog";
 import Link from "next/link";
 import Head from "next/head";
 import Logo from "./Logo";
-import { buildSiteUrl } from "@/lib/site";
 
 const Navbar: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,7 +39,7 @@ const Navbar: FC = () => {
     "@context": "https://schema.org",
     "@type": "SiteNavigationElement",
     "name": categories?.map(cat => cat?.name),
-    "url": categories?.map((cat) => buildSiteUrl(`/category/${cat.slug}`)),
+    "url": categories?.map(cat => `${process.env.NEXT_PUBLIC_SITE_URL || 'https://khabar.com'}/category/${cat.slug}`),
   };
 
   return (

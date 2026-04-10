@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { FC } from "react";
-import { buildSiteUrl, getSiteUrl } from "@/lib/site";
 
 interface SeoMetaProps {
   title: string;
@@ -19,15 +18,13 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
     title = "The Khabar Express - Latest News and Insights",
     description = "At The Khabar Express, we bring you the latest and most relevant news from around the world, covering everything from current events and technology to health, entertainment, and beyond.",
     image = "https://images.pexels.com/photos/3944460/pexels-photo-3944460.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    url = getSiteUrl(),
+    url = process.env.NEXT_PUBLIC_SITE_URL || "https://www.thekhabarexpress.com",
     category,
     createdAt,
     updatedAt,
     author,
     jsonLd,
   } = props;
-  const siteUrl = getSiteUrl();
-  const canonicalUrl = buildSiteUrl(url);
 
   const generateWebSiteSchema = () => {
     return {
@@ -35,10 +32,10 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
       "@type": "WebSite",
       "name": "The Khabar Express",
       "alternateName": "Khabar Express",
-      "url": siteUrl,
+      "url": process.env.NEXT_PUBLIC_SITE_URL,
       "potentialAction": {
         "@type": "SearchAction",
-        "target": `${siteUrl}/search?q={search_term_string}`,
+        "target": `${process.env.NEXT_PUBLIC_SITE_URL}/search?q={search_term_string}`,
         "query-input": "required name=search_term_string"
       }
     };
@@ -49,10 +46,10 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "The Khabar Express",
-      "url": siteUrl,
+      "url": process.env.NEXT_PUBLIC_SITE_URL,
       "logo": {
         "@type": "ImageObject",
-        "url": buildSiteUrl("/favicon.ico"),
+        "url": `${process.env.NEXT_PUBLIC_SITE_URL}/favicon.ico`,
         "width": 60,
         "height": 60
       },
@@ -87,20 +84,20 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
         : {
           "@type": "Organization",
           name: "The Khabar Express",
-          url: siteUrl,
+          url: process.env.NEXT_PUBLIC_SITE_URL,
         },
       publisher: {
         "@type": "Organization",
         name: "The Khabar Express",
         logo: {
           "@type": "ImageObject",
-          url: buildSiteUrl("/favicon.ico"),
+          url: `${process.env.NEXT_PUBLIC_SITE_URL}/favicon.ico`,
         },
       },
       description: description,
       mainEntityOfPage: {
         "@type": "WebPage",
-        "@id": canonicalUrl,
+        "@id": url,
       },
       articleSection: category,
     };
@@ -114,7 +111,7 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: siteUrl,
+        item: process.env.NEXT_PUBLIC_SITE_URL,
       },
     ];
 
@@ -123,16 +120,16 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
         "@type": "ListItem",
         position: 2,
         name: category,
-        item: buildSiteUrl(`/category/${category.toLowerCase()}`),
+        item: `${process.env.NEXT_PUBLIC_SITE_URL}/category/${category.toLowerCase()}`,
       });
     }
 
-    if (title && canonicalUrl !== siteUrl) {
+    if (title && url !== process.env.NEXT_PUBLIC_SITE_URL) {
       items.push({
         "@type": "ListItem",
         position: items.length + 1,
         name: title,
-        item: canonicalUrl,
+        item: url,
       });
     }
 
@@ -148,7 +145,7 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
   const allStructuredData = [
     ...(jsonLd ? [jsonLd] : []),
     generateOrganizationSchema(),
-    ...(normalizeUrl(canonicalUrl) === normalizeUrl(siteUrl) ? [generateWebSiteSchema()] : []),
+    ...(normalizeUrl(url) === normalizeUrl(process.env.NEXT_PUBLIC_SITE_URL!) ? [generateWebSiteSchema()] : []),
     ...(generateArticleSchema() ? [generateArticleSchema()] : []),
     ...(generateBreadcrumbSchema() ? [generateBreadcrumbSchema()] : []),
   ];
@@ -159,7 +156,7 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
     <Head>
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
-      <link rel="canonical" href={canonicalUrl} />
+      <link rel="canonical" href={url} />
       
       <meta name="robots" content="index, follow" />
       
@@ -170,7 +167,7 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
       <meta property="og:image" content={image} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
-      <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:url" content={url} />
       <meta property="og:type" content={category ? "article" : "website"} />
       <meta property="og:locale" content="en_US" />
       <meta name="google-adsense-account" content="ca-pub-5434867604639566" />

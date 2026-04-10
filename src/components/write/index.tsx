@@ -1,20 +1,22 @@
+import CommonEditor from "@/components/BlogEditor/CommonEditor";
 import React, { useState, useEffect, FC } from "react";
 import dynamic from "next/dynamic";
+import Layout from "@/components/Layout";
+import CustomToggle from "@/components/CustomToggle";
+
 import { toast } from "sonner";
 import { poster } from "@/lib/helper";
 import { useAuth } from "@/contexts/AuthContext";
+
 import { useRouter } from "next/router";
+import { Skeleton } from "@/components/Skeleton";
 import { v4 as uuidv4 } from "uuid";
+import FileUploadDialog from "@/components/FileUploadDialog";
+import JsonEditor from "@/components/BlogEditor/JsonEditor";
 
 const TextEditor = dynamic(() => import("@/components/BlogEditor/EditorJS"), {
   ssr: false,
 });
-const CommonEditor = dynamic(() => import("@/components/BlogEditor/CommonEditor"));
-const JsonEditor = dynamic(() => import("@/components/BlogEditor/JsonEditor"));
-const FileUploadDialog = dynamic(() => import("@/components/FileUploadDialog"), {
-  ssr: false,
-});
-const CustomToggle = dynamic(() => import("@/components/CustomToggle"));
 
 const Write: FC = () => {
   const [selected, setSelected] = useState<string>(() => {
@@ -101,7 +103,9 @@ const Write: FC = () => {
 
   if (isLoading)
     return (
-      <div className="py-12 text-center text-muted-foreground">Saving article...</div>
+      <Layout>
+        <Skeleton type="write-submit-skeleton" />
+      </Layout>
     );
 
   return (

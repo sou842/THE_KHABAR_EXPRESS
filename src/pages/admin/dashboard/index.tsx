@@ -1,19 +1,17 @@
 import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import AdminSideBar from "@/components/admin/AdminSideBar";
-
-const Overview = dynamic(() => import("@/components/admin/section/Overview"));
-const Blogs = dynamic(() => import("@/components/admin/section/Blogs"));
-const AutoBlogger = dynamic(() => import("@/components/admin/section/AutoBlogger"));
-const UsersPage = dynamic(() => import("@/components/admin/section/Users"));
-const Contributor = dynamic(() => import("@/components/admin/section/Contributor"));
-const Settings = dynamic(() => import("@/components/admin/section/Settings"));
-const TaskList = dynamic(() => import("@/components/admin/section/TaskList"));
-const Automation = dynamic(() => import("@/components/admin/section/Automation"));
-const ContactMessages = dynamic(() => import("@/components/admin/section/ContactMessages"));
-const Reports = dynamic(() => import("@/components/admin/section/Reports"));
-const Vault = dynamic(() => import("@/components/admin/section/Vault"));
+import Overview from "@/components/admin/section/Overview";
+import Blogs from "@/components/admin/section/Blogs";
+import AutoBlogger from "@/components/admin/section/AutoBlogger";
+import UsersPage from "@/components/admin/section/Users";
+import Contributor from "@/components/admin/section/Contributor";
+import Settings from "@/components/admin/section/Settings";
+import TaskList from "@/components/admin/section/TaskList";
+import Automation from "@/components/admin/section/Automation";
+import ContactMessages from "@/components/admin/section/ContactMessages";
+import Reports from "@/components/admin/section/Reports";
+import Vault from "@/components/admin/section/Vault";
 
 export default function AdminDashboard() {
   const router = useRouter();

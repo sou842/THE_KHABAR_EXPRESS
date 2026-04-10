@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
 import {
   FilePlus,
   LayoutDashboard,
@@ -9,12 +8,11 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/router";
 import PrivateRoute from "@/components/PrivateRoute/PrivateRoute";
+import EditorSideBar from "@/components/editor/EditorSideBar";
+import OverView from "@/components/editor/SidebarTabs/OverView";
+import Blogs from "@/components/editor/SidebarTabs/Blogs";
 import Logo from "@/components/Logo";
 import Link from "next/link";
-
-const EditorSideBar = dynamic(() => import("@/components/editor/EditorSideBar"));
-const OverView = dynamic(() => import("@/components/editor/SidebarTabs/OverView"));
-const Blogs = dynamic(() => import("@/components/editor/SidebarTabs/Blogs"));
 
 const menuItems = [
   { label: "Overview", value: "overview", icon: LayoutDashboard },
@@ -71,7 +69,7 @@ const EditorDashboard: React.FC = () => {
     if (tab && tab !== activeTab) {
       setActiveTab(tab as "overview" | "blogs" | "stats" | "settings");
     }
-  }, [tab, activeTab]);
+  }, [tab]);
 
   if (!user) {
     return null;
@@ -115,8 +113,8 @@ const EditorDashboard: React.FC = () => {
                     <button
                       key={value}
                       onClick={() => {
-                        handleTabChange(value);
-                        setIsMenuOpen(false);
+                        setActiveTab(value)
+                        setIsMenuOpen(false)
                       }}
                       className={`w-full flex items-center space-x-3 px-3 py-2 rounded-md text-sm ${activeTab === value
                         ? "bg-khabar-50 text-khabar-700 font-medium"
