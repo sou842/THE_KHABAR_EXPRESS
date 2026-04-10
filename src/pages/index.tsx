@@ -8,30 +8,44 @@ import { IBlog } from "@/models/blog.model";
 import Layout from "@/components/Layout";
 import { ArrowRight } from "lucide-react";
 import { SOCIAL_LINKS } from "@/lib/constants";
+import { getBlogs } from "@/lib/services/blogService";
+import { GetStaticProps } from "next";
 
-export default function Home() {
+interface HomeProps {
+  initialGeneralBlogs: any;
+  initialTechBlogs: any;
+  initialFinanceBlogs: any;
+  initialSportsBlogs: any;
+}
+
+export default function Home({ 
+  initialGeneralBlogs, 
+  initialTechBlogs, 
+  initialFinanceBlogs, 
+  initialSportsBlogs 
+}: HomeProps) {
   // 1. Fetch general top articles
   const { data: generalData, isLoading: isGeneralLoading } = useSWR<any>(
     "/api/blogs?limit=15&status=approved",
     getter,
-    preventRerendering
+    { ...preventRerendering, fallbackData: initialGeneralBlogs }
   );
 
   // 2. Separate API calls for categories
   const { data: techData } = useSWR<any>(
     "/api/blogs?category=technology&limit=4&status=approved",
     getter,
-    preventRerendering
+    { ...preventRerendering, fallbackData: initialTechBlogs }
   );
   const { data: financeData } = useSWR<any>(
     "/api/blogs?category=finance&limit=4&status=approved",
     getter,
-    preventRerendering
+    { ...preventRerendering, fallbackData: initialFinanceBlogs }
   );
   const { data: sportsData } = useSWR<any>(
     "/api/blogs?category=sports&limit=4&status=approved",
     getter,
-    preventRerendering
+    { ...preventRerendering, fallbackData: initialSportsBlogs }
   );
 
   // 3. Infinite scrolling for All Stories
@@ -343,3 +357,35 @@ export default function Home() {
     </Layout>
   );
 }
+
+export const getStaticProps: GetStaticProps = async () => {
+  try {
+    const [general, tech, finance, sports] = await Promise.all([
+      getBlogs({ limit: 15, status: 'approved' }),
+      getBlogs({ category: 'technology', limit: 4, status: 'approved' }),
+      getBlogs({ category: 'finance', limit: 4, status: 'approved' }),
+      getBlogs({ category: 'sports', limit: 4, status: 'approved' })
+    ]);
+
+    return {
+      props: {
+        initialGeneralBlogs: general || null,
+        initialTechBlogs: tech || null,
+        initialFinanceBlogs: finance || null,
+        initialSportsBlogs: sports || null,
+      },
+      revalidate: 60, // ISR: update every minute
+    };
+  } catch (error) {
+    console.error("Error in getStaticProps:", error);
+    return {
+      props: {
+        initialGeneralBlogs: null,
+        initialTechBlogs: null,
+        initialFinanceBlogs: null,
+        initialSportsBlogs: null,
+      },
+      revalidate: 60,
+    };
+  }
+};

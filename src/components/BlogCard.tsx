@@ -15,7 +15,7 @@ interface FallbackImageProps {
   fallbackSrc: string;
 }
 
-const FallbackImage = ({ src, alt, className, priority, fallbackSrc }: FallbackImageProps) => {
+const FallbackImage = ({ src, alt, className, priority, fallbackSrc, sizes }: FallbackImageProps & { sizes?: string }) => {
   const [imgSrc, setImgSrc] = useState(src);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const FallbackImage = ({ src, alt, className, priority, fallbackSrc }: FallbackI
       src={imgSrc} 
       alt={alt} 
       fill
-      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      sizes={sizes || "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"}
       className={`object-cover ${className || ""}`}
       priority={priority}
       onError={() => setImgSrc(fallbackSrc)}
@@ -90,7 +90,8 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
                   <FallbackImage 
                     src={getImageUrl(blog)!} 
                     alt={blog.title} 
-                    priority={true}
+                    priority={index === 0} // Only prioritize the first one
+                    sizes="(max-width: 1024px) 100vw, 60vw"
                     fallbackSrc="https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop"
                   />
                 ) : (
@@ -138,6 +139,7 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
                   src={getImageUrl(blog)!} 
                   alt={blog.title} 
                   className="grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" 
+                  sizes="128px"
                   fallbackSrc="https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop"
                 />
               )}

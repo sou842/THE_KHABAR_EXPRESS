@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 
 import dbConnect from '../../../lib/mongoose';
 import { Blog } from '@/models/blog.model';
-import { User } from '@/models/user.model';
+import { getBlogs } from '@/lib/services/blogService';
 
 export default async function handler(
   req: NextApiRequest,
@@ -17,11 +17,10 @@ export default async function handler(
     case 'GET':
       try {
         const {
-          limit = 10,
-          page = 1,
+          limit,
+          page,
           category,
           isApproved,
-          isTrending,
           language,
           tag,
           authorId,
@@ -30,45 +29,20 @@ export default async function handler(
           trending
         } = req.query;
 
-        // Build query
-        const query: any = {};
-        if (search) {
-          query.title = { $regex: search, $options: 'i' };
-        }
-        if (trending == 'true') query.isTrending = true;
-        if (status) query.status = status;
-        if (category) query.category = category;
-        if (isApproved !== undefined) query.isApproved = isApproved === 'true';
-        // if (isTrending !== undefined) query.isTrending = isTrending === 'true';
-        if (language) query.language = language;
-        if (tag) query.tags = { $in: [tag] };
-        if (authorId && mongoose.Types.ObjectId.isValid(authorId as string)) {
-          query.authorId = authorId;
-        }
-
-        // Pagination
-        const skip = (Number(page) - 1) * Number(limit);
-
-        const blogs = await Blog.find(query)
-          .sort({ createdAt: -1 })
-          .limit(Number(limit))
-          .skip(skip)
-          .select('-body')
-          .populate('authorId', 'username');
-
-        const total = await Blog.countDocuments(query);
-
-        res.status(200).json({
-          success: true,
-          data: blogs,
-          isValidCategory: !!blogs?.length,
-          pagination: {
-            total,
-            page: Number(page),
-            limit: Number(limit),
-            pages: Math.ceil(total / Number(limit))
-          }
+        const result = await getBlogs({
+          limit: limit ? Number(limit) : undefined,
+          page: page ? Number(page) : undefined,
+          category: category as string,
+          isApproved: isApproved === 'true',
+          language: language as string,
+          tag: tag as string,
+          authorId: authorId as string,
+          status: status as string,
+          search: search as string,
+          trending: trending as string
         });
+
+        res.status(200).json(result);
       } catch (error: any) {
         res.status(400).json({ success: false, error: error.message });
       }
