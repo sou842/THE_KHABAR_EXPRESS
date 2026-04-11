@@ -140,6 +140,7 @@ const BlogArchive: FC = () => {
               {/* Mobile Filter Trigger */}
               <button
                 onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
+                aria-label="Toggle mobile filters"
                 className="lg:hidden w-full flex items-center justify-between p-4 bg-muted/50 border border-border rounded-xl cursor-pointer"
               >
                 <div className="flex items-center gap-2 font-bold">
@@ -159,6 +160,7 @@ const BlogArchive: FC = () => {
                   <div className="flex flex-col gap-1.5">
                     <button
                       onClick={() => setSelectedCategory("")}
+                      aria-label="Select all categories"
                       className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer ${selectedCategory === ""
                         ? "bg-primary text-primary-foreground shadow-md"
                         : "hover:bg-primary/5 hover:text-primary"
@@ -167,7 +169,7 @@ const BlogArchive: FC = () => {
                       <span>All Categories</span>
                       {selectedCategory === "" && <div className="w-1.5 h-1.5 rounded-full bg-current"></div>}
                     </button>
-                    {categories.map((cat: any) => (
+                    {categories?.map((cat: any) => (
                       <button
                         key={cat._id}
                         onClick={() => setSelectedCategory(cat.name)}
@@ -185,13 +187,14 @@ const BlogArchive: FC = () => {
 
                 {/* Sort Section */}
                 <div className="bg-muted/10 p-6 rounded-2xl border border-border/40 backdrop-blur-md">
-                  <div className="flex items-center gap-2 mb-5">
+                  <div aria-label="Sort Order" className="flex items-center gap-2 mb-5">
                     <TrendingUp className="h-4 w-4 text-primary" />
                     <h3 className="text-sm font-black uppercase tracking-widest">Sort Order</h3>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       onClick={() => setSortBy("recent")}
+                      aria-label="Sort by recent"
                       className={`flex flex-col items-center gap-1 p-3 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${sortBy === "recent"
                         ? "bg-primary/10 border-primary text-primary shadow-inner"
                         : "bg-background border-border hover:border-primary/40"
@@ -202,6 +205,7 @@ const BlogArchive: FC = () => {
                     </button>
                     <button
                       onClick={() => setSortBy("oldest")}
+                      aria-label="Sort by oldest"
                       className={`flex flex-col items-center gap-1 p-3 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${sortBy === "oldest"
                         ? "bg-primary/10 border-primary text-primary shadow-inner"
                         : "bg-background border-border hover:border-primary/40"
@@ -222,6 +226,7 @@ const BlogArchive: FC = () => {
                     </div>
                     <button
                       onClick={handleRefreshTags}
+                      aria-label="Refresh Tags"
                       disabled={isTagsValidating}
                       className="p-1.5 rounded-full hover:bg-primary/10 text-primary/60 hover:text-primary transition-all cursor-pointer disabled:opacity-50"
                       title="Refresh Tags"
@@ -232,6 +237,7 @@ const BlogArchive: FC = () => {
                   <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => setSelectedTag("")}
+                      aria-label="Select all tags"
                       className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border cursor-pointer ${selectedTag === ""
                         ? "bg-foreground text-background border-foreground shadow-sm"
                         : "border-border hover:border-primary hover:text-primary"
@@ -243,6 +249,7 @@ const BlogArchive: FC = () => {
                       <button
                         key={tagObj.tag}
                         onClick={() => setSelectedTag(tagObj.tag)}
+                        aria-label={`Select tag ${tagObj.tag}`}
                         className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border cursor-pointer ${selectedTag === tagObj.tag
                           ? "bg-foreground text-background border-foreground shadow-sm"
                           : "border-border hover:border-primary hover:text-primary"
@@ -258,6 +265,7 @@ const BlogArchive: FC = () => {
                 {(selectedCategory || selectedTag || activeSearch) && (
                   <button
                     onClick={clearFilters}
+                    aria-label="Reset All Filters"
                     className="w-full flex items-center justify-center gap-2 p-4 text-sm font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors group cursor-pointer"
                   >
                     <X className="h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
@@ -309,7 +317,7 @@ const BlogArchive: FC = () => {
               </AnimatePresence>
 
               {!isLoading && (
-                <span className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-auto">
+                <span className="text-xs font-semibold capitalize tracking-widest text-muted-foreground ml-auto">
                   {blogs.length} articles discovered
                 </span>
               )}
@@ -367,7 +375,7 @@ const BlogArchive: FC = () => {
                 <button
                   onClick={() => setSize(size + 1)}
                   disabled={isLoadingMore}
-                  className="group relative flex items-center gap-3 px-12 py-5 bg-foreground text-background rounded-[20px] font-black uppercase tracking-widest text-[13px] transition-all hover:translate-y-[-5px] active:translate-y-[0px] disabled:opacity-50 cursor-pointer shadow-2xl hover:shadow-primary/20"
+                  className="group relative flex items-center gap-2 px-12 py-5 bg-foreground text-background rounded-full font-black capitalize tracking-widest text-sm transition-all hover:translate-y-[-5px] active:translate-y-[0px] disabled:opacity-50 cursor-pointer shadow-2xl hover:shadow-primary/20"
                 >
                   <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity rounded-full"></div>
                   {isLoadingMore ? (

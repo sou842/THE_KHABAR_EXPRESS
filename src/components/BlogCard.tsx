@@ -15,26 +15,6 @@ interface FallbackImageProps {
   fallbackSrc: string;
 }
 
-const FallbackImage = ({ src, alt, className, priority, fallbackSrc, sizes }: FallbackImageProps & { sizes?: string }) => {
-  const [imgSrc, setImgSrc] = useState(src?.trim());
-
-  useEffect(() => {
-    setImgSrc(src?.trim());
-  }, [src]);
-
-  return (
-    <Image 
-      src={imgSrc || "/placeholder.png"} 
-      alt={alt} 
-      fill
-      sizes={sizes || "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"}
-      className={`object-cover ${className || ""}`}
-      priority={priority}
-      onError={() => setImgSrc(fallbackSrc)}
-    />
-  );
-};
-
 interface BlogCardProps {
   blog: IBlog;
   variant?: 
@@ -52,6 +32,26 @@ interface BlogCardProps {
     | "hero-section";
   index?: number;
 }
+
+const FallbackImage = ({ src, alt, className, priority, fallbackSrc, sizes }: FallbackImageProps & { sizes?: string }) => {
+  const [imgSrc, setImgSrc] = useState(src?.trim());
+
+  useEffect(() => {
+    setImgSrc(src?.trim());
+  }, [src]);
+
+  return (
+    <Image 
+      src={imgSrc || "/placeholder.png"} 
+      alt={alt} 
+      fill
+      sizes={sizes || "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"}
+      className={`object-cover ${className || ""}`}
+      priority={priority}
+      onError={() => setImgSrc(fallbackSrc)}
+    />
+  );
+};
 
 const statusConfig: Record<string, { label: string; color: string; bg: string; dot: string }> = {
     approved: {
@@ -90,8 +90,8 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
                   <FallbackImage 
                     src={getImageUrl(blog)!} 
                     alt={blog.title} 
-                    priority={index === 0} // Only prioritize the first one
-                    sizes="(max-width: 1024px) 100vw, 60vw"
+                    priority={index === 0} 
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 70vw, 800px"
                     fallbackSrc="https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop"
                   />
                 ) : (
@@ -119,7 +119,7 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
                 <p className="font-semibold text-foreground">{blog?.author}</p>
                 <p className="text-muted-foreground">{formatDate(blog?.publishedDate)}</p>
               </div>
-              <Link href={`/blog/${blog.url}`} className="text-primary hover:text-primary/80 transition-colors">
+              <Link href={`/blog/${blog.url}`} aria-label="Read more" className="text-primary hover:text-primary/80 transition-colors">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
@@ -202,7 +202,7 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
                       e.preventDefault();
                       window.location.href = `/topic/${tag}`;
                     }}
-                    className="px-2 py-0.5 bg-primary/10 hover:bg-primary hover:text-primary-foreground text-[10px] font-bold uppercase tracking-wider text-primary/50 rounded transition-colors cursor-pointer"
+                    className="px-2.5 py-0.5 bg-primary/10 hover:bg-primary hover:text-primary-foreground text-xs font-bold capitalize tracking-wider text-primary rounded transition-colors cursor-pointer"
                   >
                     {tag || '#'}
                   </span>

@@ -35,6 +35,7 @@ import ArticleDisclaimer from "@/components/Disclaimers/ArticleDisclaimer";
 import dynamic from "next/dynamic";
 import { generateBlogPdf } from "@/lib/pdfUtils";
 import TextSelectionTooltip from "@/components/AI/TextSelectionTooltip";
+import { getImageUrl } from "@/lib/blogUtils";
 
 const AskAiChat = dynamic(() => import("@/components/AI/AskAiChat"), {
   ssr: false,
@@ -140,7 +141,7 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
   return (
     <Layout disableDefaultMeta>
       <SeoMeta
-        image={blog?.thumbnail?.image}
+        image={getImageUrl(blog as any)}
         title={blog?.title}
         description={blog?.thumbnail?.description || blog?.title}
         url={`${process.env.NEXT_PUBLIC_SITE_URL}/blog/${blog?.url}`}

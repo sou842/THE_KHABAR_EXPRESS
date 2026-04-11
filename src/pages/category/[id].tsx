@@ -62,8 +62,15 @@ const Category: FC = () => {
     );
   }
 
+  const capitalizedCategory = (category || "")
+    .split(/[- ]+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+  const pageTitle = `${capitalizedCategory} News & Updates`;
+  const pageDescription = `Stay updated with the latest ${category} news, trends, and impactful changes shaping our world every day.`;
+
   return (
-    <Layout title={category} path={`category/${category}`}>
+    <Layout title={pageTitle} description={pageDescription} path={`category/${category}`}>
       <div className="khabar-container py-8 md:py-12">
         {!isLoading ? (
           <>

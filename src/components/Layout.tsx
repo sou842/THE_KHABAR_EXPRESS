@@ -17,9 +17,10 @@ interface LayoutProps {
   image?: string;
   path?: string;
   jsonLd?: Record<string, any>;
+  preloadImage?: boolean;
 }
 
-const Layout: FC<LayoutProps> = ({ children, disableDefaultMeta, title, description, image, path, jsonLd }) => {
+const Layout: FC<LayoutProps> = ({ children, disableDefaultMeta, title, description, image, path, jsonLd, preloadImage }) => {
   const url = `${process.env.NEXT_PUBLIC_SITE_URL}/${path || ""}`;
 
   return (
@@ -31,6 +32,7 @@ const Layout: FC<LayoutProps> = ({ children, disableDefaultMeta, title, descript
           image={image!}
           url={url} 
           jsonLd={jsonLd}
+          preloadImage={preloadImage}
         />
       )}
 

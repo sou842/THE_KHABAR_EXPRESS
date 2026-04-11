@@ -12,6 +12,7 @@ interface SeoMetaProps {
   updatedAt?: string;
   author?: any;
   jsonLd?: Record<string, any>;
+  preloadImage?: boolean;
 }
 
 const SeoMeta: FC<SeoMetaProps> = (props) => {
@@ -25,6 +26,7 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
     updatedAt,
     author,
     jsonLd,
+    preloadImage,
   } = props;
   const siteUrl = getSiteUrl();
   const canonicalUrl = buildSiteUrl(url);
@@ -160,6 +162,16 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={canonicalUrl} />
+      
+      {preloadImage && image && (
+        <link
+          rel="preload"
+          as="image"
+          href={image}
+          // We use high fetchpriority for the LCP image
+          {...({ fetchpriority: "high" } as any)}
+        />
+      )}
       
       <meta name="robots" content="index, follow" />
       
