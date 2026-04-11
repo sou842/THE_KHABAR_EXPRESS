@@ -6,9 +6,9 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.thekhabarexpre
 const PAGE_PATH = "finance-disclaimer";
 const PAGE_URL = `${SITE_URL}/${PAGE_PATH}`;
 
-const TITLE = "Financial Information Disclaimer";
+const TITLE = "Financial Information Disclaimer | The Khabar Express";
 const DESCRIPTION =
-  "The Khabar Express provides financial news and market analysis for informational purposes only. We are not a registered investment advisor and do not provide investment or financial advice. Read our full finance disclaimer.";
+  "The Khabar Express provides financial news and market analysis for informational purposes only. We are not a registered investment advisor. Read our full financial disclaimer.";
 
 export default function FinanceDisclaimerPage() {
   const jsonLd = {

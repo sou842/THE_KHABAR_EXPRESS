@@ -13,9 +13,9 @@ export default function DisclaimerPage() {
 
     return (
         <Layout 
-            title={"Disclaimer"} 
-            path={"disclaimer"}
-            description={"Read the Disclaimer for The Khabar Express. Understand the limitations of our content, professional advice warnings, and third-party link policies."}
+            title="General Disclaimer | The Khabar Express" 
+            path="disclaimer"
+            description="Read the general disclaimer for The Khabar Express. Learn about the limitations of our content, professional advice warnings, and our policies on third-party links."
             jsonLd={jsonLd}
         >
             <ContentComponent contents={disclaimerpolicy} />

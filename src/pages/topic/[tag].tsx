@@ -48,9 +48,9 @@ const TopicHub: FC = () => {
 
   return (
     <Layout 
-      title={`${displayTag} News, Trends & Insights`} 
+      title={`${displayTag} News, Trends & Insights | The Khabar Express`} 
       path={`topic/${tag}`}
-      description={`Explore the latest ${displayTag} news, in-depth analysis, and expert perspectives. Stay updated with trending stories and comprehensive coverage on ${displayTag}.`}
+      description={`Stay informed with the latest ${displayTag} news, in-depth analysis, and expert perspectives on The Khabar Express. Discover trending stories and comprehensive coverage updated daily.`}
     >
       <div className="khabar-container py-8 md:py-12">
         {!isLoading || blogs.length > 0 ? (

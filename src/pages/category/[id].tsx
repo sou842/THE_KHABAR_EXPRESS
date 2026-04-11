@@ -66,8 +66,8 @@ const Category: FC = () => {
     .split(/[- ]+/)
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
-  const pageTitle = `${capitalizedCategory} News & Updates`;
-  const pageDescription = `Stay updated with the latest ${category} news, trends, and impactful changes shaping our world every day.`;
+  const pageTitle = `${capitalizedCategory} News & Updates | The Khabar Express`;
+  const pageDescription = `Explore the latest ${category} news, trending stories, and expert analysis on The Khabar Express. Stay informed with our daily news updates and in-depth reporting.`;
 
   return (
     <Layout title={pageTitle} description={pageDescription} path={`category/${category}`}>

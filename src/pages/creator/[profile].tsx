@@ -59,8 +59,8 @@ const CreatorProfile = () => {
     return null;
   }
 
-  const seoTitle = `${creator?.name} - Creator Profile`;
-  const seoDescription = creator?.shortBio || `Discover articles, insights, and perspectives from ${creator?.name} on The Khabar Express.`;
+  const seoTitle = `${creator?.name} | Contributor Profile | The Khabar Express`;
+  const seoDescription = creator?.shortBio || `Discover articles, insights, and expert reporting from ${creator?.name} on The Khabar Express. Staying ahead with the latest news.`;
   const seoImage = creator?.profilePhoto || 'https://images.pexels.com/photos/3944460/pexels-photo-3944460.jpeg';
   const seoPath = `creator/${handle}`;
 

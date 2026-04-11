@@ -55,6 +55,18 @@ interface BlogPost {
   authorId?: {
     _id: string;
     username: string;
+    name?: string;
+    profession?: string;
+    expertise?: string[];
+    shortBio?: string;
+    socialLinks?: {
+      twitter?: string;
+      linkedin?: string;
+      website?: string;
+      instagram?: string;
+      youtube?: string;
+      github?: string;
+    };
   };
   faqs: IFaqItem[];
   tags?: string[];
@@ -148,7 +160,9 @@ const Blog: FC<BlogPostPageProps> = ({ blog, relatedPosts }) => {
         category={blog?.category}
         createdAt={blog?.createdAt}
         updatedAt={blog?.updatedAt}
-        author={blog?.author || ''}
+        author={blog?.authorId || blog?.author || ''}
+        aiSummary={blog?.aiSummary}
+        tags={blog?.tags}
       />
 
       <div className="flex w-full min-h-screen relative overflow-hidden">

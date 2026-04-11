@@ -66,11 +66,9 @@ const CookieSettingsPage: FC = () => {
 
   return (
     <Layout
-      title={"Cookie Settings"}
-      path={"cookie-settings"}
-      description={
-        "Manage cookie settings for The Khabar Express, including functional, analytics, and advertising preferences."
-      }
+      title="Cookie Settings | Manage Your Privacy | The Khabar Express"
+      path="cookie-settings"
+      description="Manage your cookie preferences for The Khabar Express. Control how we use cookies for functional, analytics, and advertising purposes to protect your privacy."
       jsonLd={jsonLd}
     >
       <section className="mx-auto max-w-7xl px-0 py-8 sm:px-6 lg:px-8">

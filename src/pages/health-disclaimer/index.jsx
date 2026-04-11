@@ -6,9 +6,9 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.thekhabarexpre
 const PAGE_PATH = "health-disclaimer";
 const PAGE_URL = `${SITE_URL}/${PAGE_PATH}`;
 
-const TITLE = "Health Information Disclaimer";
+const TITLE = "Health Information Disclaimer | The Khabar Express";
 const DESCRIPTION =
-  "The Khabar Express provides health news and analysis for informational purposes only. We are not a medical provider and do not offer medical advice, diagnosis, or treatment. Read our full health disclaimer.";
+  "The Khabar Express provides health news and analysis for informational purposes only. We are not a medical provider. Read our full health disclaimer for more information.";
 
 export default function HealthDisclaimerPage() {
   const jsonLd = {

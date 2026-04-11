@@ -14,9 +14,9 @@ const TermsOfService: FC = () => {
 
   return (
     <Layout 
-      title={"Terms of Service"} 
-      path={"terms-of-service"}
-      description={"Read the Terms of Service for The Khabar Express. Understand the rules, guidelines, and legal terms governing your use of our news platform."}
+      title="Terms of Service | The Khabar Express" 
+      path="terms-of-service"
+      description="Read the Terms of Service for The Khabar Express news portal. Understand our guidelines and the legal terms governing your use of our platform."
       jsonLd={jsonLd}
     >
       <ContentComponent contents={termsofservice} />

@@ -14,9 +14,9 @@ const PrivacyPolicy: FC = () => {
 
   return (
     <Layout 
-      title={"Privacy Policy"} 
-      path={"privacy-policy"}
-      description={"Read the Privacy Policy of The Khabar Express. Learn how we collect, use, and protect your personal information in compliance with GDPR and CCPA."}
+      title="Privacy Policy | The Khabar Express" 
+      path="privacy-policy"
+      description="Read the Privacy Policy of The Khabar Express. Learn how we collect, use, and protect your personal information in compliance with privacy regulations."
       jsonLd={jsonLd}
     >
       <ContentComponent contents={privacypolicy} />

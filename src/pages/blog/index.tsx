@@ -130,7 +130,11 @@ const BlogArchive: FC = () => {
   };
 
   return (
-    <Layout title="Archive | Khabar Express" path="blog">
+    <Layout 
+      title="News Archive | All Stories & Updates | The Khabar Express" 
+      description="Explore our complete collection of news stories, in-depth articles, and daily updates across all major categories at The Khabar Express."
+      path="blog"
+    >
 
       <div className="khabar-container py-10 md:py-12">
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">

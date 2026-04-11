@@ -24,8 +24,8 @@ const About: FC = () => {
 
   return (
     <Layout 
-      title="About Us | The Khabar Express" 
-      description="Learn more about The Khabar Express, our mission, editorial approach, and how we deliver fast, accurate news across Technology, Health, Finance, and more."
+      title="About The Khabar Express | Our Mission & Editorial Standards" 
+      description="Learn how The Khabar Express delivers fast, accurate, and insightful news across Technology, Finance, and Sports. Meet our team and explore our values."
       path="about"
       jsonLd={jsonLd}
     >

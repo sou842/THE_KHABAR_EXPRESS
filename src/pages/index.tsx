@@ -90,7 +90,7 @@ export default function Home({
 
   return (
     <Layout 
-      title="The Latest News and Insights" 
+      title="The Latest News and Insights | The Khabar Express" 
       path=""
       description="Stay updated with the latest news, in-depth analysis, and trending stories across Technology, Finance, Sports, and more at The Khabar Express."
       image={getImageUrl(featuredBlog)}

@@ -23,7 +23,7 @@ export default async function handler(
   switch (method) {
     case 'GET':
       try {
-        const blog = await Blog.findOne({ ...query, url: id }).populate('authorId', 'username');
+        const blog = await Blog.findOne({ ...query, url: id }).populate('authorId', 'name username profilePhoto profession expertise shortBio socialLinks');
 
         if (!blog) {
           return res.status(200).json({ success: false, message: 'Blog not found' });

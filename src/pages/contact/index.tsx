@@ -141,8 +141,8 @@ export default function ContactUs() {
 
   return (
     <Layout 
-      title="Contact Us | The Khabar Express" 
-      description="Connect with Noida's leading news portal. Send us your feedback, news tips, or inquiries through our secure contact form."
+      title="Contact Us | Get in Touch with The Khabar Express" 
+      description="Have a news tip or feedback? Reach out to The Khabar Express editorial team through our secure contact form or social channels."
       path="contact"
       jsonLd={jsonLd}
     >

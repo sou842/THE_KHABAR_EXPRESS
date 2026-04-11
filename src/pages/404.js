@@ -3,7 +3,10 @@ import Layout from "../components/Layout";
 
 const NotFound = () => {
     return (
-        <Layout title="404 - Not Found">
+        <Layout 
+            title="404 - Page Not Found | The Khabar Express"
+            description="Oops! The page you are looking for doesn't exist. Head back to The Khabar Express homepage for the latest news and insights."
+        >
             <div className="py-20">
                 <ErrorState 
                     title="Page Not Found"

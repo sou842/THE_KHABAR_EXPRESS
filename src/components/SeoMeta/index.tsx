@@ -13,6 +13,12 @@ interface SeoMetaProps {
   author?: any;
   jsonLd?: Record<string, any>;
   preloadImage?: boolean;
+  aiSummary?: {
+    mainIdea: string;
+    keyPoints: string[];
+    finalTakeaway: string;
+  };
+  tags?: string[];
 }
 
 const SeoMeta: FC<SeoMetaProps> = (props) => {
@@ -74,6 +80,9 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
   const generateArticleSchema = () => {
     if (!category || !createdAt) return null;
 
+    const authorData = author && typeof author === 'object' ? author : null;
+    const authorName = authorData?.name || (typeof author === 'string' ? author : 'Staff Writer');
+
     return {
       "@context": "https://schema.org",
       "@type": "NewsArticle",
@@ -81,10 +90,14 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
       image: [image],
       datePublished: createdAt,
       dateModified: updatedAt || createdAt,
-      author: author
+      author: authorData
         ? {
           "@type": "Person",
-          name: typeof author === 'string' ? author : (author.name || 'Staff Writer'),
+          name: authorName,
+          jobTitle: authorData.profession || undefined,
+          description: authorData.shortBio || undefined,
+          url: authorData.socialLinks?.website || undefined,
+          sameAs: authorData.socialLinks ? Object.values(authorData.socialLinks).filter(Boolean) : [],
         }
         : {
           "@type": "Organization",
@@ -100,11 +113,25 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
         },
       },
       description: description,
+      abstract: props.aiSummary?.mainIdea || undefined,
+      keywords: props.tags?.join(", ") || category,
       mainEntityOfPage: {
         "@type": "WebPage",
         "@id": canonicalUrl,
       },
       articleSection: category,
+    };
+  };
+
+  const generateSpeakableSchema = () => {
+    return {
+      "@context": "https://schema.org",
+      "@type": "Speakable",
+      "xpath": [
+        "/html/head/title",
+        "//*[@itemprop='articleBody']"
+      ],
+      "url": canonicalUrl
     };
   };
 
@@ -149,6 +176,7 @@ const SeoMeta: FC<SeoMetaProps> = (props) => {
 
   const allStructuredData = [
     ...(jsonLd ? [jsonLd] : []),
+    generateSpeakableSchema(),
     generateOrganizationSchema(),
     ...(normalizeUrl(canonicalUrl) === normalizeUrl(siteUrl) ? [generateWebSiteSchema()] : []),
     ...(generateArticleSchema() ? [generateArticleSchema()] : []),
