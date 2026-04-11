@@ -6,10 +6,10 @@ import { Skeleton } from "@/components/Skeleton";
 import { getter, preventRerendering } from "@/lib/helper";
 import { IBlog } from "@/models/blog.model";
 import Layout from "@/components/Layout";
-import { ArrowRight } from "lucide-react";
 import { SOCIAL_LINKS } from "@/lib/constants";
 import { getBlogs } from "@/lib/services/blogService";
 import { GetStaticProps } from "next";
+import { getImageUrl } from "@/lib/blogUtils";
 
 interface HomeProps {
   initialGeneralBlogs: any;
@@ -93,6 +93,8 @@ export default function Home({
       title="The Latest News and Insights" 
       path=""
       description="Stay updated with the latest news, in-depth analysis, and trending stories across Technology, Finance, Sports, and more at The Khabar Express."
+      image={getImageUrl(featuredBlog)}
+      preloadImage={!!featuredBlog}
     >
       <main className="flex-grow bg-background">
         {/* Hidden H1 for SEO if no featured blog exists */}

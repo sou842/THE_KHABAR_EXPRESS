@@ -3,6 +3,10 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 export default function GoogleAnalytics() {
+  return null;
+}
+
+export function HookGoogleAnalytics() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -24,10 +28,11 @@ export default function GoogleAnalytics() {
   return (
     <>
       <Script
-        strategy="afterInteractive"
+        id="gtag-base"
+        strategy="lazyOnload"
         src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
       />
-      <Script id="gtag-init" strategy="afterInteractive">
+      <Script id="gtag-init" strategy="lazyOnload">
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
