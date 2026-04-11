@@ -26,25 +26,20 @@ const Layout: FC<LayoutProps> = ({ children, disableDefaultMeta, title, descript
   return (
     <div className="min-h-screen flex flex-col">
       {!disableDefaultMeta && (
-        <SeoMeta 
+        <SeoMeta
           title={title!}
           description={description!}
           image={image!}
-          url={url} 
+          url={url}
           jsonLd={jsonLd}
           preloadImage={preloadImage}
         />
       )}
 
       <Navbar />
-      <motion.main
-        className="flex-grow khabar-container my-2 md:my-6"
-        initial={{ opacity: 0, y: 5 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-      >
+      <main className="flex-grow khabar-container my-2 md:my-6">
         {children}
-      </motion.main>
+      </main>
       <Footer />
       <SocialFollowDialog />
     </div>
