@@ -77,13 +77,13 @@ const Edit: React.FC = () => {
   }, [data]);
   if (loading)
     return (
-      <Layout>
+    <Layout title={`Editing: ${data?.data?.title || 'Blog'} | The Khabar Express`}>
         <Skeleton type="write-submit-skeleton" />
       </Layout>
     );
 
   return (
-    <Layout>
+    <Layout title={`Editing: ${data?.data?.title || 'Blog'} | The Khabar Express`}>
       <div className="relative w-full m-auto max-w-3xl">
         {!isLoading ? (
           <TextEditor

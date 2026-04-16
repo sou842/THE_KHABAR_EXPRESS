@@ -81,7 +81,7 @@ const UsersPage: React.FC = () => {
   };
   
   return (
-    <Layout>
+    <Layout title="Users Management | Admin - The Khabar Express">
       <div className="container mx-auto py-8 px-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Users Management</h1>

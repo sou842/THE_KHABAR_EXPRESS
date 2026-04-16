@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import PrivateRoute from "@/components/PrivateRoute/PrivateRoute";
 import Logo from "@/components/Logo";
 import Link from "next/link";
+import SeoMeta from "@/components/SeoMeta";
 
 const EditorSideBar = dynamic(() => import("@/components/editor/EditorSideBar"));
 const OverView = dynamic(() => import("@/components/editor/SidebarTabs/OverView"));
@@ -79,6 +80,12 @@ const EditorDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-muted">
+      <SeoMeta 
+        title={`Editor Dashboard - ${activeTab?.charAt(0)?.toUpperCase() + activeTab?.slice(1)} | The Khabar Express`} 
+        description="Editor dashboard for creating and managing your news articles on The Khabar Express."
+        url={`${process.env.NEXT_PUBLIC_SITE_URL}/editor/dashboard`}
+        image="https://images.pexels.com/photos/34600/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1200"
+      />
       <div className="flex h-screen overflow-hidden">
         {/* Sidebar */}
         <EditorSideBar activeTab={activeTab} setActiveTab={handleTabChange} />

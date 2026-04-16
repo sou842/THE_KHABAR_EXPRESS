@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import AdminSideBar from "@/components/admin/AdminSideBar";
+import SeoMeta from "@/components/SeoMeta";
 
 const Overview = dynamic(() => import("@/components/admin/section/Overview"));
 const Blogs = dynamic(() => import("@/components/admin/section/Blogs"));
@@ -81,6 +82,12 @@ export default function AdminDashboard() {
 
   return (
     <div className="w-full h-dvh overflow-y-auto flex gap-6">
+      <SeoMeta 
+        title={`Admin Dashboard - ${activeTab?.charAt(0)?.toUpperCase() + activeTab?.slice(1)} | The Khabar Express`} 
+        description="Admin dashboard for managing blogs, users, and site settings on The Khabar Express."
+        url={`${process.env.NEXT_PUBLIC_SITE_URL}/admin/dashboard`}
+        image="https://images.pexels.com/photos/3944460/pexels-photo-3944460.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      />
       <AdminSideBar activeTab={activeTab} setActiveTab={setActiveTab} />
       <div className="flex-1 h-dvh overflow-y-auto p-4">{renderContent()}</div>
     </div>

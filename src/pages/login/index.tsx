@@ -4,6 +4,7 @@ import AuthForm from "@/components/AuthForm";
 import { PenLine } from "lucide-react";
 import { useRouter } from "next/router";
 import Logo from "@/components/Logo";
+import SeoMeta from "@/components/SeoMeta";
 
 const Index = () => {
   const [isContributor, setIsContributor] = useState(true);
@@ -24,6 +25,12 @@ const Index = () => {
 
   return (
     <div>
+      <SeoMeta 
+        title="Login | The Khabar Express" 
+        description="Login to your The Khabar Express account to manage your stories, track your insights, and engage with the community."
+        url={`${process.env.NEXT_PUBLIC_SITE_URL}/login`}
+        image="https://images.pexels.com/photos/3944460/pexels-photo-3944460.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      />
       <div className="min-h-screen flex flex-col md:flex-row">
         {/* Left Side - Branding */}
         <div className="md:w-1/2 bg-gradient-to-br from-accent/5 to-accent/10 p-8 md:p-8 lg:p-10 flex flex-col justify-between">
