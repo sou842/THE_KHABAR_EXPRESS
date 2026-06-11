@@ -138,7 +138,7 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
                 <FallbackImage 
                   src={getImageUrl(blog)!} 
                   alt={blog.title} 
-                  className="grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" 
+                  className="group-hover:opacity-90 transition-all" 
                   sizes="128px"
                   fallbackSrc="https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop"
                 />
@@ -178,7 +178,7 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
               <FallbackImage 
                 src={getImageUrl(blog)!} 
                 alt={blog?.title || "Blog cover image"} 
-                className="grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all" 
+                className="group-hover:opacity-90 transition-all" 
                 fallbackSrc="https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop"
               />
             ) : (
@@ -233,7 +233,7 @@ export default function BlogCard({ blog, variant = "editorPick", index = 0 }: Bl
                 <FallbackImage 
                   src={getImageUrl(blog)!} 
                   alt={blog?.title || "Blog cover image"} 
-                  className="grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all" 
+                  className="group-hover:opacity-90 transition-all" 
                   fallbackSrc="https://images.unsplash.com/photo-1624269305548-1527ef905ff6?w=900&auto=format&fit=crop"
                 />
               ) : (
