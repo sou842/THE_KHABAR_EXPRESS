@@ -104,7 +104,7 @@ export default function Home({
 
         {/* Large Hero Featured Article */}
         {featuredBlog && (
-          <section className="border-b border-border">
+          <section>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
               <BlogCard blog={featuredBlog} variant="hero" />
             </div>
